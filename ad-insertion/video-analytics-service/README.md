@@ -4,7 +4,7 @@ The Video Analytics Service exposes a set of RESTful interfaces designed to simp
  or [FFmpeg](https://github.com/OpenVisualCloud/Dockerfiles/blob/master/doc/ffmpeg.md). Each pipeline type defines the semantics of its customizable parameters. Pipeline developers define named and versioned pipelines and expose them to users via simple RESTful interfaces. 
 
 ## Architecture Overview
-<img src="volume/html/image/video_analytics_service_architecture.png" width="800">
+<img src="../../volume/html/image/video_analytics_service_architecture.png" width="800">
 
 ## Interfaces
 
