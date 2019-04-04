@@ -1,0 +1,4 @@
+archive/*
+html/*
+*.sh
+CMakeLists.txt

@@ -1,0 +1,5 @@
+CMakeLists.txt
+*.mp4
+*.sh
+dash/*
+hls/*

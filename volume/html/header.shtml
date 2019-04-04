@@ -1,0 +1,81 @@
+<div class="top-bar" style="background-color:#0071c5" ui-header>
+  <div class="top-bar-left">
+    <ul class="dropdown menu" data-dropdown-menu style="background-color:#0071c5;">
+      <li class="menu-text">
+        <h4 style="color:#FDEDEC">AD Insertion E2E Pipeline</h4>
+      </li>
+    </ul>
+  </div>
+  <div class="top-bar-right" ui-header-setting>
+      <ul class="dropdown menu" data-dropdown-menu style="background-color:gray;color:white">
+      <li><a href="#" user-name-menu class="menu-text">guest</a>
+        <ul class="menu" style="background-color:gray">
+          <li><a href="#" data-open="setting" class="menu-text"><i class="fi-key"></i>&nbsp;Setting</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="reveal" id="setting" data-reveal>
+  <form>
+    <p><h4><b>Setting</b></h4></p>
+
+    <div class="input-group" ui-header-setting-user>
+      <span class="input-group-label" style="width:40%"><b>User Name:</b></span>
+      <input class="input-group-field" type="text" name="user" pattern="[a-z0-9_]+"><br>
+    </div>
+
+    <div class="input-group" ui-header-setting-debug-console>
+      <span class="input-group-label" style="width:40%"><b>Debug Console:</b></span>
+      <input class="input-group-field switch-input" id="debugConsoleSwitch" type="checkbox">
+      <label class="switch-paddle" for="debugConsoleSwitch">
+          <span class="switch-active" aria-hidden="true">ON</span>
+          <span class="switch-inactive" aria-hidden="true">OFF</span>
+      </label>
+    </div>
+
+    <div class="input-group" ui-header-setting-analytics-console>
+      <span class="input-group-label" style="width:40%"><b>Analytics Console:</b></span>
+      <input class="input-group-field switch-input" id="analyticsConsoleSwitch" type="checkbox">
+      <label class="switch-paddle" for="analyticsConsoleSwitch">
+          <span class="switch-active" aria-hidden="true">ON</span>
+          <span class="switch-inactive" aria-hidden="true">OFF</span>
+      </label>
+    </div>
+
+    <div class="input-group" ui-header-setting-analytics-window>
+      <span class="input-group-label" style="width:40%"><b>Analytics Window:</b></span>
+      <input class="input-group-field" type="number" name="window" ><br>
+    </div>
+
+    <div class="input-group" ui-header-setting-adstats-console>
+      <span class="input-group-label" style="width:40%"><b>AD Report:</b></span>
+      <input class="input-group-field switch-input" id="adstatsConsoleSwitch" type="checkbox">
+      <label class="switch-paddle" for="adstatsConsoleSwitch">
+          <span class="switch-active" aria-hidden="true">ON</span>
+          <span class="switch-inactive" aria-hidden="true">OFF</span>
+      </label>
+    </div>
+
+    <div class="input-group" ui-header-setting-workloads-console>
+      <span class="input-group-label" style="width:40%"><b>Server Workloads:</b></span>
+      <input class="input-group-field switch-input" id="workloadsConsoleSwitch" type="checkbox">
+      <label class="switch-paddle" for="workloadsConsoleSwitch">
+          <span class="switch-active" aria-hidden="true">ON</span>
+          <span class="switch-inactive" aria-hidden="true">OFF</span>
+      </label>
+    </div>
+
+    <div class="input-group" ui-header-setting-playlist>
+      <span class="input-group-label" style="width:40%"><b>Play List:</b></span>
+      <input class="input-group-field switch-input" id="playListSwitch" type="checkbox">
+      <label class="switch-paddle" for="playListSwitch">
+          <span class="switch-active" aria-hidden="true">ON</span>
+          <span class="switch-inactive" aria-hidden="true">OFF</span>
+      </label>
+    </div>
+
+    <input class="button expanded" type="submit" data-close>
+  </form>
+</div>
