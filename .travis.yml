@@ -14,7 +14,6 @@ matrix:
     - name: ad-insertion/ad-static
     - name: ad-insertion/ad-transcode
     - name: content-provider/transcode
-	
 
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
