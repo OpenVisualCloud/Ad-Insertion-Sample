@@ -9,11 +9,11 @@ services: docker
 matrix:
   allow_failures:
     - name: image/ffmpeg
-	- name: ad-insertion/video-analytics-service
+    - name: ad-insertion/video-analytics-service
     - name: content-provider/archive
-	- name: ad-insertion/ad-static
-	- name: ad-insertion/ad-transcode
-	- name: content-provider/transcode
+    - name: ad-insertion/ad-static
+    - name: ad-insertion/ad-transcode
+    - name: content-provider/transcode
 	
 
 before_install:
