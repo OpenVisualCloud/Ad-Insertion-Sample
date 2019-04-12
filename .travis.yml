@@ -19,5 +19,103 @@ jobs:
         - mkdir build
         - cd build
         - cmake ..
+        - cd ad-decision
         - make
-          
+    - name: image-ffmpeg
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd image/ffmpeg
+        - make
+    - name: account
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd account
+        - make
+    - name: ad-content-frontend
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd ad-content/frontend
+        - make
+    - name: ad-content-archive
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd ad-content/archive
+        - make
+    - name: ad-insertion-frontend
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd ad-insertion/frontend
+        - make
+    - name: ad-insertion-ad-static
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd ad-insertion/ad-static
+        - make
+    - name: ad-insertion-analytic-db
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd ad-insertion/analytic-db
+        - make
+    - name: ad-insertion-ad-transcode
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd ad-insertion/ad-transcode
+        - make
+    - name: ad-insertion-video-analytics-service
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd ad-insertion/video-analytics-service
+        - make
+    - name: deployment
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd deployment
+        - make
+    - name: cdn
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd cdn
+        - make
+    - name: content-provider-transcode
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd content-provider/transcode
+        - make
+    - name: content-provider-frontend
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd content-provider/frontend
+        - make
+    - name: content-provider-archive
+      script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd content-provider/archive
+        - make
