@@ -6,8 +6,8 @@ if test -z "${DIR}"; then
 fi 
 
 # build image(s) in order (to satisfy dependencies)
-for dep in .8 .7 .6 .5 .4 .3 .2 .1 ''; do
-    for dockerfile in `find "${DIR}" -name "Dockerfile*$dep" -print`; do
+for dep in '.8.*' '.7.*' '.6.*' '.5.*' '.4.*' '.3.*' '.2.*' '.1.*' ''; do
+    for dockerfile in `find "${DIR}" -name "Dockerfile${dep}" -print`; do
         image=$(head -n 1 "$dockerfile" | grep '# ' | cut -d' ' -f2)
         if test -z "$image"; then image="$IMAGE"; fi
 
