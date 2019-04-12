@@ -45,15 +45,15 @@ class PipelineManager:
 
             else:
                 if len(files) == 0:
-                    pipeline = root.split('/')[-1]
+                    pipeline = os.path.basename(root)
                     pipelines[pipeline] = {}
                     for subdir in subdirs:
                         pipelines[pipeline][subdir] = {}
                 else:
-                    pipeline = root.split('/')[-2]
-                    version = root.split('/')[-1]
+                    pipeline = os.path.basename(os.path.dirname(root))
+                    version = os.path.basename(root)
                     for file in files:
-                        path = root + '/' + file
+                        path = os.path.join(root, file)
                         if path.endswith(".json"):
                             with open(path, 'r') as jsonfile:
                                 config = json.load(jsonfile)
