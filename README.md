@@ -1,3 +1,7 @@
+[![Travis Build Status](https://travis-ci.com/OpenVisualCloud/Ad-Insertion-Sample.svg?branch=master)](https://travis-ci.com/OpenVisualCloud/Ad-Insertion-Sample)
+[![License](https://img.shields.io/badge/license-BSD_3_Clause-green.svg)](https://github.com/OpenVisualCloud/Ad-Insertion-Sample/blob/master/LICENSE)
+[![Contributions](https://img.shields.io/badge/contributions-welcome-blue.svg)](https://github.com/OpenVisualCloud/Ad-Insertion-Sample/wiki)
+
 The E2E sample implements a server-side AD insertion system, which features on-demand video transcoding and streaming, and AD insertion based on video content analysis.
 
 <img src="volume/html/image/overall-arch.png" width="800">
