@@ -5,6 +5,9 @@ services: docker
 #  directories:
 #    - /var/lib/apt/lists
 
+matrix:
+  allow_failures:
+    - name: ad-insertion/video-analytics-service
 
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
