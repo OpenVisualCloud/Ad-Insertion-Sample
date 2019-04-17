@@ -3,11 +3,11 @@ from common.utils import logging  # pylint: disable=import-error
 import string
 import shlex
 import subprocess
-import tempfile
 import time
 import copy
 from threading import Thread
 import shutil
+import uuid
 
 logger = logging.get_logger('FFmpegPipeline', is_static=True)
 
@@ -128,7 +128,7 @@ class FFmpegPipeline(Pipeline):
             elif request['destination']['type'] == "file":
                 iemetadata_args.append(request['destination']['uri'])
         else:
-            iemetadata_args.append("file:///" + tempfile.mktemp(".json"))
+            iemetadata_args.append("file:///tmp/tmp"+str(uuid.uuid4().hex)+".json")
                                     
         args.extend(iemetadata_args)
         logger.debug(args)
