@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from zkdata import ZKData
 from manifest_hls import parse_hls
 from manifest_dash import parse_dash
+import os
 
 zk_prefix="/ad-insertion-frontend"
 content_provider_url = "http://content-provider:8080"
@@ -68,9 +69,12 @@ class ManifestHandler(web.RequestHandler):
         ad_spec={
             "prefix": "adstream/"+user,
             "path": ad_storage_root+"/"+stream_base,
-            "interval": [4],    # ad interval (#segments)
-            "duration": [5],    # ad duration
+            "interval": list(map(int,os.environ.get("AD_INTERVALS").split(","))),    # ad interval (#segments)
+            "duration": list(map(int,os.environ.get("AD_DURATION").split(","))),    # ad duration
         }
+        print("######################################", ad_spec["interval"])
+        print("######################################", ad_spec["duration"])
+        
         if stream.endswith(".m3u8"):
             zk=ZKData()
             minfo=parse_hls(
