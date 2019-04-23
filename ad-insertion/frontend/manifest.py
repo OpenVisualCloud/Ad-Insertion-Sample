@@ -72,8 +72,6 @@ class ManifestHandler(web.RequestHandler):
             "interval": list(map(int,os.environ.get("AD_INTERVALS").split(","))),    # ad interval (#segments)
             "duration": list(map(int,os.environ.get("AD_DURATION").split(","))),    # ad duration
         }
-        print("######################################", ad_spec["interval"])
-        print("######################################", ad_spec["duration"])
         
         if stream.endswith(".m3u8"):
             zk=ZKData()
