@@ -86,7 +86,12 @@ def start_pipeline(stream_uri,
 
     request = request_template
     request["source"]["uri"] = stream_uri
-    os.remove(os.path.abspath(destination))
+
+    try:
+        os.remove(os.path.abspath(destination))
+    except OSError:
+        pass
+
     request["destination"]["uri"] = urllib.parse.urljoin("file://",os.path.abspath(destination))
     if (tags) and (len(tags) > 0):
         request["tags"] = tags
