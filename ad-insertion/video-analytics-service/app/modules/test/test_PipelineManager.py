@@ -1,5 +1,5 @@
 import sys, os
-sys.path.append(os.path.dirname(__file__) + "/../../")
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 import unittest
 import common
@@ -149,7 +149,8 @@ class TestPipelineManager(unittest.TestCase):
                 }
             }
         }
-        PipelineManager.load_config("modules/test/pipelines")
+
+        PipelineManager.load_config(os.path.join("modules", "test", "pipelines"))
         result = PipelineManager.pipelines
 
         self.assertEqual(result, expected_result)

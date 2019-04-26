@@ -1,5 +1,5 @@
 import sys, os
-sys.path.append(os.path.dirname(__file__) + "/../../")
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 import unittest
 from unittest.mock import patch
@@ -11,7 +11,8 @@ with patch('shutil.which', return_value="1234"):
 MockProcess = type("MockProcess", (object,), {
     "kill": lambda: None,
     "wait": lambda self: None,
-    "returncode": 0
+    "returncode": 0,
+    "poll": lambda self: None
 })
 
 class TestFFmpegPipeline(unittest.TestCase):
@@ -55,11 +56,12 @@ class TestFFmpegPipeline(unittest.TestCase):
         testpipeline = FFmpegPipeline(1, {"template": None, "type": "ffmpeg"}, "models")
         testpipeline.state = "RUNNING"
         testpipeline.start_time = 1000
+        testpipeline.fps = 10
 
         expected_result = {
             "id": 1,
             "state": "RUNNING",
-            "avg_fps": "to do",
+            "avg_fps": 10,
             "start_time": 1000,
             "elapsed_time": 1
         }
@@ -69,14 +71,15 @@ class TestFFmpegPipeline(unittest.TestCase):
 
     def test_status_stopped(self):
         testpipeline = FFmpegPipeline(1, {"template": None, "type": "ffmpeg"}, "models")
-        testpipeline.state = "RUNNING"
+        testpipeline.state = "COMPLETED"
         testpipeline.start_time = 1000
         testpipeline.stop_time = 1001
+        testpipeline.fps = 10
 
         expected_result = {
             "id": 1,
-            "state": "RUNNING",
-            "avg_fps": "to do",
+            "state": "COMPLETED",
+            "avg_fps": 10,
             "start_time": 1000,
             "elapsed_time": 1
         }
@@ -92,7 +95,7 @@ class TestFFmpegPipeline(unittest.TestCase):
 
         testpipeline._spawn(args)
 
-        mockpopen.assert_called_with(args)
+        mockpopen.assert_called_with(args, bufsize=1, stderr=-1, stdout=-1, universal_newlines=True)
         self.assertEqual(testpipeline.start_time, 1001)
         self.assertEqual(testpipeline.stop_time, 1001)
         self.assertEqual(testpipeline.state, "COMPLETED")
@@ -102,7 +105,8 @@ class TestFFmpegPipeline(unittest.TestCase):
     @patch('modules.FFmpegPipeline.subprocess.Popen', return_value=type("MockProcess", (object,), {
         "kill": lambda: None,
         "wait": lambda self: None,
-        "returncode": 1
+        "returncode": 1,
+        "poll": lambda self: None
     })())
     def test__spawn_run_completed_error(self, mockpopen, mocktime):
         testpipeline = FFmpegPipeline(1, {"template": None, "type": "ffmpeg"}, "models")
@@ -110,7 +114,7 @@ class TestFFmpegPipeline(unittest.TestCase):
 
         testpipeline._spawn(args)
 
-        mockpopen.assert_called_with(args)
+        mockpopen.assert_called_with(args, bufsize=1, stderr=-1, stdout=-1, universal_newlines=True)
         self.assertEqual(testpipeline.start_time, 1001)
         self.assertEqual(testpipeline.stop_time, 1001)
         self.assertEqual(testpipeline.state, "ERROR")
@@ -134,11 +138,14 @@ class TestFFmpegPipeline(unittest.TestCase):
             }
         }
         iemetadata_args = []
-        expected_iemetadata_args = ['-custom_tag', 'tag1:value1,', '-custom_tag', 'tag2:value2']
 
         testpipeline._add_tags(iemetadata_args)
 
-        self.assertEqual(iemetadata_args, expected_iemetadata_args)
+        self.assertEqual(str(iemetadata_args).count('-custom_tag'), 2)
+        self.assertRegex(str(iemetadata_args), "tag.:value.,")
+        self.assertRegex(str(iemetadata_args), "tag.:value.\'")
+        self.assertIn('tag1:value1', str(iemetadata_args))
+        self.assertIn('tag2:value2', str(iemetadata_args))
 
     @patch('modules.FFmpegPipeline.logger.error', return_value=None)
     def test__add_tags_error(self, mock_log_error):
@@ -220,6 +227,8 @@ class TestFFmpegPipeline(unittest.TestCase):
         }
 
         testpipeline.start(request)
+        mock_log_debug.assert_called_with(['ffmpeg', 'uri=testuri', '-f', 'iemetadata', '-source_url', 'testuri', 'kafka://host1/testtopic'])
 
 if __name__ == '__main__':
     unittest.main()
+
