@@ -3,6 +3,7 @@ import json
 import common.settings  # pylint: disable=import-error
 from common.utils import logging  # pylint: disable=import-error
 import time
+from http import HTTPStatus
 from modules.ModelManager import ModelManager  # pylint: disable=import-error
 
 
@@ -84,17 +85,21 @@ class PipelineManager:
 
     @staticmethod
     def get_pipeline_parameters(name, version):
-        params_obj = {
-            "name": name,
-            "version":version,
-            "type": PipelineManager.pipelines[name][version]["type"],
-            "description": PipelineManager.pipelines[name][version]["description"],
-        }
+        try:
+            params_obj = {
+                "name": name,
+                "version":version,
+                "type": PipelineManager.pipelines[name][version]["type"],
+                "description": PipelineManager.pipelines[name][version]["description"],
+            }
 
-        if "parameters" in PipelineManager.pipelines[name][version]:
-            params_obj["parameters"] = PipelineManager.pipelines[name][version]["parameters"]
+            if "parameters" in PipelineManager.pipelines[name][version]:
+                params_obj["parameters"] = PipelineManager.pipelines[name][version]["parameters"]
 
-        return params_obj
+            return params_obj
+        except Exception as e:
+            PipelineManager.logger.error(e)
+            return ('Invalid Pipeline or Version', HTTPStatus.BAD_REQUEST)
 
     @staticmethod
     def create_instance(name, version):
@@ -115,12 +120,18 @@ class PipelineManager:
 
     @staticmethod
     def get_instance_parameters(instance_id):
-        return PipelineManager.pipeline_instances[instance_id].params()
+        if instance_id in PipelineManager.pipeline_instances:
+            return PipelineManager.pipeline_instances[instance_id].params()
+        return ('Invalid Pipeline Identifier', HTTPStatus.BAD_REQUEST)
 
     @staticmethod
     def get_instance_status(instance_id):
-        return PipelineManager.pipeline_instances[instance_id].status()
+        if instance_id in PipelineManager.pipeline_instances:
+            return PipelineManager.pipeline_instances[instance_id].status()
+        return ('Invalid Pipeline Identifier', HTTPStatus.BAD_REQUEST)
 
     @staticmethod
     def stop_instance(instance_id):
-        return PipelineManager.pipeline_instances[instance_id].stop()
+        if instance_id in PipelineManager.pipeline_instances:
+            return PipelineManager.pipeline_instances[instance_id].stop()
+        return ('Invalid Pipeline Identifier', HTTPStatus.BAD_REQUEST)
