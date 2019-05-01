@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from messaging import Consumer
-from subprocess import call
 import requests
 import ast
 from zkstate import ZKState
