@@ -47,7 +47,10 @@ def pipelines_name_version_get(name, version):  # noqa: E501
     """
 
     logger.debug("GET on /pipelines/{name}/{version}".format(name=name, version=version))
-    return PipelineManager.get_pipeline_parameters(name, version)
+    result = PipelineManager.get_pipeline_parameters(name, version)
+    if result:
+        return result
+    return ('Invalid Pipeline or Version', HTTPStatus.BAD_REQUEST)
 
 
 def pipelines_name_version_instance_id_delete(name, version, instance_id):  # noqa: E501
@@ -66,7 +69,10 @@ def pipelines_name_version_instance_id_delete(name, version, instance_id):  # no
     """
 
     logger.debug("DELETE on /pipelines/{name}/{version}/{id}".format(name=name, version=version, id=instance_id))
-    return PipelineManager.stop_instance(instance_id)
+    result = PipelineManager.stop_instance(name,version,instance_id)
+    if result:
+        return result
+    return ('Invalid pipeline, version or instance', HTTPStatus.BAD_REQUEST)
 
 
 def pipelines_name_version_instance_id_get(name, version, instance_id):  # noqa: E501
@@ -85,7 +91,10 @@ def pipelines_name_version_instance_id_get(name, version, instance_id):  # noqa:
     """
 
     logger.debug("GET on /pipelines/{name}/{version}/{id}".format(name=name, version=version, id=instance_id))
-    return PipelineManager.get_instance_parameters(instance_id)
+    result = PipelineManager.get_instance_parameters(name,version,instance_id)
+    if result:
+        return result
+    return ('Invalid pipeline, version or instance', HTTPStatus.BAD_REQUEST)
 
 
 def pipelines_name_version_instance_id_status_get(name, version, instance_id):  # noqa: E501
@@ -104,7 +113,10 @@ def pipelines_name_version_instance_id_status_get(name, version, instance_id):  
     """
 
     logger.debug("GET on /pipelines/{name}/{version}/{id}/status".format(name=name, version=version, id=instance_id))
-    return PipelineManager.get_instance_status(instance_id)
+    result = PipelineManager.get_instance_status(name,version,instance_id)
+    if result:
+        return result
+    return ('Invalid pipeline, version or instance', HTTPStatus.BAD_REQUEST)
 
 
 def pipelines_name_version_post(name, version):  # noqa: E501
@@ -124,8 +136,12 @@ def pipelines_name_version_post(name, version):  # noqa: E501
 
     logger.debug("POST on /pipelines/{name}/{version}".format(name=name, version=version))
     if connexion.request.is_json:
-        pipeline = PipelineManager.create_instance(name, version)
-        if pipeline :
-            pipeline.start(connexion.request.get_json())
-            return pipeline.id
-        return ('Invalid Pipeline or Version', HTTPStatus.BAD_REQUEST)
+        try:
+            pipeline = PipelineManager.create_instance(name, version)
+            if pipeline :
+                pipeline.start(connexion.request.get_json())
+                return pipeline.id
+            return ('Invalid Pipeline or Version', HTTPStatus.BAD_REQUEST)
+        except Exception as e:
+            PipelineManager.logger.error(e)
+            return ('Unexpected error', HTTPStatus.INTERNAL_SERVER_ERROR)
