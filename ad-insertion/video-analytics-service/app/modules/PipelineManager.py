@@ -3,7 +3,6 @@ import json
 import common.settings  # pylint: disable=import-error
 from common.utils import logging  # pylint: disable=import-error
 import time
-from http import HTTPStatus
 from modules.ModelManager import ModelManager  # pylint: disable=import-error
 
 
@@ -13,18 +12,17 @@ def import_pipeline_types(logger):
         from modules.GStreamerPipeline import GStreamerPipeline  # pylint: disable=import-error
         pipeline_types['GStreamer'] = GStreamerPipeline
     except Exception as error:
-        logger.error("Error loading GStreamer: %s\n" %(error,))
+        logger.error("Error loading GStreamer: %s\n" % (error,))
     try:
         from modules.FFmpegPipeline import FFmpegPipeline  # pylint: disable=import-error
         pipeline_types['FFmpeg'] = FFmpegPipeline
     except Exception as error:
-        logger.error("Error loading FFmpeg: %s\n"%(error,))
+        logger.error("Error loading FFmpeg: %s\n" % (error,))
 
     return pipeline_types
 
 
 class PipelineManager:
-
     pipelines = None
     logger = logging.get_logger('PipelineManager', is_static=True)
 
@@ -75,63 +73,70 @@ class PipelineManager:
 
     @staticmethod
     def get_loaded_pipelines():
-        result = []
+        results = []
         if PipelineManager.pipelines is not None:
             for pipeline in PipelineManager.pipelines:
                 for version in PipelineManager.pipelines[pipeline]:
-                    result.append(PipelineManager.get_pipeline_parameters(pipeline, version))
-
-        return result
+                    result = PipelineManager.get_pipeline_parameters(pipeline, version)
+                    if result:
+                        results.append(result)
+        return results
 
     @staticmethod
     def get_pipeline_parameters(name, version):
-        try:
-            params_obj = {
-                "name": name,
-                "version":version,
-                "type": PipelineManager.pipelines[name][version]["type"],
-                "description": PipelineManager.pipelines[name][version]["description"],
-            }
+        if not PipelineManager.is_pipeline_exists(name, version):
+            return None
+        params_obj = {
+            "name": name,
+            "version": version
+        }
+        if "type" in PipelineManager.pipelines[name][version]:
+            params_obj["type"] = PipelineManager.pipelines[name][version]["type"]
 
-            if "parameters" in PipelineManager.pipelines[name][version]:
-                params_obj["parameters"] = PipelineManager.pipelines[name][version]["parameters"]
+        if "description" in PipelineManager.pipelines[name][version]:
+            params_obj["description"] = PipelineManager.pipelines[name][version]["description"]
 
-            return params_obj
-        except Exception as e:
-            PipelineManager.logger.error(e)
-            return ('Invalid Pipeline or Version', HTTPStatus.BAD_REQUEST)
+        if "parameters" in PipelineManager.pipelines[name][version]:
+            params_obj["parameters"] = PipelineManager.pipelines[name][version]["parameters"]
+
+        return params_obj
 
     @staticmethod
     def create_instance(name, version):
         PipelineManager.logger.info("Creating Instance of Pipeline {name}/{v}".format(name=name, v=version))
-
-        try:
-            pipeline_type = PipelineManager.pipelines[name][str(version)]['type']
-            PipelineManager.pipeline_id += 1
-            PipelineManager.pipeline_instances[PipelineManager.pipeline_id] = \
-                PipelineManager.pipeline_types[pipeline_type](PipelineManager.pipeline_id,
-                                                              PipelineManager.pipelines[name][str(version)],
-                                                              ModelManager.models)
-
-            return PipelineManager.pipeline_instances[PipelineManager.pipeline_id]
-        except Exception as e:
-            PipelineManager.logger.error(e)
+        if not PipelineManager.is_pipeline_exists(name, str(version)):
             return None
+        pipeline_type = PipelineManager.pipelines[name][str(version)]['type']
+        PipelineManager.pipeline_id += 1
+        PipelineManager.pipeline_instances[PipelineManager.pipeline_id] = PipelineManager.pipeline_types[pipeline_type](
+            PipelineManager.pipeline_id,
+            PipelineManager.pipelines[name][str(version)],
+            ModelManager.models)
+        return PipelineManager.pipeline_instances[PipelineManager.pipeline_id]
 
     @staticmethod
-    def get_instance_parameters(instance_id):
-        if instance_id in PipelineManager.pipeline_instances:
-            return PipelineManager.pipeline_instances[instance_id].params()
-        return ('Invalid Pipeline Identifier', HTTPStatus.BAD_REQUEST)
+    def get_instance_parameters(name, version, instance_id):
+        if not PipelineManager.is_pipeline_exists(name, version, instance_id):
+            return None
+        return PipelineManager.pipeline_instances[instance_id].params()
 
     @staticmethod
-    def get_instance_status(instance_id):
-        if instance_id in PipelineManager.pipeline_instances:
-            return PipelineManager.pipeline_instances[instance_id].status()
-        return ('Invalid Pipeline Identifier', HTTPStatus.BAD_REQUEST)
+    def get_instance_status(name, version, instance_id):
+        if not PipelineManager.is_pipeline_exists(name, version, instance_id):
+            return None
+        return PipelineManager.pipeline_instances[instance_id].status()
 
     @staticmethod
-    def stop_instance(instance_id):
-        if instance_id in PipelineManager.pipeline_instances:
-            return PipelineManager.pipeline_instances[instance_id].stop()
-        return ('Invalid Pipeline Identifier', HTTPStatus.BAD_REQUEST)
+    def stop_instance(name, version, instance_id):
+        if not PipelineManager.is_pipeline_exists(name, version, instance_id):
+            return None
+        return PipelineManager.pipeline_instances[instance_id].stop()
+
+    @staticmethod
+    def is_pipeline_exists(name, version, instance_id=None):
+        if name not in PipelineManager.pipelines or \
+                version not in PipelineManager.pipelines[name]:
+            return False
+        if instance_id and instance_id not in PipelineManager.pipeline_instances:
+            return False
+        return True

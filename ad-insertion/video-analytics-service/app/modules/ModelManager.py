@@ -57,24 +57,27 @@ class ModelManager:
 
     @staticmethod
     def get_model_parameters(name, version):
-
+        if name not in ModelManager.models or version not in ModelManager.models[name] :
+            return None
         params_obj = {
             "name": name,
-            "version": version,
-            "type": ModelManager.models[name][version]["type"]
+            "version": version
         }
+        if "type" in ModelManager.models[name][version]:
+            params_obj["type"] = ModelManager.models[name][version]["type"]
 
         if "description" in ModelManager.models[name][version]:
-            params_obj["description"] = ModelManager.models[name][version]
+            params_obj["description"] = ModelManager.models[name][version]["description"]
         return params_obj
 
     @staticmethod
     def get_loaded_models():
-        result = []
+        results = []
         if ModelManager.models is not None:
             for model in ModelManager.models:
                 for version in ModelManager.models[model].keys():
-                    result.append(ModelManager.get_model_parameters(model, version))
-
-        return result
+                    result = ModelManager.get_model_parameters(model, version)
+                    if result :
+                        results.append(result)
+        return results
 
