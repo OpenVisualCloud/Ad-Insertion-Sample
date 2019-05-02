@@ -2,11 +2,15 @@ import connexion
 import six
 
 from modules.PipelineManager import PipelineManager
-from http import HTTPStatus 
+from http import HTTPStatus
 from common.utils import logging
+
 logger = logging.get_logger('Default Controller', is_static=True)
 
 from modules.ModelManager import ModelManager
+
+bad_request_response = 'Invalid pipeline, version or instance'
+
 
 def models_get():  # noqa: E501
     """models_get
@@ -16,9 +20,12 @@ def models_get():  # noqa: E501
 
     :rtype: List[ModelVersion]
     """
-    logger.debug("GET on /models")
-    return ModelManager.get_loaded_models()
-
+    try:
+        logger.debug("GET on /models")
+        return ModelManager.get_loaded_models()
+    except Exception as e:
+        logger.error('pipelines_name_version_get '+e)
+        return ('Unexpected error', HTTPStatus.INTERNAL_SERVER_ERROR)
 
 def pipelines_get():  # noqa: E501
     """pipelines_get
@@ -28,9 +35,12 @@ def pipelines_get():  # noqa: E501
 
     :rtype: List[Pipeline]
     """
-
-    logger.debug("GET on /pipelines")
-    return PipelineManager.get_loaded_pipelines()
+    try:
+        logger.debug("GET on /pipelines")
+        return PipelineManager.get_loaded_pipelines()
+    except Exception as e:
+        logger.error('pipelines_name_version_get '+e)
+        return ('Unexpected error', HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
 def pipelines_name_version_get(name, version):  # noqa: E501
@@ -45,12 +55,15 @@ def pipelines_name_version_get(name, version):  # noqa: E501
 
     :rtype: None
     """
-
-    logger.debug("GET on /pipelines/{name}/{version}".format(name=name, version=version))
-    result = PipelineManager.get_pipeline_parameters(name, version)
-    if result:
-        return result
-    return ('Invalid Pipeline or Version', HTTPStatus.BAD_REQUEST)
+    try:
+        logger.debug("GET on /pipelines/{name}/{version}".format(name=name, version=version))
+        result = PipelineManager.get_pipeline_parameters(name, version)
+        if result:
+            return result
+        return ('Invalid Pipeline or Version', HTTPStatus.BAD_REQUEST)
+    except Exception as e:
+        logger.error('pipelines_name_version_get '+e)
+        return ('Unexpected error', HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
 def pipelines_name_version_instance_id_delete(name, version, instance_id):  # noqa: E501
@@ -67,13 +80,15 @@ def pipelines_name_version_instance_id_delete(name, version, instance_id):  # no
 
     :rtype: None
     """
-
-    logger.debug("DELETE on /pipelines/{name}/{version}/{id}".format(name=name, version=version, id=instance_id))
-    result = PipelineManager.stop_instance(name,version,instance_id)
-    if result:
-        return result
-    return ('Invalid pipeline, version or instance', HTTPStatus.BAD_REQUEST)
-
+    try:
+        logger.debug("DELETE on /pipelines/{name}/{version}/{id}".format(name=name, version=version, id=instance_id))
+        result = PipelineManager.stop_instance(name, version, instance_id)
+        if result:
+            return result
+        return (bad_request_response, HTTPStatus.BAD_REQUEST)
+    except Exception as e:
+        logger.error('pipelines_name_version_instance_id_delete '+e)
+        return ('Unexpected error', HTTPStatus.INTERNAL_SERVER_ERROR)
 
 def pipelines_name_version_instance_id_get(name, version, instance_id):  # noqa: E501
     """pipelines_name_version_instance_id_get
@@ -89,13 +104,15 @@ def pipelines_name_version_instance_id_get(name, version, instance_id):  # noqa:
 
     :rtype: object
     """
-
-    logger.debug("GET on /pipelines/{name}/{version}/{id}".format(name=name, version=version, id=instance_id))
-    result = PipelineManager.get_instance_parameters(name,version,instance_id)
-    if result:
-        return result
-    return ('Invalid pipeline, version or instance', HTTPStatus.BAD_REQUEST)
-
+    try:
+        logger.debug("GET on /pipelines/{name}/{version}/{id}".format(name=name, version=version, id=instance_id))
+        result = PipelineManager.get_instance_parameters(name, version, instance_id)
+        if result:
+            return result
+        return (bad_request_response, HTTPStatus.BAD_REQUEST)
+    except Exception as e:
+        logger.error('pipelines_name_version_instance_id_get '+e)
+        return ('Unexpected error', HTTPStatus.INTERNAL_SERVER_ERROR)
 
 def pipelines_name_version_instance_id_status_get(name, version, instance_id):  # noqa: E501
     """pipelines_name_version_instance_id_status_get
@@ -111,12 +128,16 @@ def pipelines_name_version_instance_id_status_get(name, version, instance_id):  
 
     :rtype: object
     """
-
-    logger.debug("GET on /pipelines/{name}/{version}/{id}/status".format(name=name, version=version, id=instance_id))
-    result = PipelineManager.get_instance_status(name,version,instance_id)
-    if result:
-        return result
-    return ('Invalid pipeline, version or instance', HTTPStatus.BAD_REQUEST)
+    try:
+        logger.debug(
+            "GET on /pipelines/{name}/{version}/{id}/status".format(name=name, version=version, id=instance_id))
+        result = PipelineManager.get_instance_status(name, version, instance_id)
+        if result:
+            return result
+        return ('Invalid pipeline, version or instance', HTTPStatus.BAD_REQUEST)
+    except Exception as e:
+        logger.error('pipelines_name_version_instance_id_status_get '+e)
+        return ('Unexpected error', HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
 def pipelines_name_version_post(name, version):  # noqa: E501
@@ -138,10 +159,10 @@ def pipelines_name_version_post(name, version):  # noqa: E501
     if connexion.request.is_json:
         try:
             pipeline = PipelineManager.create_instance(name, version)
-            if pipeline :
+            if pipeline:
                 pipeline.start(connexion.request.get_json())
                 return pipeline.id
             return ('Invalid Pipeline or Version', HTTPStatus.BAD_REQUEST)
         except Exception as e:
-            PipelineManager.logger.error(e)
+            logger.error('pipelines_name_version_post ' +e)
             return ('Unexpected error', HTTPStatus.INTERNAL_SERVER_ERROR)
