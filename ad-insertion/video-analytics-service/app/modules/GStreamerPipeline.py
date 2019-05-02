@@ -147,10 +147,6 @@ class GStreamerPipeline(Pipeline):
         bus.connect("message", GStreamerPipeline.bus_call, self)
 
         self.pipeline.set_state(Gst.State.PLAYING)
-        if self.state is None:
-            logger.debug("Setting Pipeline {id} State to RUNNING".format(id=self.id))
-            self.state = "RUNNING"
-
         self.start_time = time.time()
 
     @staticmethod
@@ -203,6 +199,13 @@ class GStreamerPipeline(Pipeline):
             if (self.state is None) or (self.state is "RUNNING"):
                 logger.debug("Setting Pipeline {id} State to ERROR".format(id=self.id))
                 self.state = "ERROR"
+        elif t == Gst.MessageType.STATE_CHANGED:
+            old_state, new_state, pending_state = message.parse_state_changed()
+            if message.src == self.pipeline:
+                if old_state == Gst.State.PAUSED and new_state == Gst.State.PLAYING:
+                    if self.state is None:
+                        logger.debug("Setting Pipeline {id} State to RUNNING".format(id=self.id))
+                        self.state = "RUNNING"
 
         else:
             pass
