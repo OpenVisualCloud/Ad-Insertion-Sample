@@ -104,7 +104,7 @@ class PipelineManager:
     @staticmethod
     def create_instance(name, version):
         PipelineManager.logger.info("Creating Instance of Pipeline {name}/{v}".format(name=name, v=version))
-        if not PipelineManager.is_pipeline_exists(name, str(version)):
+        if not PipelineManager.is_pipeline_exists(name, version):
             return None
         pipeline_type = PipelineManager.pipelines[name][str(version)]['type']
         PipelineManager.pipeline_id += 1
@@ -135,7 +135,7 @@ class PipelineManager:
     @staticmethod
     def is_pipeline_exists(name, version, instance_id=None):
         if name not in PipelineManager.pipelines or \
-                version not in PipelineManager.pipelines[name]:
+                str(version) not in PipelineManager.pipelines[name]:
             return False
         if instance_id and instance_id not in PipelineManager.pipeline_instances:
             return False
