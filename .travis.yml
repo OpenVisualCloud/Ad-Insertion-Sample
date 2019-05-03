@@ -41,6 +41,6 @@ matrix:
       script: 
         - mkdir build && cd build && cmake ..
         - cd ad-insertion/video-analytics-service
-        - travis_wait 150 make >> ${TRAVIS_BUILD_DIR}/script/travis_build.sh  ad-insertion/video-analytics-service
+        - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh  ad-insertion/video-analytics-service
       after_failure:
         - tail --lines=5000 log_ad-insertion_video-analytics-service.log
