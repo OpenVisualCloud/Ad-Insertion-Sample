@@ -28,9 +28,10 @@ before_install:
   - docker version
 
 script:
-  - mkdir build && cd build && cmake ..
-  - cd ${image}
-  - make 
+#  - mkdir build && cd build && cmake ..
+#  - cd ${image}
+#  - make 
+  -echo Build ${image}
 
 matrix:
   include:
@@ -40,6 +41,6 @@ matrix:
       script: 
         - mkdir build && cd build && cmake ..
         - cd ad-insertion/video-analytics-service
-        - travis_wait 150 make >> build-video-analytics-service.log
+        - travis_wait 150 make >> ${TRAVIS_BUILD_DIR}/script/travis_build.sh  ad-insertion/video-analytics-service
       after_failure:
-        - tail --lines=5000 build-video-analytics-service.log
+        - tail --lines=5000 log_ad-insertion_video-analytics-service.log
