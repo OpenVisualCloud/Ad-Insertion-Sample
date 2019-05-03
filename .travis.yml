@@ -28,10 +28,9 @@ before_install:
   - docker version
 
 script:
-#  - mkdir build && cd build && cmake ..
-#  - cd ${image}
-#  - make 
-  - echo Build ${image}
+  - mkdir build && cd build && cmake ..
+  - cd ${image}
+  - make 
 
 matrix:
   include:
