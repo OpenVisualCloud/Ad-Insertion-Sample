@@ -1,125 +1,44 @@
 language: bash
 dist: xenial
 services: docker
-#cache: 
-#  directories:
-#    - /var/lib/apt/lists
 
-matrix:
-  allow_failures:
-    - name: ad-insertion/video-analytics-service
+addons:
+  apt:
+    packages:
+      - docker-ce
+    update: true
+
+env:
+  - image=ad-decision
+  - image=image/ffmpeg
+  - image=account
+  - image=ad-content/frontend
+  - image=ad-content/archive
+  - image=ad-insertion/frontend
+  - image=ad-insertion/ad-static
+  - image=ad-insertion/analytic-db
+  - image=ad-insertion/ad-transcode
+  - image=deployment
+  - image=cdn
+  - image=content-provider/transcode
+  - image=content-provider/frontend
+  - image=content-provider/archive
 
 before_install:
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y install docker-ce
   - docker version
 
-jobs:
+script:
+  - mkdir build && cd build && cmake ..
+  - cd ${image}
+  - make 
+
+matrix:
   include:
-    - name: ad-decision
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd ad-decision 
-        - make 
-    - name: image/ffmpeg
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd image/ffmpeg 
-        - make -j4
-    - name: account
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd account 
-        - make 
-    - name: ad-content/frontend
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd ad-content/frontend 
-        - make 
-    - name: ad-content/archive
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd ad-content/archive 
-        - make 
-    - name: ad-insertion/frontend
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd ad-insertion/frontend 
-        - make 
-    - name: ad-insertion/ad-static
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd ad-insertion/ad-static
-        - make
-    - name: ad-insertion/analytic-db
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd ad-insertion/analytic-db
-        - make
-    - name: ad-insertion/ad-transcode
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd ad-insertion/ad-transcode 
-        - make 
+  # ad-insertion/video-analytics-service
     - name: ad-insertion/video-analytics-service
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd ad-insertion/video-analytics-service 
-        - make 
-    - name: deployment
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd deployment 
-        - make 
-    - name: cdn
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd cdn 
-        - make 
-    - name: content-provider/transcode
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd content-provider/transcode 
-        - make 
-    - name: content-provider/frontend 
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd content-provider/frontend 
-        - make 
-    - name: content-provider/archive
-      script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - cd content-provider/archive
-        - make
+      env: image=ad-insertion/video-analytics-service
+      script: 
+        - mkdir build && cd build && cmake ..
+        - travis_wait 150 ${TRAVIS_BUILD_DIR}/script/travis_build.sh  ad-insertion/video-analytics-service
+      after_failure:
+        - tail --lines=5000 log_ad-insertion_video-analytics-service.log
