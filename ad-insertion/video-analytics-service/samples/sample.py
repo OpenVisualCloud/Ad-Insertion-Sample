@@ -6,7 +6,7 @@ import json
 import time
 import os
 from optparse import OptionParser
-
+import statistics
 
 video_analytics_service = "http://localhost:8080/pipelines/"
 timeout = 30
@@ -31,6 +31,10 @@ def get_options():
                       type="string", default='file:///home/video-analytics/samples/pinwheel.ts')
     parser.add_option("--destination", action="store", dest="destination",
                       type="string", default='/home/video-analytics/samples/results.txt')
+    parser.add_option("--repeat", action="store", dest="repeat",
+                      type="int", default=1)
+    parser.add_option("--quiet", action="store_false", dest="verbose", default=True)
+
 
     return parser.parse_args()
 
@@ -40,24 +44,29 @@ def print_json(object):
                      indent=4,
                      separators=[',',': ']))
     
-def read_detection_results(destination):
-    with open(destination) as file:
-        for line in file:
-            print("Detection Result: \n")
-            print_json(json.loads(line))
+def read_detection_results(destination,verbose=True):
+    if (verbose):
+        with open(destination) as file:
+            for line in file:
+                print("Detection Result: \n")
+                print_json(json.loads(line))
             
 def wait_for_pipeline(instance_id,
                       pipeline="object_detection",
-                      version="1"):
+                      version="1",
+                      verbose=True):
     status = {"state":"RUNNING"}
     while((status["state"]=="RUNNING") or (status["state"]==None)):
         status=get_status(instance_id,pipeline,version)
+        
         if (status==None):
-            return
-        print("Pipeline Status:\n")
-        print_json(status)
+            return None
+        if (verbose):
+            print("Pipeline Status:\n")
+            print_json(status)
         
         time.sleep(sleep_for_status)
+    return status
 
 def get_status(instance_id,
                pipeline="object_detection",
@@ -82,7 +91,8 @@ def start_pipeline(stream_uri,
                    destination,
                    version="1",
                    tags=None,
-                   parameters=None):
+                   parameters=None,
+                   verbose=True):
 
     request = request_template
     request["source"]["uri"] = stream_uri
@@ -100,7 +110,8 @@ def start_pipeline(stream_uri,
     pipeline_url = urllib.parse.urljoin(video_analytics_service,
                                         pipeline+"/"+version)
 
-    print("Starting Pipeline: %s" % (pipeline_url))
+    if (verbose):
+        print("Starting Pipeline: %s" % (pipeline_url))
 
     try:
         r = requests.post(pipeline_url, json=request, timeout=timeout)
@@ -110,7 +121,23 @@ def start_pipeline(stream_uri,
     except requests.exceptions.RequestException as e:
         return None
     
+def print_stats(status,key='avg_fps'):
+    values = [x[key] for x in status if x and key in x and 'state' in x and x['state']=="COMPLETED"]
 
+    if (len(values)):
+    
+        stats = {"value":key,
+                 "Average":statistics.mean(values),
+                 "Variance":statistics.variance(values),
+                 "Max":max(values),
+                 "Min":min(values),
+                 "Count":len(status),
+        }
+        
+        print_json(stats)
+    else:
+        print("No results")
+    
 if __name__ == "__main__":
     try:
         options, args = get_options()
@@ -118,6 +145,12 @@ if __name__ == "__main__":
         print(error)
         logger.error("Getopt Error!")
         exit(1)
-    instance_id=start_pipeline(options.source,options.pipeline,options.destination)
-    wait_for_pipeline(instance_id)
-    read_detection_results(options.destination)
+    status=[]
+    for i in range(options.repeat):
+        instance_id=start_pipeline(options.source,options.pipeline,options.destination,verbose=options.verbose)
+        status.append(wait_for_pipeline(instance_id,options.pipeline,verbose=options.verbose))
+        read_detection_results(options.destination,verbose=options.verbose)
+        
+    if (len(status)>1):
+        print_stats(status)
+        print_stats(status,key="elapsed_time")
