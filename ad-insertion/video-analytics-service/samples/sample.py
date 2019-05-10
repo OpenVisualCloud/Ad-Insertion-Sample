@@ -35,7 +35,6 @@ def get_options():
                       type="int", default=1)
     parser.add_option("--quiet", action="store_false", dest="verbose", default=True)
 
-
     return parser.parse_args()
 
 def print_json(object):
@@ -125,7 +124,6 @@ def print_stats(status,key='avg_fps'):
     values = [x[key] for x in status if x and key in x and 'state' in x and x['state']=="COMPLETED"]
 
     if (len(values)):
-    
         stats = {"value":key,
                  "Average":statistics.mean(values),
                  "Variance":statistics.variance(values),
@@ -133,7 +131,6 @@ def print_stats(status,key='avg_fps'):
                  "Min":min(values),
                  "Count":len(status),
         }
-        
         print_json(stats)
     else:
         print("No results")
