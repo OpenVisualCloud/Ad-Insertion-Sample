@@ -57,13 +57,11 @@ def wait_for_pipeline(instance_id,
     status = {"state":"RUNNING"}
     while((status["state"]=="RUNNING") or (status["state"]==None)):
         status=get_status(instance_id,pipeline,version)
-        
         if (status==None):
             return None
         if (verbose):
             print("Pipeline Status:\n")
             print_json(status)
-        
         time.sleep(sleep_for_status)
     return status
 
