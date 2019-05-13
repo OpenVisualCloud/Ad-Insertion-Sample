@@ -110,7 +110,7 @@ class FFmpegPipeline(Pipeline):
 
     def _add_default_parameters(self):
         request_parameters = self.request.get("parameters", {})
-        pipeline_parameters = self.config.get("parameters", {})
+        pipeline_parameters = self.config.get("parameters", {}).get("properties", {})
 
         for key in pipeline_parameters:
             if (not key in request_parameters) and ("default" in pipeline_parameters[key]):
