@@ -67,7 +67,6 @@ function shaka_play(page, video, url) {
     }).catch(onError);
 
     page.unbind(":close").on(":close", function (e) {
-        player.destroy();
     });
 }
 
