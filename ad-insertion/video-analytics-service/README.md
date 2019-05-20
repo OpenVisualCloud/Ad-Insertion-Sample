@@ -45,7 +45,7 @@ To build the service as a standalone component execute the following commands fr
 After the service is built it can be run using standard docker run commands (volume mounting is required only to see the sample results)
 
 ```bash
-(1) sudo docker run -p8080:8080 -v/tmp:/tmp -d --rm video_analytics_service_gstreamer
+(1) sudo docker run -e http_proxy=$http_proxy -e https_proxy=$https_proxy -p8080:8080 -v/tmp:/tmp -d --rm video_analytics_service_gstreamer
 ```
 
 ### Sample Request
