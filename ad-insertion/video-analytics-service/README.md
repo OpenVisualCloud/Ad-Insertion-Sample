@@ -53,7 +53,7 @@ After the service is built it can be run using standard docker run commands (vol
 To run a simple pipeline request against a running Video Analytics Service use the following commands.
 ```bash
 (1) curl localhost:8080/pipelines/object_detection/1 -X POST -H 'Content-Type: application/json' -d '{ "source": { "uri": "https://github.com/intel-iot-devkit/sample-videos/blob/master/bottle-detection.mp4?raw=true", "type": "uri" }, "destination": { "type": "file", "uri": "file:///tmp/results.txt"}}'
- ad-insertion/video-analytics-service
+
 (2) tail -f /tmp/results.txt
 ```
 ### Sample Result
