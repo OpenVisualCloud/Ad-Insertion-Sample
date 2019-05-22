@@ -1,9 +1,9 @@
 class Pipeline:
 
-    def __init__(self, config, id):
+    def __init__(self, id, config, models, request):
         pass
 
-    def start(self, request):
+    def start(self):
         pass
 
     def status(self):
