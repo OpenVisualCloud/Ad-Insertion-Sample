@@ -236,6 +236,7 @@ components:
           - COMPLETED
           - ERROR
           - ABORTED
+          - QUEUED
           type: string
         avg_fps:
           type: number

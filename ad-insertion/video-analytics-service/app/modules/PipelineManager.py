@@ -5,6 +5,7 @@ from common.utils import logging  # pylint: disable=import-error
 import time
 from http import HTTPStatus
 from modules.ModelManager import ModelManager  # pylint: disable=import-error
+from collections import deque
 
 
 def import_pipeline_types(logger):
@@ -24,18 +25,22 @@ def import_pipeline_types(logger):
 
 
 class PipelineManager:
+    MAX_RUNNING_PIPELINES = -1
 
-    pipelines = None
+    currently_running_pipelines = 0
     logger = logging.get_logger('PipelineManager', is_static=True)
-
-    pipeline_types = import_pipeline_types(logger)
+    pipeline_types = {}
     pipeline_instances = {}
     pipeline_state = {}
     pipeline_id = 0
+    pipelines = None
+    pipeline_queue = deque()
 
     @staticmethod
-    def load_config(pipeline_dir):
+    def load_config(pipeline_dir, max_running_pipelines):
+        PipelineManager.pipeline_types = import_pipeline_types(PipelineManager.logger)
         PipelineManager.logger.info("Loading Pipelines from Config Path {path}".format(path=pipeline_dir))
+        PipelineManager.MAX_RUNNING_PIPELINES = max_running_pipelines
         pipelines = {}
 
         for root, subdirs, files in os.walk(pipeline_dir):
@@ -102,7 +107,7 @@ class PipelineManager:
             return ('Invalid Pipeline or Version', HTTPStatus.BAD_REQUEST)
 
     @staticmethod
-    def create_instance(name, version):
+    def create_instance(name, version, request):
         PipelineManager.logger.info("Creating Instance of Pipeline {name}/{v}".format(name=name, v=version))
 
         try:
@@ -111,12 +116,31 @@ class PipelineManager:
             PipelineManager.pipeline_instances[PipelineManager.pipeline_id] = \
                 PipelineManager.pipeline_types[pipeline_type](PipelineManager.pipeline_id,
                                                               PipelineManager.pipelines[name][str(version)],
-                                                              ModelManager.models)
-
-            return PipelineManager.pipeline_instances[PipelineManager.pipeline_id]
+                                                              ModelManager.models,
+                                                              request)
+            PipelineManager.pipeline_queue.append(PipelineManager.pipeline_id)
+            PipelineManager.start()
+            return PipelineManager.pipeline_id
         except Exception as e:
             PipelineManager.logger.error(e)
             return None
+    
+    @staticmethod
+    def start():
+        if (PipelineManager.MAX_RUNNING_PIPELINES <= 0 or PipelineManager.currently_running_pipelines < PipelineManager.MAX_RUNNING_PIPELINES) and len(PipelineManager.pipeline_queue) != 0:
+            pipeline_to_start = PipelineManager.pipeline_instances[PipelineManager.pipeline_queue.popleft()]
+            if(pipeline_to_start is not None):
+                PipelineManager.currently_running_pipelines += 1
+                pipeline_to_start.start()
+        
+    @staticmethod
+    def start_queued():
+        PipelineManager.currently_running_pipelines -= 1
+        PipelineManager.start()
+
+    @staticmethod
+    def remove_from_queue(id):
+        PipelineManager.pipeline_queue.remove(id)
 
     @staticmethod
     def get_instance_parameters(instance_id):

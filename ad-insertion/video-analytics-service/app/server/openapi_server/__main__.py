@@ -8,6 +8,7 @@ from openapi_server import encoder
 sys.path.append(os.path.dirname(__file__) + "/../../")
 
 from common.settings import CONFIG_PATH
+from common.settings import MAX_RUNNING_PIPELINES
 from modules.PipelineManager import PipelineManager
 from modules.ModelManager import ModelManager
 from threading import Thread
@@ -42,7 +43,7 @@ def gobject_mainloop():
 
 
 def main(options):
-    PipelineManager.load_config(os.path.join(CONFIG_PATH, options.pipeline_dir))
+    PipelineManager.load_config(os.path.join(CONFIG_PATH, options.pipeline_dir), MAX_RUNNING_PIPELINES)
     ModelManager.load_config(os.path.join(CONFIG_PATH, options.model_dir))
 
     asyncio.set_event_loop(asyncio.new_event_loop())
