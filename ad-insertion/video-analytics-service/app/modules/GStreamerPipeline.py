@@ -173,6 +173,7 @@ class GStreamerPipeline(Pipeline):
             else:
                 json_string = GstGVAJSONMeta.get_json_message(meta).decode('utf-8')  # pylint: disable=undefined-variable
                 json_object = json.loads(json_string)
+                logger.debug(json.dumps(json_object))
                 if self.destination and ("objects" in json_object) and (len(json_object["objects"]) > 0):
                     self.destination.send(json_object)
         except Exception as error:
@@ -216,7 +217,7 @@ class GStreamerPipeline(Pipeline):
             old_state, new_state, pending_state = message.parse_state_changed()
             if message.src == self.pipeline:
                 if old_state == Gst.State.PAUSED and new_state == Gst.State.PLAYING:
-                    if self.state is None:
+                    if self.state is "QUEUED":
                         logger.debug("Setting Pipeline {id} State to RUNNING".format(id=self.id))
                         self.state = "RUNNING"
         else:
