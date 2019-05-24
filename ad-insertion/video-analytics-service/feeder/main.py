@@ -119,6 +119,8 @@ def process_stream(streamstring):
                     break
                 elif status == 'RUNNING':
                     continue
+                elif status == 'QUEUED':
+                    continue
                 else:
                     print("VA feeder: segment processing failed", flush=True)
                     zk.process_abort()
