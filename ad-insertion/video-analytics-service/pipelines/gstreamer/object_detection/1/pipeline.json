@@ -1,8 +1,12 @@
+
+
 {
     "name": "object_detection",
     "version": 1,
     "type": "GStreamer",
-    "template":"urisourcebin uri=\"{source[uri]}\" ! concat name=c ! decodebin ! video/x-raw ! videoconvert name=\"videoconvert\" ! gvadetect inference-id=inf0 model=\"{models[object_detection][1][network]}\" model-proc=\"{models[object_detection][1][proc]}\" name=\"detection\" ! gvametaconvert converter=json method=detection source=\"{source[uri]}\" name=\"jsonmetaconvert\" ! queue ! appsink name=appsink",
+
+    "template":"urisourcebin uri=\"{source[uri]}\"  ! tee name=t ! queue ! decodebin ! video/x-raw ! videoconvert name=\"videoconvert\" ! queue ! gvadetect inference-id=inf0 model=\"{models[object_detection][1][network]}\" model-proc=\"{models[object_detection][1][proc]}\" name=\"detection\" ! gvametaconvert converter=json method=detection source=\"{source[uri]}\" name=\"jsonmetaconvert\" ! queue ! appsink name=appsink t. ! queue ! parsebin ! splitmuxsink location={parameters[recording_prefix]} max-size-time=10000000000 max-size-bytes=1000000 name=\"record\"",
+    
     "description": "Object Detection Pipeline",
 
     "parameters": {
@@ -17,8 +21,12 @@
 	},
 	"nireq": {
 	    "element":"detection"
+	},
+        "recording_prefix": {
+            "default":"recording"
 	}
     }
 }
+
 
 
