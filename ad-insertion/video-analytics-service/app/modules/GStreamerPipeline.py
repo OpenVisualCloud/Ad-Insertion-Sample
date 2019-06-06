@@ -84,7 +84,6 @@ class GStreamerPipeline(Pipeline):
         return self.avg_fps
 
     def _add_tags(self):
-        self.metaconvert = self.pipeline.get_by_name("jsonmetaconvert")
         if "tags" in self.request:
             metaconvert = self.pipeline.get_by_name("jsonmetaconvert")
             if metaconvert:
@@ -137,25 +136,23 @@ class GStreamerPipeline(Pipeline):
     def record_format_location_callback (self,splitmux, fragment_id,sample,data=None):
         times=self.calculate_times(sample)
 
-
         if (self._real_base == None):
-        
             clock = Gst.SystemClock(clock_type=Gst.ClockType.REALTIME)
             self._real_base = clock.get_time()
-           
+            self._stream_base = times["segment.time"]
             metaconvert = self.pipeline.get_by_name("jsonmetaconvert")
             
             if metaconvert:
                 if ("tags" not in self.request):
                     self.request["tags"]={}
                 self.request["tags"]["real_base"] = self._real_base
-                self.request["tags"]["stream_base"] = times["segment.time"]
+                self.request["tags"]["stream_base"] = self._stream_base
                 self.request["tags"]["pts_base"] = times["buffer.pts"]
                 metaconvert.set_property("tags", json.dumps(self.request["tags"]))
 
         return "%s:real_base:%d:stream_base:%d:stream_time:%d_.mp4" %(splitmux.get_property("location"),
                                                                      self._real_base,
-                                                                     times["segment.time"],
+                                                                     self._stream_base,
                                                                      times["stream_time"])
 
         # uncomment for full information debug
