@@ -42,7 +42,7 @@ class GStreamerPipeline(Pipeline):
                 self.state = "ABORTED"
                 logger.debug("Setting Pipeline {id} State to ABORTED".format(id=self.id))
             self.stop_time = time.time()
-            PipelineManager.start_queued()
+            PipelineManager.pipeline_finished()
         if self.state is "QUEUED":
             self.state = "ABORTED"
             PipelineManager.remove_from_queue(self.id)
@@ -194,11 +194,10 @@ class GStreamerPipeline(Pipeline):
                 logger.debug("Setting Pipeline {id} State to COMPLETED".format(id=self.id))
                 self.state = "COMPLETED"
             self.stop_time = time.time()
-            time.sleep(1)
             bus.remove_signal_watch()
             del self.pipeline
             self.pipeline = None
-            PipelineManager.start_queued()
+            PipelineManager.pipeline_finished()
         elif t == Gst.MessageType.ERROR:
             err, debug = message.parse_error()
             logger.error("Error on Pipeline {id}: {err}".format(id=id, err=err))
@@ -212,7 +211,7 @@ class GStreamerPipeline(Pipeline):
             bus.remove_signal_watch()
             del self.pipeline
             self.pipeline = None
-            PipelineManager.start_queued()
+            PipelineManager.pipeline_finished()
         elif t == Gst.MessageType.STATE_CHANGED:
             old_state, new_state, pending_state = message.parse_state_changed()
             if message.src == self.pipeline:

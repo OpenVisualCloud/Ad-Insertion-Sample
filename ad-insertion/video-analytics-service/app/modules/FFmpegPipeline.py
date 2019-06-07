@@ -36,7 +36,7 @@ class FFmpegPipeline(Pipeline):
             self.state = "ABORTED"
             self._process.kill()
             logger.debug("Setting Pipeline {id} State to ABORTED".format(id=self.id))
-            PipelineManager.start_queued()
+            PipelineManager.pipeline_finished()
         if self.state is "QUEUED":
             PipelineManager.remove_from_queue(self.id)
             self.state = "ABORTED"
@@ -93,7 +93,7 @@ class FFmpegPipeline(Pipeline):
                 self.state = "COMPLETED"
             else:
                 self.state = "ERROR"
-            PipelineManager.start_queued()
+            PipelineManager.pipeline_finished()
         self._process = None
 
     def _add_tags(self, iemetadata_args):

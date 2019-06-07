@@ -25,7 +25,7 @@ def import_pipeline_types(logger):
 
 class PipelineManager:
     MAX_RUNNING_PIPELINES = -1
-    currently_running_pipelines = 0
+    running_pipelines = 0
     logger = logging.get_logger('PipelineManager', is_static=True)
     pipeline_types = {}
     pipeline_instances = {}
@@ -124,15 +124,15 @@ class PipelineManager:
 
     @staticmethod
     def start():
-        if (PipelineManager.MAX_RUNNING_PIPELINES <= 0 or PipelineManager.currently_running_pipelines < PipelineManager.MAX_RUNNING_PIPELINES) and len(PipelineManager.pipeline_queue) != 0:
+        if (PipelineManager.MAX_RUNNING_PIPELINES <= 0 or PipelineManager.running_pipelines < PipelineManager.MAX_RUNNING_PIPELINES) and len(PipelineManager.pipeline_queue) != 0:
             pipeline_to_start = PipelineManager.pipeline_instances[PipelineManager.pipeline_queue.popleft()]
             if(pipeline_to_start is not None):
-                PipelineManager.currently_running_pipelines += 1
+                PipelineManager.running_pipelines += 1
                 pipeline_to_start.start()
         
     @staticmethod
-    def start_queued():
-        PipelineManager.currently_running_pipelines -= 1
+    def pipeline_finished():
+        PipelineManager.running_pipelines -= 1
         PipelineManager.start()
 
     @staticmethod
