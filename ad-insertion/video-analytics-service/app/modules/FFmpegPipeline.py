@@ -1,4 +1,5 @@
 from modules.Pipeline import Pipeline  # pylint: disable=import-error
+from modules.PipelineManager import PipelineManager  # pylint: disable=import-error
 from common.utils import logging  # pylint: disable=import-error
 import string
 import shlex
@@ -17,7 +18,7 @@ if shutil.which('ffmpeg') is None:
 
 class FFmpegPipeline(Pipeline):
 
-    def __init__(self, id, config, models):
+    def __init__(self, id, config, models, request):
         self.config = config
         self.models = models
         self.template = config['template']
@@ -26,8 +27,8 @@ class FFmpegPipeline(Pipeline):
         self.start_time = None
         self.stop_time = None
         self._ffmpeg_launch_string = None
-        self.request = None
-        self.state = None
+        self.request = request
+        self.state = "QUEUED"
         self.fps = None
 
     def stop(self):
@@ -35,6 +36,13 @@ class FFmpegPipeline(Pipeline):
             self.state = "ABORTED"
             self._process.kill()
             logger.debug("Setting Pipeline {id} State to ABORTED".format(id=self.id))
+            PipelineManager.pipeline_finished()
+        if self.state is "QUEUED":
+            PipelineManager.remove_from_queue(self.id)
+            self.state = "ABORTED"
+            logger.debug("Setting Pipeline {id} State to ABORTED and removing from the queue".format(id=self.id))
+
+
  
     def params(self):
         request = copy.deepcopy(self.request)
@@ -53,9 +61,10 @@ class FFmpegPipeline(Pipeline):
         logger.debug("Called Status")
         if self.stop_time is not None:
             elapsed_time = self.stop_time - self.start_time
-        else:
+        elif self.start_time is not None:
             elapsed_time = time.time() - self.start_time
-
+        else:
+            elapsed_time = None
         status_obj = {
              "id": self.id,
              "state": self.state,
@@ -84,6 +93,7 @@ class FFmpegPipeline(Pipeline):
                 self.state = "COMPLETED"
             else:
                 self.state = "ERROR"
+            PipelineManager.pipeline_finished()
         self._process = None
 
     def _add_tags(self, iemetadata_args):
@@ -108,25 +118,24 @@ class FFmpegPipeline(Pipeline):
 
         self.request["parameters"] = request_parameters
 
-    def start(self, request):
+    def start(self):
         logger.debug("Starting Pipeline {id}".format(id=self.id))
-        self.request = request
-        request["models"] = self.models
+        self.request["models"] = self.models
 
         self._add_default_parameters()
-        self._ffmpeg_launch_string = string.Formatter().vformat(self.template, [], request)
+        self._ffmpeg_launch_string = string.Formatter().vformat(self.template, [], self.request)
         args = ['ffmpeg']
         args.extend(shlex.split(self._ffmpeg_launch_string))
         iemetadata_args = ["-f", "iemetadata", "-source_url", self.request["source"]["uri"]]
 
         self._add_tags(iemetadata_args)
 
-        if 'destination' in request:
-            if request['destination']['type'] == "kafka":
-                for item in request['destination']['hosts']:
-                    iemetadata_args.append("kafka://"+item+"/"+request["destination"]["topic"])
-            elif request['destination']['type'] == "file":
-                iemetadata_args.append(request['destination']['uri'])
+        if 'destination' in self.request:
+            if self.request['destination']['type'] == "kafka":
+                for item in self.request['destination']['hosts']:
+                    iemetadata_args.append("kafka://"+item+"/"+self.request["destination"]["topic"])
+            elif self.request['destination']['type'] == "file":
+                iemetadata_args.append(self.request['destination']['uri'])
         else:
             iemetadata_args.append("file:///tmp/tmp"+str(uuid.uuid4().hex)+".json")
                                     

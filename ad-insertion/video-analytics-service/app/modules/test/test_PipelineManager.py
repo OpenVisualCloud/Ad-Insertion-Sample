@@ -101,8 +101,9 @@ class TestPipelineManager(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_create_instance(self):
+        mock_pipeline = type("MockPipeline", (object,), dict(start=lambda : "started"))
         PipelineManager.pipeline_types = {
-            "GStreamer": lambda id, config, models: "Instance"
+            "GStreamer": lambda id, config, models, request: mock_pipeline
         }
 
         PipelineManager.pipelines = {
@@ -125,8 +126,18 @@ class TestPipelineManager(unittest.TestCase):
             }
         }
 
-        expected_result = "Instance"
-        result = PipelineManager.create_instance("object_detection", 1)
+        request_to_send = {
+            'source': {
+                'uri': 'path_to_source', 
+                'type': 'uri'
+            }, 
+            'destination': {
+                'uri': 'path_to_destination', 
+                'type': 'file'
+            }
+        }
+        expected_result = 1
+        result = PipelineManager.create_instance("object_detection", 1, request_to_send)
 
         self.assertEqual(result, expected_result)
 
@@ -150,10 +161,13 @@ class TestPipelineManager(unittest.TestCase):
             }
         }
 
-        PipelineManager.load_config(os.path.join("modules", "test", "pipelines"))
+        expected_max_running_pipelines = 3
+        PipelineManager.load_config(os.path.join(os.path.dirname(__file__),"pipelines"), expected_max_running_pipelines)
         result = PipelineManager.pipelines
+        result_max_running_pipelines = PipelineManager.MAX_RUNNING_PIPELINES
 
         self.assertEqual(result, expected_result)
+        self.assertEqual(result_max_running_pipelines, expected_max_running_pipelines)
 
     def test_get_instance_parameters(self):
 
