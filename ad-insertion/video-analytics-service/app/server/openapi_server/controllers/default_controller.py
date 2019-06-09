@@ -160,7 +160,7 @@ def pipelines_name_version_post(name, version):  # noqa: E501
         try:
             pipeline_id, err = PipelineManager.create_instance(name, version, connexion.request.get_json())
             if pipeline_id is not None:
-                return pipeline.id
+                return pipeline_id
             return (err, HTTPStatus.BAD_REQUEST)
         except Exception as e:
             logger.error('pipelines_name_version_post ' +e)
