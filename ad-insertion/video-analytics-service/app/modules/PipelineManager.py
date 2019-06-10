@@ -5,6 +5,7 @@ from common.utils import logging  # pylint: disable=import-error
 import time
 from modules.ModelManager import ModelManager  # pylint: disable=import-error
 from collections import deque
+import jsonschema as jsonschema
 
 
 def import_pipeline_types(logger):
@@ -107,10 +108,25 @@ class PipelineManager:
         return params_obj
 
     @staticmethod
+    def is_input_valid(name, version, request):
+        config_validation = PipelineManager.pipelines[name][str(version)].get("parameters", {})
+        try:
+            input_validator = jsonschema.Draft4Validator(schema=config_validation, format_checker=jsonschema.draft4_format_checker)
+            input_validator.validate(request.get("parameters", {}))
+            PipelineManager.logger.debug("Validation successful")
+            return True
+        except:
+            PipelineManager.logger.debug("Validation error in request payload")
+            return False
+
+
+    @staticmethod
     def create_instance(name, version, request):
         PipelineManager.logger.info("Creating Instance of Pipeline {name}/{v}".format(name=name, v=version))
         if not PipelineManager.is_pipeline_exists(name, version):
-            return None
+            return None, "Invalid Pipeline or Version"
+        if not PipelineManager.is_input_valid(name, version, request):
+            return None, "Request parameters do not match JSON schema"
         pipeline_type = PipelineManager.pipelines[name][str(version)]['type']
         PipelineManager.pipeline_id += 1
         PipelineManager.pipeline_instances[PipelineManager.pipeline_id] = \
@@ -120,7 +136,7 @@ class PipelineManager:
                                                             request)
         PipelineManager.pipeline_queue.append(PipelineManager.pipeline_id)
         PipelineManager.start()
-        return PipelineManager.pipeline_id
+        return PipelineManager.pipeline_id, None
 
     @staticmethod
     def start():

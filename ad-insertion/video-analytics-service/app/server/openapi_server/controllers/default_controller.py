@@ -158,11 +158,10 @@ def pipelines_name_version_post(name, version):  # noqa: E501
     logger.debug("POST on /pipelines/{name}/{version}".format(name=name, version=version))
     if connexion.request.is_json:
         try:
-            pipeline_id = PipelineManager.create_instance(name, version, connexion.request.get_json())
+            pipeline_id, err = PipelineManager.create_instance(name, version, connexion.request.get_json())
             if pipeline_id is not None:
                 return pipeline_id
-
-            return ('Invalid Pipeline or Version', HTTPStatus.BAD_REQUEST)
+            return (err, HTTPStatus.BAD_REQUEST)
         except Exception as e:
             logger.error('pipelines_name_version_post ' +e)
             return ('Unexpected error', HTTPStatus.INTERNAL_SERVER_ERROR)

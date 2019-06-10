@@ -71,9 +71,9 @@ class GStreamerPipeline(Pipeline):
     def status(self):
         logger.debug("Called Status")
         if self.stop_time is not None:
-            elapsed_time = self.stop_time - self.start_time
+            elapsed_time = max(0, self.stop_time - self.start_time)
         elif self.start_time is not None:
-            elapsed_time = time.time() - self.start_time
+            elapsed_time = max(0, time.time() - self.start_time)
         else:
             elapsed_time = None
         status_obj = {
@@ -99,7 +99,7 @@ class GStreamerPipeline(Pipeline):
 
     def _add_default_parameters(self):
         request_parameters = self.request.get("parameters", {})
-        pipeline_parameters = self.config.get("parameters", {})
+        pipeline_parameters = self.config.get("parameters", {}).get("properties", {})
 
         for key in pipeline_parameters:
             if (not key in request_parameters) and ("default" in pipeline_parameters[key]):
@@ -109,7 +109,7 @@ class GStreamerPipeline(Pipeline):
 
     def _add_element_parameters(self):
         request_parameters = self.request.get("parameters", {})
-        pipeline_parameters = self.config.get("parameters", {})
+        pipeline_parameters = self.config.get("parameters", {}).get("properties", {})
 
         for key in pipeline_parameters:                
             if "element" in pipeline_parameters[key]:
@@ -204,6 +204,7 @@ class GStreamerPipeline(Pipeline):
             
             if (self.state is None) or (self.state is "RUNNING") or (self.state is "QUEUED"):
                 logger.debug("Setting Pipeline {id} State to ERROR".format(id=self.id))
+                self.stop_time = time.time()
                 self.state = "ERROR"
             self.pipeline.set_state(Gst.State.NULL)
             self.stop_time = time.time()
