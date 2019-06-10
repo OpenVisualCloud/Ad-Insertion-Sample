@@ -1,6 +1,7 @@
 import string
 import json
 import time
+import os
 import copy
 import modules.Destination as Destination  # pylint: disable=import-error
 from modules.Pipeline import Pipeline  # pylint: disable=import-error
@@ -141,6 +142,15 @@ class GStreamerPipeline(Pipeline):
             self._real_base = clock.get_time()
             self._stream_base = times["segment.time"]
             metaconvert = self.pipeline.get_by_name("jsonmetaconvert")
+            self._year_base = time.strftime("%Y", time.localtime(self._real_base / 1000000000))
+            self._month_base = time.strftime("%m", time.localtime(self._real_base / 1000000000))
+            self._day_base = time.strftime("%d", time.localtime(self._real_base / 1000000000))
+            self._dirName = "recordings/%s/%s/%s" %(self._year_base,self._month_base,self._day_base)
+
+            try:
+                os.makedirs(self._dirName)
+            except FileExistsError:
+                print("Directory already exists")
             
             if metaconvert:
                 if ("tags" not in self.request):
@@ -150,7 +160,8 @@ class GStreamerPipeline(Pipeline):
                 self.request["tags"]["pts_base"] = times["buffer.pts"]
                 metaconvert.set_property("tags", json.dumps(self.request["tags"]))
 
-        return "%s:real_base:%d:stream_base:%d:stream_time:%d_.mp4" %(splitmux.get_property("location"),
+        return "%s/%s:real_base:%d:stream_base:%d:stream_time:%d_.mp4" %(self._dirName,
+                                                                     splitmux.get_property("location"),
                                                                      self._real_base,
                                                                      self._stream_base,
                                                                      times["stream_time"])
