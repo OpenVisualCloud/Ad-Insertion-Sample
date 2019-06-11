@@ -69,6 +69,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0):
             m1=re.search("(.*)_[0-9]+", lines[i+1])
             ad_name=ad_spec["prefix"]+"/"+str(ad_sequence)+"/"+m1.group(1)
             if segsplayed == ad_spec["interval"][ad_sequence%len(ad_spec["interval"])]:
+                seg_info["seg_time"]=seg_info["seg_time"]+ad_segment
                 ad_lines=_ad_template(ad_spec,ad_name+"_{0:03d}.ts",ad_sequence,ad_segment)
                 minfo["manifest"].extend(ad_lines)
                 ad_sequence=ad_sequence+1
