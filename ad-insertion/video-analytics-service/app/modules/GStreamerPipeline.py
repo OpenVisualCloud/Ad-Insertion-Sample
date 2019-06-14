@@ -155,15 +155,14 @@ class GStreamerPipeline(Pipeline):
         self._year_base = time.strftime("%Y", time.localtime(adjusted_time / 1000000000))
         self._month_base = time.strftime("%m", time.localtime(adjusted_time / 1000000000))
         self._day_base = time.strftime("%d", time.localtime(adjusted_time / 1000000000))
-        self._dirName = "recordings/%s/%s/%s/%s" %(self.request["parameters"]["recording_prefix"],self._year_base,self._month_base,self._day_base)
+        self._dirName = "%s/%s/%s/%s" %(self.request["parameters"]["recording_prefix"],self._year_base,self._month_base,self._day_base)
 
         try:
             os.makedirs(self._dirName)
         except FileExistsError:
             print("Directory already exists")
 
-        return "%s/%s:real_base:%d:stream_base:%d:stream_time:%d_.mp4" %(self._dirName,
-                                                                     splitmux.get_property("location"),
+        return "%s/:real_base:%d:stream_base:%d:stream_time:%d_.mp4" %(self._dirName,
                                                                      self._real_base,
                                                                      self._stream_base,
                                                                      times["stream_time"])
