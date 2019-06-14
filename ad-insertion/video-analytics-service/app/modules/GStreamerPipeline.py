@@ -155,7 +155,7 @@ class GStreamerPipeline(Pipeline):
         self._year_base = time.strftime("%Y", time.localtime(adjusted_time / 1000000000))
         self._month_base = time.strftime("%m", time.localtime(adjusted_time / 1000000000))
         self._day_base = time.strftime("%d", time.localtime(adjusted_time / 1000000000))
-        self._dirName = "recordings/%s/%s/%s" %(self._year_base,self._month_base,self._day_base)
+        self._dirName = "recordings/%s/%s/%s/%s" %(self.request["properties"]["recording_prefix"],self._year_base,self._month_base,self._day_base)
 
         try:
             os.makedirs(self._dirName)
