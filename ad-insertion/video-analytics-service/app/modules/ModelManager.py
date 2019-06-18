@@ -3,17 +3,19 @@ import json
 import common.settings  # pylint: disable=import-error
 from common.utils import logging  # pylint: disable=import-error
 
+logger = logging.get_logger('ModelManager', is_static=True)
 
 class ModelManager:
     models = None
-
-    logger = logging.get_logger('ModelManager', is_static=True)
  
     @staticmethod
     def load_config(model_dir):
-        ModelManager.logger.info("Loading Models from Config Path {path}".format(path=os.path.abspath(model_dir)))
+        logger.info("Loading Models from Config Path {path}".format(path=os.path.abspath(model_dir)))
+        if os.path.islink(model_dir):
+            logger.warning("Models directory is symbolic link")
+        if os.path.ismount(model_dir):
+            logger.warning("Models directory is mount point")
         models = {}
-
         for path in os.listdir(model_dir):
             try:
                 full_path = os.path.join(model_dir, path)
@@ -43,17 +45,14 @@ class ModelManager:
                                         if 'labels' in config['outputs'][key]:
                                             config['outputs'][key]['labels'] = os.path.abspath(
                                                 os.path.join(version_path, config['outputs'][key]['labels']))
-
             except Exception as error:
-                ModelManager.logger.error("Error in Model Loading: {err}".format(err=error))
+                logger.error("Error in Model Loading: {err}".format(err=error))
                 model = None
-
             if model:
                 models[model] = {}
                 models[model][version] = config
-
         ModelManager.models = models
-        ModelManager.logger.info("Completed Loading Models")
+        logger.info("Completed Loading Models")
 
     @staticmethod
     def get_model_parameters(name, version):

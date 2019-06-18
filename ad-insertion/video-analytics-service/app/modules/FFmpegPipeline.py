@@ -75,6 +75,10 @@ class FFmpegPipeline(Pipeline):
 
         return status_obj
 
+    @staticmethod
+    def validate_config(config):
+        pass
+
     def _spawn(self,args):
         self.start_time = time.time()
         self._process=subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True)

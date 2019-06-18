@@ -8,15 +8,11 @@ from common import settings
 
 _static_loggers = []
 
-def verify_log_level(level):
-    return level in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
-
 def set_log_level(level):
-    #settings.LOG_LEVEL = level
     for logger in _static_loggers:
         logger.setLevel(level)
 
-def get_logger(name, attrs_to_print=None, is_static=False):
+def get_logger(name, is_static=False):
     try:
         level = settings.LOG_LEVEL
         attrs = settings.LOG_ATTRS
@@ -24,22 +20,17 @@ def get_logger(name, attrs_to_print=None, is_static=False):
         print('Unable to read logger settings, defaulting to "DEBUG"')
         level = 'DEBUG'
         attrs = ['levelname', 'asctime', 'message', 'name']
-
     logger = logging.getLogger(name)
-
     if not logger.handlers:
         json_handler = logging.StreamHandler()
         json_handler.setFormatter(JSONFormatter(attrs))
         json_handler.set_name('JSON_Handler')
         logger.addHandler(json_handler)
-
     logger.setLevel(level)
     logger.propagate = False
     if is_static:
         _static_loggers.append(logger)
-
     return logger
-
 
 class JSONFormatter(logging.Formatter):
     attrs_to_print = []

@@ -11,3 +11,7 @@ class Pipeline:
 
     def params(self):
         pass
+
+    @staticmethod
+    def validate_config(config):
+        pass

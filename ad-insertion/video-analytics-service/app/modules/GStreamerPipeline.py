@@ -83,7 +83,6 @@ class GStreamerPipeline(Pipeline):
             "start_time": self.start_time,
             "elapsed_time": elapsed_time
         }
-
         return status_obj
 
     def get_avg_fps(self):
@@ -119,6 +118,19 @@ class GStreamerPipeline(Pipeline):
                         element.set_property(key, request_parameters[key])
                     else:
                         logger.debug("parameter given for element but no element found")
+    @staticmethod
+    def validate_config(config):
+        template = config["template"]
+        pipeline = Gst.parse_launch(template)
+        appsink = pipeline.get_by_name("appsink")
+        jsonmetaconvert = pipeline.get_by_name("jsonmetaconvert")
+        metapublish = pipeline.get_by_name("metapublish")
+        if appsink is None:
+            logger.warning("Missing appsink element")
+        if jsonmetaconvert is None:
+            logger.warning("Missing metaconvert element")
+        if metapublish is None:
+            logger.warning("Missing metapublish element")
 
     def start(self):
         logger.debug("Starting Pipeline {id}".format(id=self.id))
@@ -142,10 +154,11 @@ class GStreamerPipeline(Pipeline):
         self._add_tags()
 
         sink = self.pipeline.get_by_name("appsink")
-
-        sink.set_property("emit-signals", True)
-        sink.set_property('sync', False)
-        sink.connect("new-sample", GStreamerPipeline.on_sample, self)
+        if sink is not None:
+            sink.set_property("emit-signals", True)
+            sink.set_property('sync', False)
+            sink.connect("new-sample", GStreamerPipeline.on_sample, self)
+            self.avg_fps= 0
 
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
@@ -208,7 +221,6 @@ class GStreamerPipeline(Pipeline):
                 self.state = "ERROR"
             self.pipeline.set_state(Gst.State.NULL)
             self.stop_time = time.time()
-            time.sleep(1)
             bus.remove_signal_watch()
             del self.pipeline
             self.pipeline = None

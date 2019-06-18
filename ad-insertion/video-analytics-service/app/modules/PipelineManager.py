@@ -7,8 +7,9 @@ from modules.ModelManager import ModelManager  # pylint: disable=import-error
 from collections import deque
 import jsonschema as jsonschema
 
+logger = logging.get_logger('PipelineManager', is_static=True)
 
-def import_pipeline_types(logger):
+def import_pipeline_types():
     pipeline_types = {}
     try:
         from modules.GStreamerPipeline import GStreamerPipeline  # pylint: disable=import-error
@@ -27,7 +28,6 @@ def import_pipeline_types(logger):
 class PipelineManager:
     MAX_RUNNING_PIPELINES = -1
     running_pipelines = 0
-    logger = logging.get_logger('PipelineManager', is_static=True)
     pipeline_types = {}
     pipeline_instances = {}
     pipeline_state = {}
@@ -37,17 +37,18 @@ class PipelineManager:
 
     @staticmethod
     def load_config(pipeline_dir, max_running_pipelines):
-        PipelineManager.pipeline_types = import_pipeline_types(PipelineManager.logger)
-        PipelineManager.logger.info("Loading Pipelines from Config Path {path}".format(path=pipeline_dir))
+        PipelineManager.pipeline_types = import_pipeline_types()
+        logger.info("Loading Pipelines from Config Path {path}".format(path=pipeline_dir))
+        if os.path.islink(pipeline_dir):
+            logger.warning("Pipelines directory is symbolic link")
+        if os.path.ismount(pipeline_dir):
+            logger.warning("Pipelines directory is mount point")
         PipelineManager.MAX_RUNNING_PIPELINES = max_running_pipelines
         pipelines = {}
-
         for root, subdirs, files in os.walk(pipeline_dir):
-
             if os.path.abspath(root) == os.path.abspath(pipeline_dir):
                 for subdir in subdirs:
                     pipelines[subdir] = {}
-
             else:
                 if len(files) == 0:
                     pipeline = os.path.basename(root)
@@ -62,20 +63,20 @@ class PipelineManager:
                         if path.endswith(".json"):
                             with open(path, 'r') as jsonfile:
                                 config = json.load(jsonfile)
-                                if ('type' not in config) or ('description' not in config):
+                                if ('type' not in config) or ('description' not in config) :
+                                    logger.warning("Skipping loading of pipeline %s because of missing type or description" % (pipeline))
                                     continue
                                 if config['type'] in PipelineManager.pipeline_types:
                                     pipelines[pipeline][version] = config
+                                    # validate_config will throw warning of missing elements but continue execution
+                                    PipelineManager.pipeline_types[config['type']].validate_config(config)
                                 else:
                                     del pipelines[pipeline][version]
-                                    PipelineManager.logger.error(
-                                        "Pipeline %s with type %s not supported" % (pipeline, config['type']))
-
+                                    logger.error("Pipeline %s with type %s not supported" % (pipeline, config['type']))
         # Remove pipelines with no valid versions
         pipelines = dict([(model, versions) for model, versions in pipelines.items() if len(versions) > 0])
         PipelineManager.pipelines = pipelines
-
-        PipelineManager.logger.info("Completed Loading Pipelines")
+        logger.info("Completed Loading Pipelines")
 
     @staticmethod
     def get_loaded_pipelines():
@@ -90,7 +91,7 @@ class PipelineManager:
 
     @staticmethod
     def get_pipeline_parameters(name, version):
-        if not PipelineManager.is_pipeline_exists(name, version):
+        if not PipelineManager.pipeline_exists(name, version):
             return None
         params_obj = {
             "name": name,
@@ -98,13 +99,10 @@ class PipelineManager:
         }
         if "type" in PipelineManager.pipelines[name][version]:
             params_obj["type"] = PipelineManager.pipelines[name][version]["type"]
-
         if "description" in PipelineManager.pipelines[name][version]:
             params_obj["description"] = PipelineManager.pipelines[name][version]["description"]
-
         if "parameters" in PipelineManager.pipelines[name][version]:
             params_obj["parameters"] = PipelineManager.pipelines[name][version]["parameters"]
-
         return params_obj
 
     @staticmethod
@@ -113,17 +111,16 @@ class PipelineManager:
         try:
             input_validator = jsonschema.Draft4Validator(schema=config_validation, format_checker=jsonschema.draft4_format_checker)
             input_validator.validate(request.get("parameters", {}))
-            PipelineManager.logger.debug("Validation successful")
+            logger.debug("Validation successful")
             return True
         except:
-            PipelineManager.logger.debug("Validation error in request payload")
+            logger.debug("Validation error in request payload")
             return False
-
 
     @staticmethod
     def create_instance(name, version, request):
-        PipelineManager.logger.info("Creating Instance of Pipeline {name}/{v}".format(name=name, v=version))
-        if not PipelineManager.is_pipeline_exists(name, version):
+        logger.info("Creating Instance of Pipeline {name}/{v}".format(name=name, v=version))
+        if not PipelineManager.pipeline_exists(name, version):
             return None, "Invalid Pipeline or Version"
         if not PipelineManager.is_input_valid(name, version, request):
             return None, "Request parameters do not match JSON schema"
@@ -157,27 +154,31 @@ class PipelineManager:
 
     @staticmethod
     def get_instance_parameters(name, version, instance_id):
-        if not PipelineManager.is_pipeline_exists(name, version, instance_id):
-            return None
-        return PipelineManager.pipeline_instances[instance_id].params()
+        if PipelineManager.instance_exists(name, version, instance_id):
+            return PipelineManager.pipeline_instances[instance_id].params()
+        return None
         
     @staticmethod
     def get_instance_status(name, version, instance_id):
-        if not PipelineManager.is_pipeline_exists(name, version, instance_id):
-            return None
-        return PipelineManager.pipeline_instances[instance_id].status()
+        if PipelineManager.instance_exists(name, version, instance_id):
+            return PipelineManager.pipeline_instances[instance_id].status()
+        return None
 
     @staticmethod
     def stop_instance(name, version, instance_id):
-        if not PipelineManager.is_pipeline_exists(name, version, instance_id):
-            return None
-        return PipelineManager.pipeline_instances[instance_id].stop()
+        if PipelineManager.instance_exists(name, version, instance_id):
+            return PipelineManager.pipeline_instances[instance_id].stop()
+        return None
 
     @staticmethod
-    def is_pipeline_exists(name, version, instance_id=None):
-        if name not in PipelineManager.pipelines or \
-                str(version) not in PipelineManager.pipelines[name]:
-            return False
-        if instance_id and instance_id not in PipelineManager.pipeline_instances:
-            return False
-        return True
+    def instance_exists(name, version, instance_id):
+        if PipelineManager.pipeline_exists(name, version) and instance_id in PipelineManager.pipeline_instances:
+            return True
+        logger.warning("Invalid Instance ID")
+        return False
+    @staticmethod
+    def pipeline_exists(name, version):
+        if name in PipelineManager.pipelines and str(version) in PipelineManager.pipelines[name]:
+            return True
+        logger.warning("Invalid pipeline or version")
+        return False
