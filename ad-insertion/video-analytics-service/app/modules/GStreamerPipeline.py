@@ -34,6 +34,9 @@ class GStreamerPipeline(Pipeline):
         self.avg_fps = 0
         self.destination = None
         self._gst_launch_string = None
+        self.latency_times = dict()
+        self.sum_pipeline_latency = 0
+        self.count_pipeline_latency = 0
 
     def stop(self):
         if self.pipeline is not None:
@@ -70,13 +73,17 @@ class GStreamerPipeline(Pipeline):
             elapsed_time = self.stop_time - self.start_time
         else:
             elapsed_time = time.time() - self.start_time
-
+        if self.count_pipeline_latency == 0:
+            avg_pipeline_latency = 0
+        else:
+            avg_pipeline_latency = self.sum_pipeline_latency / self.count_pipeline_latency
         status_obj = {
             "id": self.id,
             "state": self.state,
             "avg_fps": self.avg_fps,
             "start_time": self.start_time,
-            "elapsed_time": elapsed_time
+            "elapsed_time": elapsed_time,
+            "avg_pipeline_latency": avg_pipeline_latency
         }
 
         return status_obj
@@ -198,7 +205,12 @@ class GStreamerPipeline(Pipeline):
         self._add_tags()
 
         sink = self.pipeline.get_by_name("appsink")
-
+        src = self.pipeline.get_by_name("urisource")
+        if src and sink:
+            src.connect("pad-added", GStreamerPipeline.source_pad_added_callback, self)
+            sink_pad = sink.get_static_pad("sink")
+            sink_pad.add_probe(Gst.PadProbeType.BUFFER, GStreamerPipeline.appsink_probe_callback, self)
+        
         sink.set_property("emit-signals", True)
         sink.set_property('sync', False)
         sink.connect("new-sample", GStreamerPipeline.on_sample, self)
@@ -220,6 +232,30 @@ class GStreamerPipeline(Pipeline):
         
         self.pipeline.set_state(Gst.State.PLAYING)
         self.start_time = time.time()
+
+    @staticmethod
+    def source_pad_added_callback(element, pad, self):
+        pad.add_probe(Gst.PadProbeType.BUFFER, GStreamerPipeline.urisource_probe_callback, self)
+        return Gst.FlowReturn.OK
+        
+
+    @staticmethod
+    def urisource_probe_callback(pad, info, self):
+        buffer = info.get_buffer()
+        pts = buffer.pts
+        self.latency_times[pts] = time.time()
+        return Gst.PadProbeReturn.OK
+
+    @staticmethod
+    def appsink_probe_callback(pad, info, self):
+        buffer = info.get_buffer()
+        pts = buffer.pts
+        source_time = self.latency_times.pop(pts, -1)
+        if not source_time == -1:
+            self.sum_pipeline_latency += time.time() - source_time
+            self.count_pipeline_latency += 1
+        return Gst.PadProbeReturn.OK
+
 
     @staticmethod
     def on_sample(sink, self):
