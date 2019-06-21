@@ -73,19 +73,16 @@ class GStreamerPipeline(Pipeline):
             elapsed_time = self.stop_time - self.start_time
         else:
             elapsed_time = time.time() - self.start_time
-        if self.count_pipeline_latency == 0:
-            avg_pipeline_latency = 0
-        else:
-            avg_pipeline_latency = self.sum_pipeline_latency / self.count_pipeline_latency
         status_obj = {
             "id": self.id,
             "state": self.state,
             "avg_fps": self.avg_fps,
             "start_time": self.start_time,
             "elapsed_time": elapsed_time,
-            "avg_pipeline_latency": avg_pipeline_latency
         }
-
+        if not self.count_pipeline_latency == 0:
+            status_obj["avg_pipeline_latency"] = self.sum_pipeline_latency / self.count_pipeline_latency
+        
         return status_obj
 
     def get_avg_fps(self):
