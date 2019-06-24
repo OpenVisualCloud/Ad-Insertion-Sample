@@ -69,47 +69,43 @@ $("[debug-console]").on(":initpage",function () {
 
 $("[analytics-console]").on(":initpage", function () {
     var page=$(this);
-    var show_data=function () {
-        if (page.is(":visible")) {
-            var stream=$("#player input").val();
-            if ((stream.indexOf("dash/")>=0 && stream.indexOf(".mpd")>=0) || (stream.indexOf("hls/")>=0 && stream.indexOf(".m3u8")>=0)) {
-                var end=$("#player video")[0].currentTime;
-                var start=end-settings.analytics_window();
-                apiHost.analytics(stream,start,end).then(function (data) {
-                    var objects={}
-                    $.each(data, function (x,v1) {
-                        var time=Math.floor(v1.time);
-                        if (!(time in objects)) objects[time]={}
-                        $.each(v1.objects, function (x, v2) {
-                            if ("detection" in v2) objects[time].d=v2.detection;
-                            if ("emotion" in v2) objects[time].e=v2.emotion;
-                            if ("face_id" in v2) objects[time].f=v2.face_id;
-                        });
-                    });
-                    page.children().remove();
-                    $.each(objects, function (time,v2) {
-                        var div1=page.parent().find("[analytics-template]").clone(false).removeAttr("analytics-template");
-                        var ts1=parseInt(time,10);
-                        div1.find("[timestring]").text([Math.floor(ts1/3600)%24,Math.floor(ts1/60)%60,ts1%60].map(v=>v<10?'0'+v:v).join(':'));
-                        if ("d" in v2) {
-                            div1.find("[labelstring]").text(v2.d.label);
-                            div1.find("[baseimage]").attr("src","image/object_"+v2.d.label_id+"_"+v2.d.label+".png").width(40).height(40);
-                        }
-                        if ("e" in v2) {
-                            div1.find("[overlayimage]").attr("src","image/"+v2.e.label+".png").width(24).height(24);
-                        }
-                        if ("f" in v2) {
-                            if (v2.f.label!="Unknown")
-                                div1.find("[labelstring]").text(v2.f.label);
-                        }
-                        page.append(div1.show());
+
+    $("#player video").unbind('timeupdate').on('timeupdate',function () {
+        var stream=$("#player input").val();
+        if ((stream.indexOf("dash/")>=0 && stream.indexOf(".mpd")>=0) || (stream.indexOf("hls/")>=0 && stream.indexOf(".m3u8")>=0)) {
+            var current_time=$("#player video")[0].currentTime;
+            apiHost.analytics(stream,current_time-0.150,current_time+0.150).then(function (data) {
+                var objects={}
+                $.each(data, function (x,v1) {
+                    var time=Math.floor(v1.time);
+                    if (!(time in objects)) objects[time]={}
+                    $.each(v1.objects, function (x, v2) {
+                        if ("detection" in v2) objects[time].d=v2.detection;
+                        if ("emotion" in v2) objects[time].e=v2.emotion;
+                        if ("face_id" in v2) objects[time].f=v2.face_id;
                     });
                 });
-            }
+                page.children().remove();
+                $.each(objects, function (time,v2) {
+                    var div1=page.parent().find("[analytics-template]").clone(false).removeAttr("analytics-template");
+                    var ts1=parseInt(time,10);
+                    div1.find("[timestring]").text([Math.floor(ts1/3600)%24,Math.floor(ts1/60)%60,ts1%60].map(v=>v<10?'0'+v:v).join(':'));
+                    if ("d" in v2) {
+                        div1.find("[labelstring]").text(v2.d.label);
+                        div1.find("[baseimage]").attr("src","image/object_"+v2.d.label_id+"_"+v2.d.label+".png").width(40).height(40);
+                    }
+                    if ("e" in v2) {
+                        div1.find("[overlayimage]").attr("src","image/"+v2.e.label+".png").width(24).height(24);
+                    }
+                    if ("f" in v2) {
+                        if (v2.f.label!="Unknown")
+                            div1.find("[labelstring]").text(v2.f.label);
+                    }
+                    page.append(div1.show());
+                });
+            });
         }
-        setTimeout(show_data,1000);
-    };
-    setTimeout(show_data, 1000);
+    });
 }).on(":mouseclick",function (e) {
     $(this).next().trigger(e);
 }).on(":mousemove",function (e) {
