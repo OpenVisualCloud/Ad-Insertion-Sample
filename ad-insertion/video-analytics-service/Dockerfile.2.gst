@@ -480,12 +480,17 @@ RUN if [ "$PAHO_INSTALL" = "true" ] ; then \
 ARG RDKAFKA_INSTALL=true
 ARG RDKAFKA_VER=1.0.0
 ARG RDKAFKA_REPO=https://github.com/edenhill/librdkafka/archive/v${RDKAFKA_VER}.tar.gz
-RUN wget -O - ${RDKAFKA_REPO} | tar -xz && \
+RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
+        wget -O - ${RDKAFKA_REPO} | tar -xz && \
         cd librdkafka-${RDKAFKA_VER} && \
         ./configure --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu/ && \
         make && \
         make install && \
-        make install DESTDIR=/home/build
+        make install DESTDIR=/home/build; \
+    else \
+        echo "RDKAFKA install disabled"; \
+    fi
+
 
 #Install va gstreamer plugins
 #Has a dependency on OpenCV, GStreamer
@@ -511,12 +516,18 @@ RUN wget -O - ${RDKAFKA_REPO} | tar -xz && \
 #RUN mkdir -p /usr/lib/x86_64-linux-gnu/gstreamer-1.0 && \
 #    cp -r gst-video-analytics-${VA_GSTREAMER_PLUGINS_VER}/build/intel64/Release/lib/* /usr/lib/x86_64-linux-gnu/gstreamer-1.0
 
-ARG VA_GSTREAMER_PLUGINS_VER=6920b48fdbf3949f34094fdb00aa3fe712823a2f
-ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/fkhoshne/gst-video-analytics.git
+#Install va gstreamer plugins
+#Has a dependency on OpenCV, GStreamer
+#ARG VA_GSTREAMER_PLUGINS_VER=0.4
+#ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
+
+ARG VA_GSTREAMER_PLUGINS_VER=268f6326f1c395570ceb6d4c3ce90354eed2c7d6
+ARG VA_GSTREAMER_PLUGINS_REPO=https://gitlab.devtools.intel.com/video-analytics/gstreamer-plugins.git
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
-    cd gst-video-analytics && \
+    cd gstreamer-plugins && \
     git checkout ${VA_GSTREAMER_PLUGINS_VER} && \
+    git submodule init && git submodule update && \
     mkdir build && \
     cd build && \
     export CFLAGS="-std=gnu99 -Wno-missing-field-initializers" && \
@@ -526,13 +537,15 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     -DGIT_INFO=$(echo "git_$(git rev-parse --short HEAD)") \
     -DCMAKE_BUILD_TYPE=Release \
     -DDISABLE_SAMPLES=ON \
+    -DMQTT=ON \
+    -DKAFKA=ON \
     -DDISABLE_VAAPI=ON \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
 RUN mkdir -p build/usr/lib/x86_64-linux-gnu/gstreamer-1.0 && \
-    cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/lib/x86_64-linux-gnu/gstreamer-1.0
+    cp -r gstreamer-plugins/build/intel64/Release/lib/* build/usr/lib/x86_64-linux-gnu/gstreamer-1.0
 RUN mkdir -p /usr/lib/x86_64-linux-gnu/gstreamer-1.0 && \
-    cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/lib/x86_64-linux-gnu/gstreamer-1.0
+    cp -r gstreamer-plugins/build/intel64/Release/lib/* /usr/lib/x86_64-linux-gnu/gstreamer-1.0
 
 # Clean up after build
 RUN rm -rf /home/build/usr/include && \
