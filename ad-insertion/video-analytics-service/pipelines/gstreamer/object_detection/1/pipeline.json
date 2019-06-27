@@ -5,7 +5,7 @@
     "version": 1,
     "type": "GStreamer",
 
-    "template":"urisourcebin uri=\"{source[uri]}\" ! tee name=t ! queue ! decodebin ! video/x-raw ! videoconvert name=\"videoconvert\" ! queue ! gvadetect inference-id=inf0 model=\"{models[object_detection][1][network]}\" model-proc=\"{models[object_detection][1][proc]}\" name=\"detection\" ! gvametaconvert converter=json method=detection source=\"{source[uri]}\" name=\"jsonmetaconvert\" ! gvametapublish method=\"mqtt\" clientid=vaservice timeout=1000 address=127.0.0.1:1883 topic=vaservice ! queue ! appsink name=appsink t. ! queue ! parsebin ! splitmuxsink location={parameters[recording_prefix]} max-size-time=10000000000 max-size-bytes=1000000 name=\"record\"",
+    "template":"urisourcebin uri=\"{source[uri]}\" ! tee name=t ! queue ! decodebin ! video/x-raw ! videoconvert name=\"videoconvert\" ! queue ! gvadetect inference-id=inf0 model=\"{models[object_detection][1][network]}\" model-proc=\"{models[object_detection][1][proc]}\" name=\"detection\" ! gvametaconvert converter=json method=detection source=\"{source[uri]}\" name=\"jsonmetaconvert\" ! gvametapublish method=mqtt clientid=vaservice timeout=1000 address=127.0.0.1:1883 topic=vaservice ! queue ! appsink name=appsink t. ! queue ! parsebin ! splitmuxsink location={parameters[recording_prefix]} max-size-time=10000000000 max-size-bytes=1000000 name=\"record\"",
 
     "description": "Object Detection Pipeline",
 
