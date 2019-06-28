@@ -521,11 +521,11 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 #ARG VA_GSTREAMER_PLUGINS_VER=0.4
 #ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
 
-ARG VA_GSTREAMER_PLUGINS_VER=02ee9691ff252b9650f5034b9efb913927378468
-ARG VA_GSTREAMER_PLUGINS_REPO=https://gitlab.devtools.intel.com/video-analytics/gstreamer-plugins.git
+ARG VA_GSTREAMER_PLUGINS_VER=024f169e64ad7890541ef92ef5e46731f83f9ac4
+ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/fkhoshne/gst-video-analytics.git
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
-    cd gstreamer-plugins && \
+    cd gst-video-analytics && \
     git checkout ${VA_GSTREAMER_PLUGINS_VER} && \
     git submodule init && git submodule update && \
     mkdir build && \
@@ -543,9 +543,9 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j4
 RUN mkdir -p build/usr/lib/x86_64-linux-gnu/gstreamer-1.0 && \
-    cp -r gstreamer-plugins/build/intel64/Release/lib/* build/usr/lib/x86_64-linux-gnu/gstreamer-1.0
+    cp -r gst-video-analytics/build/intel64/Release/lib/* build/usr/lib/x86_64-linux-gnu/gstreamer-1.0
 RUN mkdir -p /usr/lib/x86_64-linux-gnu/gstreamer-1.0 && \
-    cp -r gstreamer-plugins/build/intel64/Release/lib/* /usr/lib/x86_64-linux-gnu/gstreamer-1.0
+    cp -r gst-video-analytics/build/intel64/Release/lib/* /usr/lib/x86_64-linux-gnu/gstreamer-1.0
 
 # Clean up after build
 RUN rm -rf /home/build/usr/include && \
