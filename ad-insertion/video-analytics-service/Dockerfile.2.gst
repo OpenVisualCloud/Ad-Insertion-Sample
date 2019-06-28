@@ -521,7 +521,7 @@ RUN if [ "$RDKAFKA_INSTALL" = "true" ] ; then \
 #ARG VA_GSTREAMER_PLUGINS_VER=0.4
 #ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/opencv/gst-video-analytics/archive/v${VA_GSTREAMER_PLUGINS_VER}.tar.gz
 
-ARG VA_GSTREAMER_PLUGINS_VER=024f169e64ad7890541ef92ef5e46731f83f9ac4
+ARG VA_GSTREAMER_PLUGINS_VER=9d3ec3657cfd2864404d23679b31245402e58eac
 ARG VA_GSTREAMER_PLUGINS_REPO=https://github.com/fkhoshne/gst-video-analytics.git
 
 RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
