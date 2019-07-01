@@ -1,7 +1,7 @@
 
 FROM xeon-ubuntu1804-ffmpeg
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q python3-kafka python3-kazoo python3-psutil && rm -rf /var/lib/apt/lists/*
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends nginx python3-tornado python3-kafka python3-urllib3 python3-requests python3-psutil python3-kazoo && rm -rf /var/lib/apt/lists/*;
 
 COPY   *.py /home/
 CMD    ["/bin/bash","-c","/home/workload.py tx&/home/main.py"]
