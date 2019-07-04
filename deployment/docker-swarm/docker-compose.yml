@@ -102,7 +102,7 @@ services:
             - kafka
             - zookeeper
         environment:
-            AD_INTERVALS: 4,8
+            AD_INTERVALS: 8
             AD_DURATION: 5
         deploy:
             replicas: 1

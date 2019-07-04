@@ -73,7 +73,8 @@ def ADPrefetch(ad_uri):
 
 def ADClipDecision(msg, db):
     duration = msg.time_range[1]-msg.time_range[0]
-    for t in range(5):
+    query_times = 10
+    for t in range(query_times):
         print("query db with time range: "+str(msg.time_range[0])+"-"+str(msg.time_range[1]))
         metaData = db.query(msg.content, msg.time_range, msg.time_field)
         if metaData:
@@ -93,7 +94,9 @@ def ADClipDecision(msg, db):
             except requests.exceptions.RequestException as e:
                 print("Error in ADClipDecision() " + str(e), flush=True)
             return None
-        msg.time_range[0]=msg.time_range[0]-duration
+        time.sleep(1)
+        if t == query_times - 2:
+            msg.time_range[0]=msg.time_range[0]-duration/2
     return None
 
 class KafkaMsgParser(object):
