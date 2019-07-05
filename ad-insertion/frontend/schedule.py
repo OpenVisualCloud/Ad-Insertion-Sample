@@ -38,31 +38,33 @@ class Schedule(object):
             "meta-db": {
                 "stream": seg_info["stream"],
                 "time_range": [
-                    seg_info["transcode"][0]["seg_time"]-search_interval,
-                    seg_info["transcode"][0]["seg_time"],
+                    0.0,
+                    10.0,
                 ],
                 "time_field": "time",
             },
             "ad_config": {
                 "codec": seg_info["codec"],
-                "resolution": seg_info["resolution"],
+                 "resolution": seg_info["resolution"],
                 "bandwidth": seg_info["bandwidth"],
                 "streaming_type": seg_info["streaming_type"],
                 "duration": seg_info["ad_duration"],
                 "segment": seg_info["ad_segment"],
             },
             "destination": {
-                "adpath": seg_info["transcode"][0]["stream"],
+                "adpath": "",
             },
             "user_info": {
                 "name": user,
                 "keywords": [] #"keywords": ["sports","animal"]
-            }
+            },
+            "bench_mode": 0
         }
         for item in seg_info["transcode"]:
             temp=request.copy()
             temp["meta-db"]["time_range"]=[item["seg_time"]-search_interval,item["seg_time"]]
             temp["destination"]["adpath"]=item["stream"]
+            temp["bench_mode"]=item["bench_mode"]
             print("Schedule transcode: "+temp["destination"]["adpath"], flush=True)
             self._producer.send(transcode_topic, json.dumps(temp))
 

@@ -104,6 +104,7 @@ services:
         environment:
             AD_INTERVALS: 8
             AD_DURATION: 5
+            AD_BENCH_MODE: 0
         deploy:
             replicas: 1
 

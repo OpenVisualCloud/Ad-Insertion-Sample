@@ -57,6 +57,7 @@ class MetaDataHandler(web.RequestHandler):
         self.inventory = None
         self.keywords = []
         self.user_keywords = []
+        self.bench_mode = 0
         
     def check_origin(self, origin):
         return True
@@ -80,6 +81,8 @@ class MetaDataHandler(web.RequestHandler):
 
         if max_matched_idx == -1:
             max_matched_idx = random.randint(0,len(self.inventory))
+            if self.bench_mode:
+                return self.inventory[max_matched_idx]["uri"]
             return None
 
         return self.inventory[max_matched_idx]["uri"]
@@ -108,6 +111,7 @@ class MetaDataHandler(web.RequestHandler):
             data = json.loads(self.request.body.decode('utf-8'))
             self.user_name = data["user"]["name"]
             self.user_keywords = data["user"]["keywords"]
+            self.bench_mode = data["bench_mode"]
             # parse the meta data and choose the keyword, the data is the list of meta data
             self.keywords = GetAdKeywords(data["metadata"])
             # select a ad clip according to the keyword
