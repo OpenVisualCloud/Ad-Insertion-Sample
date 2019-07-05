@@ -189,7 +189,7 @@ def parse_dash(stream_cp_url, mpd, ad_spec, ad_segment=5.0):
                         "stream":ad_spec["path"]+"/"+ad_spec["prefix"]+"/"+str(i)+"/"+Representation1.attrib["height"]+"p.mpd",
                         "seg_time":S[0]/timescale+_ad_time(ad_spec,i) + (S[1]/timescale)*(ad_interval -sidx)
                     }
-                    minfo["segs"][stream]["transcode"]=transcode_info
+                    minfo["segs"][stream]["transcode"]=[transcode_info]
 
                 #print( minfo["segs"][stream])
                 sidx=sidx+1

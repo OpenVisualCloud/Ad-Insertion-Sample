@@ -70,7 +70,6 @@ class SegmentHandler(web.RequestHandler):
 
         # schedule ad
         if "transcode" in seg_info:
-            print("Schedule transcode: "+seg_info["transcode"]["stream"], flush=True)
             self._sch.transcode(user, seg_info)
             self._sch.flush()
 

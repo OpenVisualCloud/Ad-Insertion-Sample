@@ -114,7 +114,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0):
                     "stream":ad_spec["path"]+"/"+ad_name+".m3u8",
                     "seg_time":timeline+_ad_time(ad_spec,ad_sequence)+duration*(ad_interval - segsplayed)
                 }
-                seg_info["transcode"]=transcode_info
+                seg_info["transcode"]=[transcode_info]
 
             # schedule analytics on every segment
             minfo["segs"][lines[i+1]]=seg_info
