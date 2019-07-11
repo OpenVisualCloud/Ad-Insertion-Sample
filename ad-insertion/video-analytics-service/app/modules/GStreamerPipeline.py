@@ -151,8 +151,6 @@ class GStreamerPipeline(Pipeline):
                 if ("tags" not in self.request):
                     self.request["tags"]={}
                 self.request["tags"]["real_base"] = self._real_base
-                self.request["tags"]["stream_base"] = self._stream_base
-                self.request["tags"]["pts_base"] = times["buffer.pts"]
                 metaconvert.set_property("tags", json.dumps(self.request["tags"]))
 
         adjusted_time = self._real_base + (times["stream_time"] - self._stream_base)
@@ -166,18 +164,10 @@ class GStreamerPipeline(Pipeline):
         except FileExistsError:
             print("Directory already exists")
 
-        return "%s/:real_base:%d:stream_base:%d:stream_time:%d_.mp4" %(self._dirName,
-                                                                     self._real_base,
-                                                                     self._stream_base,
-                                                                     times["stream_time"])
+        return "%s/%d_%d.mp4" %(self._dirName,
+                                adjusted_time,
+                                times["stream_time"]-self._stream_base)
 
-        # uncomment for full information debug
-        #return "%s:base:%d:clock:%d:stream:%d:pts:%d:dur:%d.mp4"%(splitmux.get_property("location"),
-         #                            times['pipeline.base_time'],
-          #                           times['clock_time'],
-           #                          times['stream_time'],
-            #                         times['buffer.pts'],
-             #                        times['buffer.duration'])
 
     def start(self, request):
         logger.debug("Starting Pipeline {id}".format(id=self.id))
@@ -223,9 +213,6 @@ class GStreamerPipeline(Pipeline):
             record.connect("format-location-full",
                            self.record_format_location_callback,
                            None)
-
-            #clock = Gst.SystemClock(clock_type=Gst.ClockType.REALTIME)
-            #self.pipeline.use_clock(clock)
         
         self.pipeline.set_state(Gst.State.PLAYING)
         self.start_time = time.time()
