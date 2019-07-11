@@ -55,7 +55,7 @@ def wait_for_pipeline(instance_id,
                       version="1",
                       verbose=True):
     status = {"state":"RUNNING"}
-    while((status["state"]=="RUNNING") or (status["state"]==None)):
+    while((status["state"]=="RUNNING") or (status["state"]==None) or (status["state"]=="QUEUED")):
         status=get_status(instance_id,pipeline,version)
         if (status==None):
             return None

@@ -11,25 +11,21 @@
 				"element":"detection",
 				"type": "integer",
 				"minimum": 0,
-				"maximum": 4294967295,
-				"default": 1
+				"maximum": 4294967295
 			},
 			"cpu-streams": {
 				"element":"detection",
-				"type": "string",
-				"default": ""
+				"type": "string"
 			},
 			"n-threads": {
 				"element":"videoconvert",
-				"type": "integer",
-				"default": 1
+				"type": "integer"
 			},
 			"nireq": {
 				"element":"detection",
 				"type": "integer",
 				"minimum": 1,
-				"maximum": 64,
-				"default": 2
+				"maximum": 64
 			}
 		}
 	}
