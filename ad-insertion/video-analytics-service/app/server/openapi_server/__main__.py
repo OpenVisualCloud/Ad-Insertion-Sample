@@ -34,6 +34,8 @@ def get_options():
 
 
 def gobject_mainloop():
+    import gi
+    gi.require_version('Gst', '1.0')
     from gi.repository import Gst, GObject
     mainloop = GObject.MainLoop()
     try:

@@ -6,6 +6,7 @@ import modules.Destination as Destination  # pylint: disable=import-error
 import modules.GstGVAJSONMeta as GstGVAJSONMeta  # pylint: disable=import-error
 from modules.Pipeline import Pipeline  # pylint: disable=import-error
 from modules.PipelineManager import PipelineManager  # pylint: disable=import-error
+from modules.ModelManager import ModelManager  # pylint: disable=import-error
 from common.utils import logging  # pylint: disable=import-error
 
 import gi  # pylint: disable=import-error
@@ -19,6 +20,11 @@ class GStreamerPipeline(Pipeline):
 
     Gst.init(None)
     GObject.threads_init()
+    GVA_INFERENCE_ELEMENT_TYPES = ["GstGvaDetect",
+                                   "GstGvaClassify",
+                                   "GstGvaIdentify",
+                                   "GstGvaInference"]
+
 
     def __init__(self, id, config, models, request):
         self.config = config
@@ -118,6 +124,12 @@ class GStreamerPipeline(Pipeline):
                         element.set_property(key, request_parameters[key])
                     else:
                         logger.debug("parameter given for element but no element found")
+
+    def _add_default_models(self):
+        gva_elements = [e for e in self.pipeline.iterate_elements() if (e.__gtype__.name in self.GVA_INFERENCE_ELEMENT_TYPES and "VA_DEVICE_DEFAULT" in e.get_property("model"))]
+        for e in gva_elements:
+            e.set_property("model",ModelManager.get_default_network_for_device(e.get_property("device"),e.get_property("model")))
+            
     @staticmethod
     def validate_config(config):
         template = config["template"]
@@ -149,10 +161,11 @@ class GStreamerPipeline(Pipeline):
         logger.debug(self._gst_launch_string)
 
         self.pipeline = Gst.parse_launch(self._gst_launch_string)
-
+        
         self._add_element_parameters()
         self._add_tags()
-
+        self._add_default_models()
+        
         sink = self.pipeline.get_by_name("appsink")
         if sink is not None:
             sink.set_property("emit-signals", True)
