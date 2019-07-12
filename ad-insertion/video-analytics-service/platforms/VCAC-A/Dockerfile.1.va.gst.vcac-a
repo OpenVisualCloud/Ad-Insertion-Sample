@@ -1,4 +1,4 @@
-# video_analytics_service_gstreamer_vcac_c
+# video_analytics_service_gstreamer_vcac_a
 ARG base_name=vcac-a-ubuntu1604-openvino-gst-va
 
 FROM ${base_name}:build AS gst-python-build
