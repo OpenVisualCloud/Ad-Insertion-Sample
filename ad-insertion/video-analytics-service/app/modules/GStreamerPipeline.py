@@ -171,7 +171,7 @@ class GStreamerPipeline(Pipeline):
         return times
         
 
-    def record_format_location_callback (self,splitmux, fragment_id,sample,data=None):
+    def format_location_callback (self,splitmux, fragment_id,sample,data=None):
         times=self.calculate_times(sample)
 
         if (self._real_base == None):
@@ -231,9 +231,13 @@ class GStreamerPipeline(Pipeline):
             sink.connect("new-sample", GStreamerPipeline.on_sample, self)
             self.avg_fps= 0
 
-        src = self.pipeline.get_by_name("urisource")
+        src = self.pipeline.get_by_name("source")
         if src and sink:
-            src.connect("pad-added", GStreamerPipeline.source_pad_added_callback, self)
+            src_pad = src.get_static_pad("src")
+            if (src_pad):
+                src_pad.add_probe(Gst.PadProbeType.BUFFER, GStreamerPipeline.source_probe_callback, self)
+            else:
+                src.connect("pad-added", GStreamerPipeline.source_pad_added_callback, self)
             sink_pad = sink.get_static_pad("sink")
             sink_pad.add_probe(Gst.PadProbeType.BUFFER, GStreamerPipeline.appsink_probe_callback, self)
         
@@ -245,12 +249,12 @@ class GStreamerPipeline(Pipeline):
         bus.add_signal_watch()
         bus.connect("message", GStreamerPipeline.bus_call, self)
 
-        record = self.pipeline.get_by_name("record")
+        splitmuxsink = self.pipeline.get_by_name("splitmuxsink")
         self._real_base=None
-        if (record != None):
+        if (splitmuxsink != None):
             
-            record.connect("format-location-full",
-                           self.record_format_location_callback,
+            splitmuxsink.connect("format-location-full",
+                           self.format_location_callback,
                            None)
         
         self.pipeline.set_state(Gst.State.PLAYING)
@@ -258,12 +262,12 @@ class GStreamerPipeline(Pipeline):
 
     @staticmethod
     def source_pad_added_callback(element, pad, self):
-        pad.add_probe(Gst.PadProbeType.BUFFER, GStreamerPipeline.urisource_probe_callback, self)
+        pad.add_probe(Gst.PadProbeType.BUFFER, GStreamerPipeline.source_probe_callback, self)
         return Gst.FlowReturn.OK
         
 
     @staticmethod
-    def urisource_probe_callback(pad, info, self):
+    def source_probe_callback(pad, info, self):
         buffer = info.get_buffer()
         pts = buffer.pts
         self.latency_times[pts] = time.time()
