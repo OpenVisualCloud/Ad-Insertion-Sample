@@ -1,0 +1,16 @@
+{
+    "name": "object_detection",
+    "version": 1,
+    "type": "FFmpeg",
+    "template":"-flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_device /dev/dri/renderD128 -i \"{source[uri]}\" -vf \"detect=model={models[object_detection_fp16][1][network]}:device=6:model_proc=\"{models[object_detection_fp16][1][proc]}\":interval={parameters[every-nth-frame]}\"",
+
+    "parameters": {
+	"every-nth-frame":{
+	    "default":1
+	}
+    },
+
+    "description": "Object Detection Pipeline"
+}
+
+

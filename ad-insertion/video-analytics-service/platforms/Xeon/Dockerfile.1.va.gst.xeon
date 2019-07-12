@@ -42,13 +42,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-
     rm -rf /var/lib/apt/lists/*;
 
 COPY --from=gst-python-build /home/build_gst_python /
-COPY --from=models_base /home/video-analytics/models/ /home/video-analytics/models/
 COPY ./app/server/requirements.txt /
 RUN pip3 install  --no-cache-dir -r /requirements.txt
 COPY ./samples /home/video-analytics/samples
 COPY ./app /home/video-analytics/app
 COPY ./models/ /home/video-analytics/models/
-COPY ./pipelines /home/video-analytics/pipelines
+COPY ./platforms/Xeon/pipelines/gstreamer /home/video-analytics/pipelines
 COPY  ./feeder/*.py /home/video-analytics/feeder/
 COPY   docker-entrypoint.sh /home/video-analytics/
 
