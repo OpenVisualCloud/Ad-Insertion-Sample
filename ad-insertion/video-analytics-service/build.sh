@@ -11,8 +11,8 @@ case "$1" in
     xeon)
         PLATFORM=Xeon
         ;;
-    vcac-c)
-        PLATFORM=VCAC-C
+    vcac-a)
+        PLATFORM=VCAC-A
         ;;
     *)
         PLATFORM=Xeon
