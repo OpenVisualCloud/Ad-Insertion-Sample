@@ -16,14 +16,14 @@ RUN apt-get update \
     automake \
     libtool \
     gobject-introspection \
-    curl\
-    inetutils-ping\
-    libsoup2.4.1\
+    curl \
+    inetutils-ping \
+    libsoup2.4.1 \
     && rm -rf /var/lib/apt/lists/*; fi
 
 RUN git clone https://gitlab.freedesktop.org/gstreamer/gst-python.git \
     && cd gst-python \
-    && git checkout 1.14.4 \
+    && git checkout 1.16.0 \
     && ./autogen.sh --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu --libexecdir=/usr/lib/x86_64-linux-gnu --enable-introspection -- \
         --with-pygi-overrides-dir=/usr/lib/python3/dist-packages/gi/overrides \
         --disable-dependency-tracking \

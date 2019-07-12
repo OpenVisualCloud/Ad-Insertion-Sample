@@ -1,6 +1,7 @@
 import string
 import json
 import time
+import os
 import copy
 import modules.Destination as Destination  # pylint: disable=import-error
 import modules.GstGVAJSONMeta as GstGVAJSONMeta  # pylint: disable=import-error
@@ -40,6 +41,9 @@ class GStreamerPipeline(Pipeline):
         self.avg_fps = 0
         self.destination = None
         self._gst_launch_string = None
+        self.latency_times = dict()
+        self.sum_pipeline_latency = 0
+        self.count_pipeline_latency = 0
 
     def stop(self):
         if self.pipeline is not None:
@@ -82,13 +86,17 @@ class GStreamerPipeline(Pipeline):
             elapsed_time = max(0, time.time() - self.start_time)
         else:
             elapsed_time = None
+
         status_obj = {
             "id": self.id,
             "state": self.state,
             "avg_fps": self.avg_fps,
             "start_time": self.start_time,
-            "elapsed_time": elapsed_time
+            "elapsed_time": elapsed_time,
         }
+        if not self.count_pipeline_latency == 0:
+            status_obj["avg_pipeline_latency"] = self.sum_pipeline_latency / self.count_pipeline_latency
+        
         return status_obj
 
     def get_avg_fps(self):
@@ -144,7 +152,57 @@ class GStreamerPipeline(Pipeline):
         if metapublish is None:
             logger.warning("Missing metapublish element")
 
-    def start(self):
+    def calculate_times(self,sample):
+        buffer = sample.get_buffer()
+        segment = sample.get_segment()
+        times={}
+        times['segment.time'] = segment.time
+        times['segment.start'] = segment.start
+        times['segment.base'] = segment.base
+        times['segment.position'] = segment.position
+        times['buffer.pts'] = buffer.pts
+        times['buffer.dts'] = buffer.dts
+        times['buffer.duration'] = buffer.duration
+        times['pipeline.base_time'] = self.pipeline.base_time
+        times['stream_time'] = segment.to_stream_time(Gst.Format.TIME,buffer.pts)                
+        times['running_time'] = segment.to_running_time(Gst.Format.TIME,buffer.pts)
+        times['clock_time'] = times['running_time'] + self.pipeline.base_time
+
+        return times
+        
+
+    def record_format_location_callback (self,splitmux, fragment_id,sample,data=None):
+        times=self.calculate_times(sample)
+
+        if (self._real_base == None):
+            clock = Gst.SystemClock(clock_type=Gst.ClockType.REALTIME)
+            self._real_base = clock.get_time()
+            self._stream_base = times["segment.time"]
+            metaconvert = self.pipeline.get_by_name("jsonmetaconvert")
+            
+            if metaconvert:
+                if ("tags" not in self.request):
+                    self.request["tags"]={}
+                self.request["tags"]["real_base"] = self._real_base
+                metaconvert.set_property("tags", json.dumps(self.request["tags"]))
+
+        adjusted_time = self._real_base + (times["stream_time"] - self._stream_base)
+        self._year_base = time.strftime("%Y", time.localtime(adjusted_time / 1000000000))
+        self._month_base = time.strftime("%m", time.localtime(adjusted_time / 1000000000))
+        self._day_base = time.strftime("%d", time.localtime(adjusted_time / 1000000000))
+        self._dirName = "%s/%s/%s/%s" %(self.request["parameters"]["recording_prefix"],self._year_base,self._month_base,self._day_base)
+
+        try:
+            os.makedirs(self._dirName)
+        except FileExistsError:
+            print("Directory already exists")
+
+        return "%s/%d_%d.mp4" %(self._dirName,
+                                adjusted_time,
+                                times["stream_time"]-self._stream_base)
+
+
+    def start(self, request):
         logger.debug("Starting Pipeline {id}".format(id=self.id))
 
         try:
@@ -173,19 +231,60 @@ class GStreamerPipeline(Pipeline):
             sink.connect("new-sample", GStreamerPipeline.on_sample, self)
             self.avg_fps= 0
 
+        src = self.pipeline.get_by_name("urisource")
+        if src and sink:
+            src.connect("pad-added", GStreamerPipeline.source_pad_added_callback, self)
+            sink_pad = sink.get_static_pad("sink")
+            sink_pad.add_probe(Gst.PadProbeType.BUFFER, GStreamerPipeline.appsink_probe_callback, self)
+        
+        sink.set_property("emit-signals", True)
+        sink.set_property('sync', False)
+        sink.connect("new-sample", GStreamerPipeline.on_sample, self)
+
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect("message", GStreamerPipeline.bus_call, self)
 
+        record = self.pipeline.get_by_name("record")
+        self._real_base=None
+        if (record != None):
+            
+            record.connect("format-location-full",
+                           self.record_format_location_callback,
+                           None)
+        
         self.pipeline.set_state(Gst.State.PLAYING)
         self.start_time = time.time()
+
+    @staticmethod
+    def source_pad_added_callback(element, pad, self):
+        pad.add_probe(Gst.PadProbeType.BUFFER, GStreamerPipeline.urisource_probe_callback, self)
+        return Gst.FlowReturn.OK
+        
+
+    @staticmethod
+    def urisource_probe_callback(pad, info, self):
+        buffer = info.get_buffer()
+        pts = buffer.pts
+        self.latency_times[pts] = time.time()
+        return Gst.PadProbeReturn.OK
+
+    @staticmethod
+    def appsink_probe_callback(pad, info, self):
+        buffer = info.get_buffer()
+        pts = buffer.pts
+        source_time = self.latency_times.pop(pts, -1)
+        if not source_time == -1:
+            self.sum_pipeline_latency += time.time() - source_time
+            self.count_pipeline_latency += 1
+        return Gst.PadProbeReturn.OK
+
 
     @staticmethod
     def on_sample(sink, self):
 
         logger.debug("Received Sample from Pipeline {id}".format(id=self.id))
         sample = sink.emit("pull-sample")
-
         try:
 
             buf = sample.get_buffer()
@@ -199,6 +298,7 @@ class GStreamerPipeline(Pipeline):
             else:
                 json_string = GstGVAJSONMeta.get_json_message(meta).decode('utf-8')  # pylint: disable=undefined-variable
                 json_object = json.loads(json_string)
+                #json_object['tags']={'times':self.calculate_times(sample)}
                 logger.debug(json.dumps(json_object))
                 if self.destination and ("objects" in json_object) and (len(json_object["objects"]) > 0):
                     self.destination.send(json_object)
@@ -221,6 +321,9 @@ class GStreamerPipeline(Pipeline):
                 self.state = "COMPLETED"
             self.stop_time = time.time()
             bus.remove_signal_watch()
+            if (self.destination):
+                del self.destination
+                self.destination=None
             del self.pipeline
             self.pipeline = None
             PipelineManager.pipeline_finished()
