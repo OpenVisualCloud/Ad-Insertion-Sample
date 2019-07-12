@@ -45,11 +45,29 @@ def print_json(object):
     
 def read_detection_results(destination,verbose=True):
     if (verbose):
+        object_lines=[]
         with open(destination) as file:
             for line in file:
-                print("Detection Result: \n")
-                print_json(json.loads(line))
-            
+                try:
+                    if (line=="{\n"):
+                        object_lines.append(line)
+                        line=None
+                        
+                    if (object_lines):
+                        if (line):
+                            object_lines.append(line)
+                        if (line=='}\n'):
+                            line="".join(object_lines)
+                            object_lines=[]
+                        else:
+                            line=None
+
+                    if (line):
+                        print("Detection Result: \n")
+                        print_json(json.loads(line))
+                except Exception as error:
+                    print(error)
+                
 def wait_for_pipeline(instance_id,
                       pipeline="object_detection",
                       version="1",
@@ -134,6 +152,7 @@ def print_stats(status,key='avg_fps'):
         print("No results")
     
 if __name__ == "__main__":
+
     try:
         options, args = get_options()
     except Exception as error:

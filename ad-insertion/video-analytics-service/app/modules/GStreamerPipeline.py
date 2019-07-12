@@ -136,7 +136,9 @@ class GStreamerPipeline(Pipeline):
     def _add_default_models(self):
         gva_elements = [e for e in self.pipeline.iterate_elements() if (e.__gtype__.name in self.GVA_INFERENCE_ELEMENT_TYPES and "VA_DEVICE_DEFAULT" in e.get_property("model"))]
         for e in gva_elements:
-            e.set_property("model",ModelManager.get_default_network_for_device(e.get_property("device"),e.get_property("model")))
+            network = ModelManager.get_default_network_for_device(e.get_property("device"),e.get_property("model"))
+            logger.debug("Setting model to %s for element %s" %(network,e.get_name()))
+            e.set_property("model",network)
             
     @staticmethod
     def validate_config(config):
@@ -195,14 +197,14 @@ class GStreamerPipeline(Pipeline):
         try:
             os.makedirs(self._dirName)
         except FileExistsError:
-            print("Directory already exists")
+            logger.debug("Directory already exists")
 
         return "%s/%d_%d.mp4" %(self._dirName,
                                 adjusted_time,
                                 times["stream_time"]-self._stream_base)
 
 
-    def start(self, request):
+    def start(self):
         logger.debug("Starting Pipeline {id}".format(id=self.id))
 
         try:
@@ -241,10 +243,6 @@ class GStreamerPipeline(Pipeline):
             sink_pad = sink.get_static_pad("sink")
             sink_pad.add_probe(Gst.PadProbeType.BUFFER, GStreamerPipeline.appsink_probe_callback, self)
         
-        sink.set_property("emit-signals", True)
-        sink.set_property('sync', False)
-        sink.connect("new-sample", GStreamerPipeline.on_sample, self)
-
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect("message", GStreamerPipeline.bus_call, self)
@@ -311,7 +309,6 @@ class GStreamerPipeline(Pipeline):
 
         self.frame_count += 1
         self.avg_fps = self.frame_count/(time.time()-self.start_time)
-
         return Gst.FlowReturn.OK
 
     @staticmethod

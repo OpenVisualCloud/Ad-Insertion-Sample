@@ -35,10 +35,10 @@ class ModelsDict(MutableMapping):
 
 class ModelManager:
     models = None
-    device_defaults = {'CPU':"FP32",
-                       'HDDL':"FP16",
-                       'GPU':"FP16",
-                       'VPU':"FP16"}
+    network_preference = {'CPU':"FP32",
+                          'HDDL':"FP16",
+                          'GPU':"FP16",
+                          'VPU':"FP16"}
     
     @staticmethod
     def _get_model_proc(path):
@@ -74,19 +74,20 @@ class ModelManager:
 
     @staticmethod
     def get_default_network_for_device(device,model):
-        model=model.replace("VA_DEVICE_DEFAULT",ModelManager.device_defaults[device])
+        model=model.replace("VA_DEVICE_DEFAULT",ModelManager.network_preference[device])
         model=string.Formatter().vformat(model, [], {'models':ModelManager.models})
         return model
     
     
     @staticmethod
-    def load_config(model_dir):
+    def load_config(model_dir,network_preference):
         logger.info("Loading Models from Path {path}".format(path=os.path.abspath(model_dir)))
         if os.path.islink(model_dir):
             logger.warning("Models directory is symbolic link")
         if os.path.ismount(model_dir):
             logger.warning("Models directory is mount point")
         models = {}
+        ModelManager.network_preference.update(network_preference)
         for model_name in os.listdir(model_dir):
             try:
                 model_path = os.path.join(model_dir,model_name)

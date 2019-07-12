@@ -2,6 +2,7 @@
 import sys
 import os
 import connexion
+import json
 import asyncio
 from openapi_server import encoder
 
@@ -19,7 +20,6 @@ from optparse import OptionParser
 
 logger = logging.get_logger('main', is_static=True)
 
-
 def get_options():
     parser = OptionParser()
     parser.add_option("-p", "--port", action="store", type="int", dest="port", default=8080)
@@ -29,6 +29,9 @@ def get_options():
                       type="string", default='pipelines')
     parser.add_option("--model_dir", action="store", dest="model_dir",
                       type="string", default='models')
+    parser.add_option("--network_preference", action="store", 
+                      dest="network_preference",
+                      type="string", default=os.getenv('NETWORK_PREFERENCE', '{}'))
 
     return parser.parse_args()
 
@@ -43,10 +46,17 @@ def gobject_mainloop():
     except KeyboardInterrupt:
         pass
 
+def parse_network_preference(options):
+    try:
+        return json.loads(options.network_preference)
+    except Exception as error:
+        logger.warning("Invalid network preference: %s" %(error,))
+        return {}
 
 def main(options):
+        
     PipelineManager.load_config(os.path.join(CONFIG_PATH, options.pipeline_dir), MAX_RUNNING_PIPELINES)
-    ModelManager.load_config(os.path.join(CONFIG_PATH, options.model_dir))
+    ModelManager.load_config(os.path.join(CONFIG_PATH, options.model_dir),parse_network_preference(options))
 
     asyncio.set_event_loop(asyncio.new_event_loop())
 
