@@ -1,0 +1,21 @@
+{
+    "name": "emotion_recognition",
+    "version": 1,
+    "type": "FFmpeg",
+    "template":"-flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_device /dev/dri/renderD128 -i \"{source[uri]}\" -vf \"detect=model={models[face_detection_retail][1][network]}:model_proc=\"{models[face_detection_retail][1][proc]}\":interval=\"{parameters[every-nth-frame]}\":device=6,classify=model=\"{models[emotion_recognition][1][network]}\":model_proc=\"{models[emotion_recognition][1][proc]}\":device=6\"",
+    "description":"Emotion Recognition",
+    "parameters": {
+        "type" : "object",
+        "properties" : {
+            "every-nth-frame": {
+                "element":"detection",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4294967295,
+                "default": 1
+            }
+        }
+    }
+}
+
+

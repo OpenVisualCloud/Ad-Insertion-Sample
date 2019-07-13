@@ -1,0 +1,34 @@
+# video_analytics_service_ffmpeg_vcac_a
+ARG base_name=vcac-a-ubuntu1604-openvino-ffmpeg-va
+
+FROM ${base_name}
+ 
+# Fetch python3 and Install python3
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libgirepository-1.0-1 libsoup2.4.1 python3-gi python3-requests python3-tornado python3-pip python3-setuptools python3-wheel &&  \
+    rm -rf /var/lib/apt/lists/*;
+    
+COPY ./app/server/requirements.txt /
+RUN pip3 install  --no-cache-dir -r /requirements.txt
+RUN pip3 install kafka-python==1.3.2
+RUN pip3 install kazoo==2.2.1
+COPY ./samples /home/video-analytics/samples
+COPY ./app /home/video-analytics/app
+COPY ./models/ /home/video-analytics/models/
+COPY ./platforms/VCAC-A/pipelines/ffmpeg /home/video-analytics/pipelines
+COPY  ./feeder/*.py /home/video-analytics/feeder/
+COPY   docker-entrypoint.sh /home/video-analytics/
+
+
+WORKDIR /home/video-analytics
+
+ENTRYPOINT ["./docker-entrypoint.sh", "--framework", "ffmpeg"]
+
+####
+ARG  USER
+ARG  GROUP
+ARG  UID
+ARG  GID
+## must use ; here to ignore user exist status code
+RUN  groupadd -f -g ${GID} ${GROUP};useradd -d /home -g ${GROUP} -K UID_MIN=${UID} ${USER};chown -R ${USER}.${GROUP} /home; 
+USER ${USER}
+####
