@@ -8,9 +8,6 @@ USER="docker"
 GROUP="docker"
 
 case "$1" in 
-    xeon)
-        PLATFORM=Xeon
-        ;;
     vcac-a)
         PLATFORM=VCAC-A
         ;;

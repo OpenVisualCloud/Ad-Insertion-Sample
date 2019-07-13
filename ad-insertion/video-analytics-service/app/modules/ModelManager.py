@@ -3,7 +3,6 @@ import sys
 import json
 import fnmatch
 import string
-#sys.path.append("../")
 import common.settings  # pylint: disable=import-error
 from common.utils import logging  # pylint: disable=import-error
 
@@ -24,7 +23,7 @@ class ModelsDict(MutableMapping):
             if ('default' in self._dict["networks"]):
                 return self._dict["networks"]["default"]
             else:
-                return "{models[%s][%d][VA_DEVICE_DEFAULT][network]}" %(self._model_name,self._model_version)
+                return "{{models[{}][{}][VA_DEVICE_DEFAULT][network]}}".format(self._model_name,self._model_version)
         if (key in self._dict["networks"]):
             return self._dict["networks"][key]
         return self._dict[key]
@@ -146,20 +145,3 @@ class ModelManager:
                     if result :
                         results.append(result)
         return results
-
-if __name__ == '__main__':
-    
-    ModelManager.load_config("../../models")
-    print(ModelManager.get_model_parameters("object_detection",1))
-    print(ModelManager.get_loaded_models())
-    print(ModelManager.models)
-    template = "urisourcebin uri=\"{source[uri]}\" ! concat name=c ! decodebin ! video/x-raw ! videoconvert name=\"videoconvert\" ! gvadetect inference-id=inf0 model=\"{models[object_detection][1][network]}\" model-proc=\"{models[object_detection][1][proc]}\" name=\"detection\" ! gvametaconvert converter=json method=detection source=\"{source[uri]}\" name=\"jsonmetaconvert\" ! queue ! appsink name=appsink"
-
-    request={}
-    request["models"]=ModelManager.models
-    request["source"]={'uri':'foo'}
-    
-
-    _gst_launch_string = string.Formatter().vformat(template, [], request)
-
-    print(_gst_launch_string)

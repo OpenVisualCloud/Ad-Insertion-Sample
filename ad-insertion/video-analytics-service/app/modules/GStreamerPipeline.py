@@ -92,7 +92,7 @@ class GStreamerPipeline(Pipeline):
             "state": self.state,
             "avg_fps": self.avg_fps,
             "start_time": self.start_time,
-            "elapsed_time": elapsed_time,
+            "elapsed_time": elapsed_time
         }
         if not self.count_pipeline_latency == 0:
             status_obj["avg_pipeline_latency"] = self.sum_pipeline_latency / self.count_pipeline_latency
@@ -137,7 +137,7 @@ class GStreamerPipeline(Pipeline):
         gva_elements = [e for e in self.pipeline.iterate_elements() if (e.__gtype__.name in self.GVA_INFERENCE_ELEMENT_TYPES and "VA_DEVICE_DEFAULT" in e.get_property("model"))]
         for e in gva_elements:
             network = ModelManager.get_default_network_for_device(e.get_property("device"),e.get_property("model"))
-            logger.debug("Setting model to %s for element %s" %(network,e.get_name()))
+            logger.debug("Setting model to {} for element {}".format(network,e.get_name()))
             e.set_property("model",network)
             
     @staticmethod
@@ -159,17 +159,7 @@ class GStreamerPipeline(Pipeline):
         segment = sample.get_segment()
         times={}
         times['segment.time'] = segment.time
-        times['segment.start'] = segment.start
-        times['segment.base'] = segment.base
-        times['segment.position'] = segment.position
-        times['buffer.pts'] = buffer.pts
-        times['buffer.dts'] = buffer.dts
-        times['buffer.duration'] = buffer.duration
-        times['pipeline.base_time'] = self.pipeline.base_time
         times['stream_time'] = segment.to_stream_time(Gst.Format.TIME,buffer.pts)                
-        times['running_time'] = segment.to_running_time(Gst.Format.TIME,buffer.pts)
-        times['clock_time'] = times['running_time'] + self.pipeline.base_time
-
         return times
         
 
@@ -213,20 +203,15 @@ class GStreamerPipeline(Pipeline):
             self.destination = None
 
         self.request["models"] = self.models
-
         self._add_default_parameters()
-        
         self._gst_launch_string = string.Formatter().vformat(self.template, [], self.request)
-
         logger.debug(self._gst_launch_string)
-
         self.pipeline = Gst.parse_launch(self._gst_launch_string)
-        
         self._add_element_parameters()
         self._add_tags()
         self._add_default_models()
-        
         sink = self.pipeline.get_by_name("appsink")
+
         if sink is not None:
             sink.set_property("emit-signals", True)
             sink.set_property('sync', False)
@@ -234,6 +219,7 @@ class GStreamerPipeline(Pipeline):
             self.avg_fps= 0
 
         src = self.pipeline.get_by_name("source")
+        
         if src and sink:
             src_pad = src.get_static_pad("src")
             if (src_pad):
@@ -242,19 +228,18 @@ class GStreamerPipeline(Pipeline):
                 src.connect("pad-added", GStreamerPipeline.source_pad_added_callback, self)
             sink_pad = sink.get_static_pad("sink")
             sink_pad.add_probe(Gst.PadProbeType.BUFFER, GStreamerPipeline.appsink_probe_callback, self)
-        
+            
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect("message", GStreamerPipeline.bus_call, self)
-
         splitmuxsink = self.pipeline.get_by_name("splitmuxsink")
         self._real_base=None
+
         if (splitmuxsink != None):
-            
             splitmuxsink.connect("format-location-full",
                            self.format_location_callback,
                            None)
-        
+
         self.pipeline.set_state(Gst.State.PLAYING)
         self.start_time = time.time()
 

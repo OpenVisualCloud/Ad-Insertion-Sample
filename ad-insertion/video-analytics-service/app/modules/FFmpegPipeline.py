@@ -1,6 +1,6 @@
 from modules.Pipeline import Pipeline  # pylint: disable=import-error
 from modules.PipelineManager import PipelineManager  # pylint: disable=import-error
-from modules.PipelineManager import ModelManager  # pylint: disable=import-error
+from modules.ModelManager import ModelManager  # pylint: disable=import-error
 from common.utils import logging  # pylint: disable=import-error
 import string
 import shlex
