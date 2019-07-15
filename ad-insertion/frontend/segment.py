@@ -70,13 +70,11 @@ class SegmentHandler(web.RequestHandler):
 
         # schedule ad
         if "transcode" in seg_info:
-            print("Schedule transcode: "+seg_info["transcode"], flush=True)
             self._sch.transcode(user, seg_info)
             self._sch.flush()
 
         # schedule analytics
         if "analytics" in seg_info:
-            print("Schedule analysis: "+seg_info["analytics"], flush=True)
             self._sch.analyze(seg_info, "object_detection")
             #self._sch.analyze(seg_info, "emotion_recognition" )
             self._sch.flush()

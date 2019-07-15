@@ -72,7 +72,9 @@ class ManifestHandler(web.RequestHandler):
             "interval": list(map(int,os.environ.get("AD_INTERVALS").split(","))),    # ad interval (#segments)
             "duration": list(map(int,os.environ.get("AD_DURATION").split(","))),    # ad duration
         }
-        
+
+        ad_bench_mode=(int)(os.environ.get("AD_BENCH_MODE"))
+        print("Bench Mode:"+str(ad_bench_mode),flush=True)
         if stream.endswith(".m3u8"):
             zk=ZKData()
             minfo=parse_hls(
@@ -80,6 +82,7 @@ class ManifestHandler(web.RequestHandler):
                 m3u8=manifest,
                 stream_info=zk.get(zk_path+"/"+stream.split("/")[-1]),
                 ad_spec=ad_spec,
+                ad_bench_mode=ad_bench_mode
             )
             zk.close()
         if stream.endswith(".mpd"):
@@ -87,6 +90,7 @@ class ManifestHandler(web.RequestHandler):
                 stream_cp_url=content_provider_url+"/"+stream,
                 mpd=manifest,
                 ad_spec=ad_spec,
+                ad_bench_mode=ad_bench_mode
             )
 
         # set zk states

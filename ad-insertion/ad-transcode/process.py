@@ -73,17 +73,19 @@ def ADPrefetch(ad_uri):
 
 def ADClipDecision(msg, db):
     duration = msg.time_range[1]-msg.time_range[0]
-    for t in range(5):
+    query_times = 10
+    for t in range(query_times):
         print("query db with time range: "+str(msg.time_range[0])+"-"+str(msg.time_range[1]))
         metaData = db.query(msg.content, msg.time_range, msg.time_field)
-        if metaData:
+        if metaData or msg.bench_mode:
             try:
                 jdata = json.dumps({
                     "metadata":metaData,
                     "user":{
                         "name":msg.user_name,
                         "keywords":msg.user_keywords
-                    }
+                    },
+                    "bench_mode":msg.bench_mode
                 })
                 r = requests.post(ad_decision_server, data=jdata, timeout=timeout)
                 if r.status_code == 200:
@@ -93,7 +95,9 @@ def ADClipDecision(msg, db):
             except requests.exceptions.RequestException as e:
                 print("Error in ADClipDecision() " + str(e), flush=True)
             return None
-        msg.time_range[0]=msg.time_range[0]-duration
+        time.sleep(1)
+        if t == query_times - 2:
+            msg.time_range[0]=msg.time_range[0]-duration/2
     return None
 
 class KafkaMsgParser(object):
@@ -115,6 +119,7 @@ class KafkaMsgParser(object):
         self.height = self.msg["ad_config"]["resolution"]["height"]
         self.width = self.msg["ad_config"]["resolution"]["width"]
         self.bitrate = self.msg["ad_config"]["bandwidth"]
+        self.bench_mode = self.msg["bench_mode"]
  
     def GetRedition(self):
         redition = ([self.width, self.height, self.bitrate, 128000],)
