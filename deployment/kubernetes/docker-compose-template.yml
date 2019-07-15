@@ -1,0 +1,290 @@
+version: '3.1'
+
+services:
+
+    zookeeper:
+        image: confluentinc/cp-zookeeper:latest
+        ports:
+            - "2181:2181"
+            - "8080:8080"
+        environment:
+            ZOOKEEPER_SERVER_ID: 1
+            ZOOKEEPER_CLIENT_PORT: '2181'
+            ZOOKEEPER_TICK_TIME: '2000'
+            ZOOKEEPER_HEAP_OPTS: '-Xmx2048m -Xms2048m'
+            ZOOKEEPER_MAX_CLIENT_CNXNS: '20000'
+            ZOOKEEPER_LOG4J_LOGGERS: 'zookeepr=ERROR'
+            ZOOKEEPER_LOG4J_ROOT_LOGLEVEL: 'ERROR'
+        restart: always
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+
+    kafka-service:
+        image: confluentinc/cp-kafka:latest
+        ports:
+            - "9092:9092"
+            - "8080:8080"
+        depends_on:
+            - zookeeper
+        environment:
+            KAFKA_BROKER_ID: 1
+            KAFKA_ADVERTISED_HOST_NAME: 'kafka-service'
+            KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+            KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka-service:9092,PLAINTEXT_HOST://localhost:29092'
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+            KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+            KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+            KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+            KAFKA_NUM_PARTITIONS: 16
+            KAFKA_LOG_RETENTION_HOURS: 8
+            KAFKA_HEAP_OPTS: '-Xmx1024m -Xms1024m'
+            KAFKA_LOG4J_LOGGERS: 'kafka=ERROR,kafka.controller=ERROR,state.change.logger=ERROR,org.apache.kafka=ERROR'
+            KAFKA_LOG4J_ROOT_LOGLEVEL: 'ERROR'
+            CONFLUENT_SUPPORT_METRICS_ENABLE: 0
+        restart: always
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+
+    kafka-init:
+        image: confluentinc/cp-kafka:latest
+        ports:
+            - "8080:8080"
+        depends_on:
+            - kafka-service
+        #environment:
+        #    KAFKA_BROKER_ID: ignored
+        #    KAFKA_ZOOKEEPER_CONNECT: ignored
+        restart: always
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        command: ["bash", "-c", "cub kafka-ready -b kafka-service:9092 1 20 && \
+                                 kafka-topics --create --topic content_provider_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
+                                 kafka-topics --create --topic seg_analytics_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
+                                 kafka-topics --create --topic seg_analytics_data --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
+                                 kafka-topics --create --topic ad_transcode_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
+                                 kafka-topics --create --topic workloads --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
+                                 kafka-topics --create --topic adstats --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
+                                 sleep infinity"]
+        labels:
+            kompose.service.type: NodePort
+
+    database:
+        image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.0
+        ports:
+            - "9200:9200"
+            - "8080:8080"
+        environment:
+            - 'discovery.type=single-node'
+            - 'ES_JAVA_OPTS=-Xms1024m -Xmx1024m'
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        restart: always
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+
+    cdn:
+        image: ssai_cdn_service:latest
+        ports:
+            - "8080:8080"
+        depends_on:
+            - kafka-service
+            - ad-insertion-frontend
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        #command: ["bash", "-c", "ls && touch /home/temp.txt && sleep infinity"]
+        labels:
+            kompose.service.type: NodePort
+            kompose.image-pull-policy: IfNotPresent
+
+    video-analytic-ffmpeg:
+        image: video_analytics_service_ffmpeg:latest
+        ports:
+            - "8080:8080"
+        depends_on:
+            - kafka-service
+            - zookeeper
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+            kompose.image-pull-policy: IfNotPresent
+        restart: always
+
+    video-analytic-gstreamer:
+        image: video_analytics_service_gstreamer:latest
+        ports:
+            - "8080:8080"
+        depends_on:
+            - kafka-service
+            - zookeeper
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+            kompose.image-pull-policy: IfNotPresent
+        restart: always
+
+    ad-transcode:
+        image: ssai_ad_transcode:latest
+        ports:
+            - "8080:8080"
+        depends_on:
+            - kafka-service
+            - ad-decision
+            - ad-insertion-frontend
+            - ad-content
+        restart: always
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+            kompose.image-pull-policy: IfNotPresent
+
+    account-service:
+        image: ssai_account_service:latest
+        ports:
+            - "8080:8080"
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+            kompose.image-pull-policy: IfNotPresent
+
+    ad-decision:
+        image: ad_decision_service:latest
+        ports:
+            - "8080:8080"
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+            kompose.image-pull-policy: IfNotPresent
+
+
+    ad-content:
+        image: ad_content_service_frontend:latest
+        ports:
+            - "8080:8080"
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+            kompose.image-pull-policy: IfNotPresent
+
+
+    ad-insertion-frontend:
+        image: ssai_ad_insertion_frontend:latest
+        ports:
+            - "8080:8080"
+        depends_on:
+            - content-provider
+            - kafka-service
+            - zookeeper
+        environment:
+            AD_INTERVALS: 4,8
+            AD_DURATION: 5
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+            kompose.image-pull-policy: IfNotPresent
+
+
+    analytic-db:
+        image: ssai_analytic_db:latest
+        ports:
+            - "8080:8080"
+        depends_on:
+            - kafka-service
+            - database
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+            kompose.image-pull-policy: IfNotPresent
+
+    content-provider:
+        image: ssai_content_provider_frontend:latest
+        ports:
+            - "8080:8080"
+        depends_on:
+            - kafka-service
+            - account-service
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.service.type: NodePort
+            kompose.image-pull-policy: IfNotPresent
+        restart: always
+
+
+    content-provider-transcode:
+        image: ssai_content_provider_transcode:latest
+        ports:
+            - "8080:8080"
+        deploy:
+            replicas: 2
+            placement:
+                constraints:
+                    - node.hostname == master.machine
+        labels:
+            kompose.image-pull-policy: IfNotPresent
+            kompose.service.type: NodePort
+        restart: always
+
+        depends_on:
+            - -servicee
+            - zookeeper
+
+
