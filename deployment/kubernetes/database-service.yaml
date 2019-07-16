@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.type: NodePort
+  creationTimestamp: null
+  labels:
+    io.kompose.service: database
+  name: database
+spec:
+  ports:
+  - name: "9200"
+    port: 9200
+    targetPort: 9200
+  - name: "8080"
+    port: 8080
+    targetPort: 8080
+  selector:
+    io.kompose.service: database
+  type: NodePort
+status:
+  loadBalancer: {}

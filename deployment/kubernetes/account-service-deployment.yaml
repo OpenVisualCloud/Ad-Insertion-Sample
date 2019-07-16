@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    image-pull-policy: IfNotPresent
+    service.type: NodePort
+  creationTimestamp: null
+  labels:
+    io.kompose.service: account-service
+  name: account-service
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: account-service
+    spec:
+      containers:
+      - image: ssai_account_service:latest
+        imagePullPolicy: IfNotPresent
+        name: account-service
+        ports:
+        - containerPort: 8080
+        resources: {}
+      restartPolicy: Always
+status: {}

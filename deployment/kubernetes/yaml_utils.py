@@ -29,11 +29,6 @@ def update_imageName(data, fileName, imageName, isVOD):
     with open(fileName, 'w', encoding='utf8') as outfile:
         yaml.dump(data, outfile, Dumper=yaml.RoundTripDumper, default_flow_style=False, allow_unicode=True)
 
-def update_nodeSelector(data, fileName, nodeName):
-    data['spec']['template']['spec']['nodeSelector']['kubernetes.io/hostname'] = nodeName
-    with open(fileName, 'w', encoding='utf8') as outfile:
-        yaml.dump(data, outfile, Dumper=yaml.RoundTripDumper, default_flow_style=False, allow_unicode=True)
-
 def add_volumeMounts(data, fileName, node_name):
     if node_name == "ad-content":
         volumemounts_caps = [ {'name': 'ad-archive',

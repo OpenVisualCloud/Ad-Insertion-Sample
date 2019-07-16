@@ -1,0 +1,54 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    image-pull-policy: IfNotPresent
+    service.type: NodePort
+  creationTimestamp:
+  labels:
+    io.kompose.service: content-provider
+  name: content-provider
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp:
+      labels:
+        io.kompose.service: content-provider
+    spec:
+      containers:
+      - image: ssai_content_provider_frontend:latest
+        imagePullPolicy: IfNotPresent
+        name: content-provider
+        ports:
+        - containerPort: 8080
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/www/html
+          readOnly: false
+          name: html-volume
+        - mountPath: /var/www/archive
+          readOnly: false
+          name: video-archive
+        - mountPath: /var/www/dash
+          readOnly: false
+          name: video-dash
+        - mountPath: /var/www/hls
+          readOnly: false
+          name: video-hls
+      restartPolicy: Always
+      volumes:
+      - hostPath:
+          path: /home/vcse/temp/ADI/Ad-Insertion-Sample/volume/html
+        name: html-volume
+      - hostPath:
+          path: /home/vcse/temp/ADI/Ad-Insertion-Sample/volume/video/archive
+        name: video-archive
+      - hostPath:
+          path: /home/vcse/temp/ADI/Ad-Insertion-Sample/volume/video/dash
+        name: video-dash
+      - hostPath:
+          path: /home/vcse/temp/ADI/Ad-Insertion-Sample/volume/video/hls
+        name: video-hls
+status: {}

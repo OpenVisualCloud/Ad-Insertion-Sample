@@ -60,4 +60,3 @@ done
 #    kubectl delete -f "$DIR/ovc-self-certificates.yaml"
 #fi
 
-rm -rf $DIR/$EXT

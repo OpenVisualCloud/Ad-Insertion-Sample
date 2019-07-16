@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    image-pull-policy: IfNotPresent
+    service.type: NodePort
+  creationTimestamp: null
+  labels:
+    io.kompose.service: video-analytic-ffmpeg
+  name: video-analytic-ffmpeg
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: video-analytic-ffmpeg
+    spec:
+      containers:
+      - image: video_analytics_service_ffmpeg:latest
+        imagePullPolicy: IfNotPresent
+        name: video-analytic-ffmpeg
+        ports:
+        - containerPort: 8080
+        resources: {}
+      restartPolicy: Always
+status: {}

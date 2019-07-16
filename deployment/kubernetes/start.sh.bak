@@ -54,6 +54,22 @@ if [ -f "$DIR/ovc-self-certificates.yaml" ]; then
     kubectl delete -f "$DIR/ovc-self-certificates.yaml"
 fi
 
+rm -rf $DIR/$EXT
+
+yml="$DIR/docker-compose-template.yml"
+test -f "$yml"
+
+dcv="$(kompose version | cut -f1 -d' ')"
+mdcv="$(printf '%s\n' $dcv 1.16 | sort -r -V | head -n 1)"
+if test "$mdcv" = "1.16"; then
+    echo ""
+    echo "kompose >=1.16 is required."
+    echo "Please upgrade kompose at https://docs.docker.com/compose/install."
+    echo ""
+    exit 0
+fi
+
+try_command kompose convert -f "$yml" -o "$DIR"
 
 try_command "$DIR/update_yaml.py" "$DIR"
 
