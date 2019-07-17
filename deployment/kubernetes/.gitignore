@@ -1,0 +1,4 @@
+*.key
+*.crt
+*.pem
+ovc-self-certificates.yaml

@@ -30,18 +30,18 @@ spec:
         - containerPort: 8080
         resources: {}
         volumeMounts:
-        - mountPath: /var/www/adinsert/dash
+        - name: ad-dash
           readOnly: false
-          name: ad-dash
-        - mountPath: /var/www/adinsert/hls
+          mountPath: /var/www/adinsert/dash
+        - name: ad-hls
           readOnly: false
-          name: ad-hls
+          mountPath: /var/www/adinsert/hls
       restartPolicy: Always
       volumes:
-      - hostPath:
-          path: /home/vcse/temp/ADI/Ad-Insertion-Sample/volume/ad/dash
-        name: ad-dash
-      - hostPath:
-          path: /home/vcse/temp/ADI/Ad-Insertion-Sample/volume/ad/hls
-        name: ad-hls
+      - name: ad-dash
+        hostPath:
+          path: /home/vcse/ADI/fork/Ad-Insertion-Sample/volume/ad/dash
+      - name: ad-hls
+        hostPath:
+          path: /home/vcse/ADI/fork/Ad-Insertion-Sample/volume/ad/hls
 status: {}

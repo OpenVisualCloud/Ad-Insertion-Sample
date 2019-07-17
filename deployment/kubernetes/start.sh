@@ -57,9 +57,10 @@ fi
 
 try_command "$DIR/update_yaml.py" "$DIR"
 
+try_command "$DIR/self-sign.sh" 
 
 # Generate Secrets
-try_command kubectl create secret generic ssl-key-secret --from-file=self.key="$DIR/../docker-swarm/self.key" --from-file=self.crt="$DIR/../docker-swarm/self.crt" --from-file=dhparam.pem="$DIR/../docker-swarm/dhparam.pem" --dry-run -o yaml > "$DIR/ovc-self-certificates.yaml"
+try_command kubectl create secret generic ssl-key-secret --from-file=self.key="$DIR/self.key" --from-file=self.crt="$DIR/self.crt" --from-file=dhparam.pem="$DIR/dhparam.pem" --dry-run -o yaml > "$DIR/ovc-self-certificates.yaml"
 
 try_command kubectl apply -f "$DIR/ovc-self-certificates.yaml"
 

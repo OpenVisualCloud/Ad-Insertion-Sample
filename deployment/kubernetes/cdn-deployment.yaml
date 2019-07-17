@@ -25,12 +25,12 @@ spec:
         - containerPort: 8080
         resources: {}
         volumeMounts:
-        - mountPath: /var/run/secrets
+        - name: secrets
           readOnly: false
-          name: secrets
+          mountPath: /var/run/secrets
       restartPolicy: Always
       volumes:
-      - secret:
+      - name: secrets
+        secret:
           secretName: ssl-key-secret
-        name: secrets
 status: {}

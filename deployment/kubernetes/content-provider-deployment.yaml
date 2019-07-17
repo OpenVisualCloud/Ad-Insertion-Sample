@@ -25,30 +25,30 @@ spec:
         - containerPort: 8080
         resources: {}
         volumeMounts:
-        - mountPath: /var/www/html
+        - name: html-volume
           readOnly: false
-          name: html-volume
-        - mountPath: /var/www/archive
+          mountPath: /var/www/html
+        - name: video-archive
           readOnly: false
-          name: video-archive
-        - mountPath: /var/www/dash
+          mountPath: /var/www/archive
+        - name: video-dash
           readOnly: false
-          name: video-dash
-        - mountPath: /var/www/hls
+          mountPath: /var/www/dash
+        - name: video-hls
           readOnly: false
-          name: video-hls
+          mountPath: /var/www/hls
       restartPolicy: Always
       volumes:
-      - hostPath:
-          path: /home/vcse/temp/ADI/Ad-Insertion-Sample/volume/html
-        name: html-volume
-      - hostPath:
-          path: /home/vcse/temp/ADI/Ad-Insertion-Sample/volume/video/archive
-        name: video-archive
-      - hostPath:
-          path: /home/vcse/temp/ADI/Ad-Insertion-Sample/volume/video/dash
-        name: video-dash
-      - hostPath:
-          path: /home/vcse/temp/ADI/Ad-Insertion-Sample/volume/video/hls
-        name: video-hls
+      - name: html-volume
+        hostPath:
+          path: /home/vcse/ADI/fork/Ad-Insertion-Sample/volume/html
+      - name: video-archive
+        hostPath:
+          path: /home/vcse/ADI/fork/Ad-Insertion-Sample/volume/video/archive
+      - name: video-dash
+        hostPath:
+          path: /home/vcse/ADI/fork/Ad-Insertion-Sample/volume/video/dash
+      - name: video-hls
+        hostPath:
+          path: /home/vcse/ADI/fork/Ad-Insertion-Sample/volume/video/hls
 status: {}
