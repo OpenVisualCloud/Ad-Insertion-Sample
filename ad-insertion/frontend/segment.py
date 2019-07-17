@@ -10,10 +10,12 @@ import re
 zk_prefix="/ad-insertion-frontend"
 ad_storage_path="/var/www/adinsert"
 
+ad_use_case={"obj_detection":0, "emotion":0, "face_recognition":0}
 class SegmentHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
         super(SegmentHandler, self).__init__(app, request, **kwargs)
         self._sch=Schedule()
+        self._usecase=ad_use_case
 
     def check_origin(self, origin):
         return True
@@ -75,11 +77,21 @@ class SegmentHandler(web.RequestHandler):
 
         # schedule analytics
         if "analytics" in seg_info:
-            self._sch.analyze(seg_info, "object_detection")
-            #self._sch.analyze(seg_info, "emotion_recognition" )
+            if self._usecase["obj_detection"]==1:
+                self._sch.analyze(seg_info, "object_detection")
+            if self._usecase["emotion"]==1:
+                self._sch.analyze(seg_info, "emotion_recognition" )
             self._sch.flush()
 
             # delay releasing the stream to combat player caching.
             if "seg_duration" in seg_info and seg_info["seg_time"]:
                 yield gen.sleep(max(0,seg_info["seg_duration"]-1.5))
 
+    @gen.coroutine
+    def post(self):
+        casename=str(self.get_argument("casename"))
+        enable=int(self.get_argument("enable"))
+        print("segment {} {}".format(casename,enable),flush=True)
+        if casename in ["obj_detection", "emotion", "face_recognition"]:
+            self._usecase[casename]=enable
+        print(self._usecase,flush=True)

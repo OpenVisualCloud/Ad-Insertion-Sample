@@ -76,6 +76,33 @@
       </label>
     </div>
 
+    <div class="input-group" ui-header-setting-obj-detection>
+      <span class="input-group-label" style="width:40%"><b>Object Detection:</b></span>
+      <input class="input-group-field switch-input" id="objDetectionSwitch" type="checkbox">
+      <label class="switch-paddle" for="objDetectionSwitch">
+          <span class="switch-active" aria-hidden="true">ON</span>
+          <span class="switch-inactive" aria-hidden="true">OFF</span>
+      </label>
+    </div>
+
+    <div class="input-group" ui-header-setting-emotion-recognition>
+      <span class="input-group-label" style="width:40%"><b>Emotion Recognition:</b></span>
+      <input class="input-group-field switch-input" id="emotionRecognitionSwitch" type="checkbox">
+      <label class="switch-paddle" for="emotionRecognitionSwitch">
+          <span class="switch-active" aria-hidden="true">ON</span>
+          <span class="switch-inactive" aria-hidden="true">OFF</span>
+      </label>
+    </div>
+
+    <div class="input-group" ui-header-setting-face-recognition>
+      <span class="input-group-label" style="width:40%"><b>Face Recognition:</b></span>
+      <input class="input-group-field switch-input" id="faceRecognitionSwitch" type="checkbox">
+      <label class="switch-paddle" for="faceRecognitionSwitch">
+          <span class="switch-active" aria-hidden="true">ON</span>
+          <span class="switch-inactive" aria-hidden="true">OFF</span>
+      </label>
+    </div>
+
     <input class="button expanded" type="submit" data-close>
   </form>
 </div>

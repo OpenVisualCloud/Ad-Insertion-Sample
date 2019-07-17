@@ -34,6 +34,37 @@ $("#setting").find("form").submit(function() {
         $("#player [video-section]").width("100%");
     }
 
+    /* ["obj_detection", "emotion", "face_recognition"] */
+    if ($("#objDetectionSwitch").is(":checked")) {
+       var casename="obj_detection"
+       var enable=1
+       apiHost.usecase(casename,enable)
+    } else {
+       var casename="obj_detection"
+       var enable=0
+       apiHost.usecase(casename,enable)
+    }
+
+    if ($("#emotionRecognitionSwitch").is(":checked")) {
+       var casename="emotion"
+       var enable=1
+       apiHost.usecase(casename,enable)
+    } else {
+       var casename="emotion"
+       var enable=0
+       apiHost.usecase(casename,enable)
+    }
+
+    if ($("#faceRecognitionSwitch").is(":checked")) {
+       var casename="face_recognition"
+       var enable=1
+       apiHost.usecase(casename,enable)
+    } else {
+       var casename="face_recognition"
+       var enable=0
+       apiHost.usecase(casename,enable)
+    }
+
     $("#player").trigger(":update");
     return false;
 });
