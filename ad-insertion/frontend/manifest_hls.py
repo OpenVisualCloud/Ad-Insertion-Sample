@@ -65,6 +65,10 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
                 dst_analysis_res=ori_analysis_res
             seg_info={
                 "stream": stream_cp_url.split("/")[-1],
+                "resolution": {
+                    "width": 0,
+                    "height": 0,
+                },
                 "seg_time": timeline+_ad_time(ad_spec,ad_sequence),
                 "seg_duration": duration,
                 "codec": "avc",
@@ -73,6 +77,9 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
                 "ad_duration": ad_spec["duration"][ad_sequence%len(ad_spec["duration"])],
                 "ad_segment": ad_segment,
             }
+
+            if "resolution" in stream_info.keys():
+                seg_info["resolution"]=stream_info["resolution"]
 
             # schedule every AD_INTERVAL interval
             m1=re.search("(.*)_[0-9]+", lines[i+1])
