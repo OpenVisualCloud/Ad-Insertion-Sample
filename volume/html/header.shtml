@@ -103,6 +103,15 @@
       </label>
     </div>
 
+    <div class="input-group" ui-header-setting-bench-mode>
+      <span class="input-group-label" style="width:40%"><b>Bench Mode:</b></span>
+      <input class="input-group-field switch-input" id="benchModeSwitch" type="checkbox">
+      <label class="switch-paddle" for="benchModeSwitch">
+          <span class="switch-active" aria-hidden="true">ON</span>
+          <span class="switch-inactive" aria-hidden="true">OFF</span>
+      </label>
+    </div>
+
     <input class="button expanded" type="submit" data-close>
   </form>
 </div>

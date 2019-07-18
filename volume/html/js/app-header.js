@@ -65,6 +65,16 @@ $("#setting").find("form").submit(function() {
        apiHost.usecase(casename,enable)
     }
 
+    if ($("#benchModeSwitch").is(":checked")) {
+       var name=user
+       var enable=1
+       apiHost.benchmode(name,enable)
+    } else {
+       var name=user
+       var enable=0
+       apiHost.benchmode(name,enable)
+    }
+
     $("#player").trigger(":update");
     return false;
 });
