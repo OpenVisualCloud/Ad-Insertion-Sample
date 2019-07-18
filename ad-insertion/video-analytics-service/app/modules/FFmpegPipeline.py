@@ -39,7 +39,7 @@ class FFmpegPipeline(Pipeline):
         self._ffmpeg_launch_string = None
         self.request = request
         self.state = "QUEUED"
-        self.fps = None
+        self.fps = 0
 
     def stop(self):
         if self._process:
