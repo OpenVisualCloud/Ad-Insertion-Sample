@@ -101,6 +101,10 @@ services:
             - content-provider
             - kafka-service
             - zookeeper
+        environment:
+            AD_INTERVALS: 8
+            AD_DURATION: 5
+            AD_BENCH_MODE: 0
         deploy:
             replicas: 1
 
@@ -150,7 +154,7 @@ services:
             - account-service
         deploy:
             replicas: 1
-
+  
     content-provider-transcode:
         image: ssai_content_provider_transcode:latest
         volumes:
@@ -185,6 +189,8 @@ services:
             - zookeeper
         deploy:
             replicas: 1
+        environment:
+            NETWORK_PREFERENCE: "{\"CPU\":\"INT8\"}"
         restart: unless-stopped
 
     video-analytic-gstreamer:

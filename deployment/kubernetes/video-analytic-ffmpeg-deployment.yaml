@@ -18,7 +18,10 @@ spec:
         io.kompose.service: video-analytic-ffmpeg
     spec:
       containers:
-      - image: video_analytics_service_ffmpeg:latest
+      - env:
+        - name: NETWORK_PREFERENCE
+          value: "{\"CPU\":\"INT8\"}"
+        image: video_analytics_service_ffmpeg:latest
         imagePullPolicy: IfNotPresent
         name: video-analytic-ffmpeg
         ports:

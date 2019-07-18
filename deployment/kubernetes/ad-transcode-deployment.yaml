@@ -25,14 +25,14 @@ spec:
         - containerPort: 8080
         resources: {}
         volumeMounts:
-        - name: ad-dash
-          readOnly: false
+        - readOnly: false
+          name: ad-dash
           mountPath: /var/www/adinsert/dash
-        - name: ad-hls
-          readOnly: false
+        - readOnly: false
+          name: ad-hls
           mountPath: /var/www/adinsert/hls
-        - name: ad-static
-          readOnly: false
+        - readOnly: false
+          name: ad-static
           mountPath: /var/www/skipped
       restartPolicy: Always
       volumes:

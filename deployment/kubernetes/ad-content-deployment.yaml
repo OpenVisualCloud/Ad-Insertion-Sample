@@ -25,8 +25,8 @@ spec:
         - containerPort: 8080
         resources: {}
         volumeMounts:
-        - name: ad-archive
-          readOnly: false
+        - readOnly: false
+          name: ad-archive
           mountPath: /var/www/archive
       restartPolicy: Always
       volumes:

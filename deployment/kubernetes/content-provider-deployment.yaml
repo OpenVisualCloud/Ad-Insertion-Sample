@@ -25,17 +25,17 @@ spec:
         - containerPort: 8080
         resources: {}
         volumeMounts:
-        - name: html-volume
-          readOnly: false
+        - readOnly: false
+          name: html-volume
           mountPath: /var/www/html
-        - name: video-archive
-          readOnly: false
+        - readOnly: false
+          name: video-archive
           mountPath: /var/www/archive
-        - name: video-dash
-          readOnly: false
+        - readOnly: false
+          name: video-dash
           mountPath: /var/www/dash
-        - name: video-hls
-          readOnly: false
+        - readOnly: false
+          name: video-hls
           mountPath: /var/www/hls
       restartPolicy: Always
       volumes:
