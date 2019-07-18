@@ -77,6 +77,8 @@ Use the following commands to start/stop services via Kubernetes:
 
 Launch your browser and point to `https://localhost` to play the streams and see ADs got inserted during playback. Note that if you see a browser warning of self-signed certificate, please accept it to proceed to the sample UI.    
 
+In-case of Kubernetes, connect to `https://<system-ip>:30443`
+
 ### Customize videos:
 
 Customize the video playlist by adding videos under [volume/video/archive](volume/video/archive) or in the build script [content-provider/archive/build.sh](content-provider/archive/build.sh).      
