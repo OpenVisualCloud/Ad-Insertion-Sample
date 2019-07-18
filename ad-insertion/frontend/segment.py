@@ -2,6 +2,7 @@
 
 from tornado import web, gen
 from zkdata import ZKData
+from zkmdata import ZKMData
 from schedule import Schedule
 from os.path import isfile
 import time
@@ -10,15 +11,27 @@ import re
 zk_prefix="/ad-insertion-frontend"
 ad_storage_path="/var/www/adinsert"
 
-ad_use_case={"obj_detection":0, "emotion":0, "face_recognition":0}
 class SegmentHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
         super(SegmentHandler, self).__init__(app, request, **kwargs)
         self._sch=Schedule()
-        self._usecase=ad_use_case
+        self._usecase={"obj_detection":1, "emotion":0, "face_recognition":0}
 
     def check_origin(self, origin):
         return True
+
+    def _get_usecase_status(self, name, usecase):
+        zk_usecase_path=zk_prefix+"/"+name +"/"+usecase
+        zk=ZKMData()
+        enable=zk.get(zk_usecase_path)
+        zk.close()
+        return enable
+
+    def _set_usecase_status(self, name, usecase, value):
+        zk_usecase_path=zk_prefix+"/"+name +"/"+usecase
+        zk=ZKMData()
+        zk.set(zk_usecase_path,value)
+        zk.close()
 
     @gen.coroutine
     def get(self):
@@ -77,6 +90,13 @@ class SegmentHandler(web.RequestHandler):
 
         # schedule analytics
         if "analytics" in seg_info:
+            flag=0
+            for usecase in ["obj_detection", "emotion", "face_recognition"]:
+                self._usecase[usecase]=self._get_usecase_status(user,usecase)
+                flag += self._usecase[usecase]
+            if flag == 0:
+                self._get_usecase_status(user,"obj_detection",1)
+
             if self._usecase["obj_detection"]==1:
                 self._sch.analyze(seg_info, "object_detection")
             if self._usecase["emotion"]==1:
@@ -89,9 +109,10 @@ class SegmentHandler(web.RequestHandler):
 
     @gen.coroutine
     def post(self):
+        name=str(self.get_argument("name"))
         casename=str(self.get_argument("casename"))
         enable=int(self.get_argument("enable"))
-        print("segment {} {}".format(casename,enable),flush=True)
         if casename in ["obj_detection", "emotion", "face_recognition"]:
-            self._usecase[casename]=enable
-        print(self._usecase,flush=True)
+            self._set_usecase_status(name, casename, enable)
+        for usecase in ["obj_detection", "emotion", "face_recognition"]:
+            self._usecase[usecase]=self._get_usecase_status(name,usecase)

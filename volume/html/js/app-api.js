@@ -25,9 +25,9 @@ var apiHost={
         //console.log("GET "+url+"?"+JSON.stringify(args));
         return $.get(url, args);
     },
-    usecase: function (casename,enable) {
+    usecase: function (name,casename,enable) {
         var url="api/usecase";
-        var args= { casename: casename, enable: enable };
+        var args= { name: name, casename: casename, enable: enable };
         console.log("POST "+url+"?"+JSON.stringify(args));
         return $.post(url, args);
     },
