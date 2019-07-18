@@ -1,14 +1,15 @@
 ### Setup Kubernetes master node
 You may need to setup the kubelet proxy on one machine. Below is an example to directly use the host proxy as the kubelet proxy.
 ```bash
-mkdir -p /etc/systemd/system/kubelet.service.d/`
-`printf "[Service]\nEnvironment=\"HTTPS_PROXY=$https_proxy\" \"NO_PROXY=$no_proxy\"\n" | sudo tee /etc/systemd/system/kubelet.service.d/proxy.conf
+mkdir -p /etc/systemd/system/kubelet.service.d/
+printf "[Service]\nEnvironment=\"HTTPS_PROXY=$https_proxy\" \"NO_PROXY=$no_proxy\"\n" | sudo tee /etc/systemd/system/kubelet.service.d/proxy.conf
 ```
 **Note:** This command must be run as root.
 
 #### Setup Proxy
 Make sure you have required *http_proxy*, *https_proxy* and *no_proxy* setup.
-- ```bash
+- 
+```bash
 export HTTP_PROXY=$http_proxy
 export HTTPS_PROXY=$https_proxy
 ```
