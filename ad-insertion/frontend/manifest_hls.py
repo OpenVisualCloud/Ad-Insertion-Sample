@@ -65,6 +65,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
                 dst_analysis_res=ori_analysis_res
             seg_info={
                 "stream": stream_cp_url.split("/")[-1],
+                "bandwidth" : 0,
                 "resolution": {
                     "width": 0,
                     "height": 0,
@@ -80,6 +81,9 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
 
             if "resolution" in stream_info.keys():
                 seg_info["resolution"]=stream_info["resolution"]
+
+            if "bandwidth" in stream_info.keys():
+                seg_info["bandwidth"]=stream_info["bandwidth"]
 
             # schedule every AD_INTERVAL interval
             m1=re.search("(.*)_[0-9]+", lines[i+1])
