@@ -5,8 +5,9 @@ import requests
 import ast
 from zkstate import ZKState
 import merged_segment as merge
-
+import datetime
 import json
+import socket
 import time
 import os
 import re
@@ -40,7 +41,11 @@ def send_video_analytics_fps(fps):
     if not p:
         p=Producer()
     if p:
-        p.send(video_analytics_fps_topic, json.dumps({"avg_fps": fps }));
+        p.send(video_analytics_fps_topic, json.dumps({
+            "fps": fps,
+            "machine":socket.gethostname()[0:3],
+            "time": datetime.datetime.utcnow().isoformat(),
+        }));
 
 def start_analytic(stream_uri, pipeline, tags, parameters):
     jsonData = analytic_rest_msg_template
