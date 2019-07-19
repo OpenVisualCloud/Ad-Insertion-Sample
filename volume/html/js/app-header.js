@@ -6,7 +6,7 @@ $(".top-bar").on(":initpage", function(e) {
     /* disable all switches */
     $("#playListSwitch").prop("checked",true);
     $("#objDetectionSwitch").prop("checked",true);
-    $.each(["debug","analytics","adstats","workloads"],function(i,x) {
+    $.each(["debug","analytics","adstats","workloads","analyticPerf"],function(i,x) {
         $("#"+x+"ConsoleSwitch").prop("checked",false);
     });
 });
@@ -20,7 +20,7 @@ $("#setting").find("form").submit(function() {
     
     settings.analytics_window(page.find("[ui-header-setting-analytics-window] input").val());
 
-    $.each(["debug","analytics","adstats","workloads"],function(i,x) {
+    $.each(["debug","analytics","adstats","workloads","analyticPerf"],function(i,x) {
         if ($("#"+x+"ConsoleSwitch").is(":checked"))
             $("["+x+"-console]").show();
         else

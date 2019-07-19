@@ -67,6 +67,15 @@
       </label>
     </div>
 
+    <div class="input-group" ui-header-setting-va-fps-console>
+      <span class="input-group-label" style="width:40%"><b>Analytic Perf:</b></span>
+      <input class="input-group-field switch-input" id="analyticPerfConsoleSwitch" type="checkbox">
+      <label class="switch-paddle" for="analyticPerfConsoleSwitch">
+          <span class="switch-active" aria-hidden="true">ON</span>
+          <span class="switch-inactive" aria-hidden="true">OFF</span>
+      </label>
+    </div>
+
     <div class="input-group" ui-header-setting-playlist>
       <span class="input-group-label" style="width:40%"><b>Play List:</b></span>
       <input class="input-group-field switch-input" id="playListSwitch" type="checkbox">
