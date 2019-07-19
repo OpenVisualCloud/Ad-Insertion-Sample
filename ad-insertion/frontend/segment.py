@@ -25,6 +25,8 @@ class SegmentHandler(web.RequestHandler):
         zk=ZKMData()
         enable=zk.get(zk_usecase_path)
         zk.close()
+        if enable == {}:
+            return 0
         return enable
 
     def _set_usecase_status(self, name, usecase, value):
@@ -95,7 +97,8 @@ class SegmentHandler(web.RequestHandler):
                 self._usecase[usecase]=self._get_usecase_status(user,usecase)
                 flag += self._usecase[usecase]
             if flag == 0:
-                self._get_usecase_status(user,"obj_detection",1)
+                self._set_usecase_status(user,"obj_detection",1)
+                self._usecase["obj_detection"]=1
 
             if self._usecase["obj_detection"]==1:
                 self._sch.analyze(seg_info, "object_detection")
