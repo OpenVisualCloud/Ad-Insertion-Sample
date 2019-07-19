@@ -22,7 +22,7 @@ export NO_PROXY=$no_proxy
 #### Setup Kubernetes Master Node
 On this machine, run below command to setup Kubernetes master node(treat this machine as Kubernetes master node by default):
 ```bash
-script/Kubernetes_setup_master.sh
+script/Kubernetes_setup_ubuntu_master.sh
 ```
 
 **Note:** This script must be run as root. If there are two or more machines, please copy the Kubernetes join command from console output.
