@@ -55,10 +55,10 @@ $("[debug-console]").on(":initpage",function () {
         }
 
         panel=$("[analyticPerf-console]");
-        if (doc.topic=="workloads") {
+        if (doc.topic=="video_analytics_fps") {
             if (panel.is(":visible")) {
                 try {
-                    panel.trigger(":update-perf",[moment(doc.value.time),doc.value.machine,doc.value.workload]);
+                    panel.trigger(":update-perf",[moment(doc.value.time),doc.value.machine,doc.value.fps]);
                 } catch (e) {
                 }
             }
@@ -282,7 +282,7 @@ $("[analyticPerf-console]").on(":initpage",function (e) {
             maintainAspectRatio: false,
             title: {
                 display: true,
-                text: 'Analytic Perf',
+                text: 'Analytic Perf(FPS)',
             },
             scales: {
                 yAxes: [{

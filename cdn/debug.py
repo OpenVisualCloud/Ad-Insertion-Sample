@@ -4,7 +4,7 @@ from tornado import websocket, gen, ioloop
 from messaging import Consumer
 import json
 
-kafka_topics=["content_provider_sched","seg_analytics_sched","ad_transcode_sched","seg_analytics_data","workloads","adstats"]
+kafka_topics=["content_provider_sched","seg_analytics_sched","ad_transcode_sched","seg_analytics_data","workloads","adstats","video_analytics_fps"]
 
 class DebugHandler(websocket.WebSocketHandler):
     def __init__(self, app, request, **kwargs):

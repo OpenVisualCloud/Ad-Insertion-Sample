@@ -67,7 +67,7 @@
       </label>
     </div>
 
-    <div class="input-group" ui-header-setting-va-fps-console>
+    <div class="input-group" ui-header-setting-analyticPerf-console>
       <span class="input-group-label" style="width:40%"><b>Analytic Perf:</b></span>
       <input class="input-group-field switch-input" id="analyticPerfConsoleSwitch" type="checkbox">
       <label class="switch-paddle" for="analyticPerfConsoleSwitch">
