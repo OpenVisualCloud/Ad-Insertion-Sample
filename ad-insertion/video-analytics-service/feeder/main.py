@@ -21,6 +21,7 @@ p=None
 video_analytic_url = "http://localhost:8080/pipelines/"
 timeout = 30
 sleep_for_status = 0.1
+machine_prefix="va"
 
 analytic_rest_msg_template = {
     "source": {
@@ -35,7 +36,7 @@ analytic_rest_msg_template = {
 }
 
 def send_video_analytics_fps(fps):
-    if fps <= 0:
+    if fps < 0:
         return
     global p
     if not p:
@@ -43,7 +44,7 @@ def send_video_analytics_fps(fps):
     if p:
         p.send(video_analytics_fps_topic, json.dumps({
             "fps": fps,
-            "machine":socket.gethostname()[0:3],
+            "machine":machine_prefix+socket.gethostname()[0:3],
             "time": datetime.datetime.utcnow().isoformat(),
         }));
 
@@ -128,12 +129,11 @@ def process_stream(streamstring):
                 time.sleep(sleep_for_status)
                 status, fps = get_analytic_status(instanceid.strip(), pipeline)
                 print("VA feeder: segment status : " + status, flush=True)
+                send_video_analytics_fps(fps)
                 if status == 'COMPLETED':
-                    send_video_analytics_fps(fps)
                     zk.process_end()
                     break
                 elif status == 'RUNNING':
-                    send_video_analytics_fps(fps)
                     continue
                 elif status == 'QUEUED':
                     continue
