@@ -1,19 +1,23 @@
 #!/usr/bin/python3
 
-from messaging import Consumer
+from messaging import Producer,Consumer
 import requests
 import ast
 from zkstate import ZKState
 import merged_segment as merge
-
+import datetime
 import json
+import socket
 import time
 import os
 import re
 
+
 kafka_host = ["kafka-service:9092"]
-kafka_topic = "seg_analytics_sched"
+video_analytics_topic = "seg_analytics_sched"
+video_analytics_fps_topic="video_analytics_fps"
 kafka_group = "video_analytics"
+p=None
 
 video_analytic_url = "http://localhost:8080/pipelines/"
 timeout = 30
@@ -31,6 +35,18 @@ analytic_rest_msg_template = {
     }
 }
 
+def send_video_analytics_fps(fps):
+    if fps <= 0:
+        return
+    global p
+    if not p:
+        p=Producer()
+    if p:
+        p.send(video_analytics_fps_topic, json.dumps({
+            "fps": fps,
+            "machine":socket.gethostname()[0:3],
+            "time": datetime.datetime.utcnow().isoformat(),
+        }));
 
 def start_analytic(stream_uri, pipeline, tags, parameters):
     jsonData = analytic_rest_msg_template
@@ -114,10 +130,11 @@ def process_stream(streamstring):
                 status, fps = get_analytic_status(instanceid.strip(), pipeline)
                 print("VA feeder: segment status : " + status, flush=True)
                 if status == 'COMPLETED':
-                    print("VA feeder: Avg fps: " + str(fps), flush=True)
+                    send_video_analytics_fps(fps)
                     zk.process_end()
                     break
                 elif status == 'RUNNING':
+                    send_video_analytics_fps(fps)
                     continue
                 elif status == 'QUEUED':
                     continue
@@ -147,7 +164,7 @@ if __name__ == "__main__":
     while True:
         try:
             print("VA feeder: listening to messages", flush=True)
-            for msg in c.messages(kafka_topic):
+            for msg in c.messages(video_analytics_topic):
                 print("VA feeder: recieved message: " + str(msg), flush=True)
                 try:
                     process_stream(msg)
@@ -156,3 +173,5 @@ if __name__ == "__main__":
         except Exception as e:
             print("VA feeder: error in main" + str(e), flush=True)
         time.sleep(10)
+    if p:
+        p.close()
