@@ -91,6 +91,6 @@ try_command kubectl taint nodes --all node-role.kubernetes.io/master-
 try_command kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
 
 #Workaround for K8s DNS settings
-try_command sed 's/dns=dnsmasq/#dns=dnsmasq/g' /etc/NetworkManager/NetworkManager.conf
+try_command sed -i 's/dns=dnsmasq/#dns=dnsmasq/g' /etc/NetworkManager/NetworkManager.conf
 try_command service network-manager restart
 try_command resolvconf -u
