@@ -1,0 +1,5 @@
+*.key
+*.crt
+*.pem
+ovc-self-certificates.yaml
+__pycache__/

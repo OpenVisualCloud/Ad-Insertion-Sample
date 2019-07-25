@@ -3,7 +3,7 @@
 from kafka import KafkaProducer, KafkaConsumer, TopicPartition
 import socket
 
-kafka_hosts=["kafka:9092"]
+kafka_hosts=["kafka-service:9092"]
 
 class Producer(object):
     def __init__(self):

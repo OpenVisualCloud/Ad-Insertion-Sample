@@ -12,7 +12,8 @@ import time
 import os
 import re
 
-kafka_host = ["kafka:9092"]
+
+kafka_host = ["kafka-service:9092"]
 video_analytics_topic = "seg_analytics_sched"
 video_analytics_fps_topic="video_analytics_fps"
 kafka_group = "video_analytics"

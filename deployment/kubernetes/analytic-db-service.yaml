@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    image-pull-policy: IfNotPresent
+    service.type: NodePort
+  creationTimestamp: null
+  labels:
+    io.kompose.service: analytic-db
+  name: analytic-db
+spec:
+  ports:
+  - name: "8080"
+    port: 8080
+    targetPort: 8080
+  selector:
+    io.kompose.service: analytic-db
+  type: NodePort
+status:
+  loadBalancer: {}

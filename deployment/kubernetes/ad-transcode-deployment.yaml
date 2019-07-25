@@ -1,0 +1,48 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    image-pull-policy: IfNotPresent
+    service.type: NodePort
+  creationTimestamp:
+  labels:
+    io.kompose.service: ad-transcode
+  name: ad-transcode
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp:
+      labels:
+        io.kompose.service: ad-transcode
+    spec:
+      containers:
+      - image: ssai_ad_transcode:latest
+        imagePullPolicy: IfNotPresent
+        name: ad-transcode
+        ports:
+        - containerPort: 8080
+        resources: {}
+        volumeMounts:
+        - readOnly: false
+          name: ad-dash
+          mountPath: /var/www/adinsert/dash
+        - readOnly: false
+          name: ad-hls
+          mountPath: /var/www/adinsert/hls
+        - readOnly: false
+          name: ad-static
+          mountPath: /var/www/skipped
+      restartPolicy: Always
+      volumes:
+      - name: ad-dash
+        hostPath:
+          path: /home/vcse/ADI/fork/Ad-Insertion-Sample/volume/ad/dash
+      - name: ad-hls
+        hostPath:
+          path: /home/vcse/ADI/fork/Ad-Insertion-Sample/volume/ad/hls
+      - name: ad-static
+        hostPath:
+          path: /home/vcse/ADI/fork/Ad-Insertion-Sample/volume/ad/static
+status: {}

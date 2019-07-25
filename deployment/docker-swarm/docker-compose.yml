@@ -22,14 +22,14 @@ services:
         deploy:
             replicas: 1
             
-    kafka:
+    kafka-service:
         image: confluentinc/cp-kafka:latest
         depends_on:
             - zookeeper
         environment:
             KAFKA_BROKER_ID: 1
             KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-service:9092,PLAINTEXT_HOST://localhost:29092
             KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
             KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
             KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -48,9 +48,9 @@ services:
     kafka-init:
         image: confluentinc/cp-kafka:latest
         depends_on:
-            - kafka
+            - kafka-service
         command: |
-              bash -c 'cub kafka-ready -b kafka:9092 1 20 && \
+              bash -c 'cub kafka-ready -b kafka-service:9092 1 20 && \
                        kafka-topics --create --topic content_provider_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
                        kafka-topics --create --topic seg_analytics_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
                        kafka-topics --create --topic seg_analytics_data --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
@@ -99,7 +99,7 @@ services:
             - ${AD_HLS_VOLUME}:/var/www/adinsert/hls:ro
         depends_on:
             - content-provider
-            - kafka
+            - kafka-service
             - zookeeper
         environment:
             AD_INTERVALS: 8
@@ -111,7 +111,7 @@ services:
     analytic-db:
         image: ssai_analytic_db:latest
         depends_on:
-            - kafka
+            - kafka-service
             - database
         deploy:
             replicas: 1
@@ -122,22 +122,22 @@ services:
             - "443:8080"
         depends_on:
             - ad-insertion-frontend
-            - kafka
+            - kafka-service
         deploy:
             replicas: 1
         secrets:
             - source: self_crt
-              target: self.crt 
+              target: /var/run/secrets/self.crt 
               uid: ${USER_ID}
               gid: ${GROUP_ID}
               mode: 0444
             - source: self_key
-              target: self.key
+              target: /var/run/secrets/self.key
               uid: ${USER_ID}
               gid: ${GROUP_ID}
               mode: 0440
             - source: dhparam_pem
-              target: dhparam.pem
+              target: /var/run/secrets/dhparam.pem
               uid: ${USER_ID}
               gid: ${GROUP_ID}
               mode: 0444
@@ -150,7 +150,7 @@ services:
             - ${VIDEO_DASH_VOLUME}:/var/www/dash:ro
             - ${VIDEO_HLS_VOLUME}:/var/www/hls:ro
         depends_on:
-            - kafka
+            - kafka-service
             - account-service
         deploy:
             replicas: 1
@@ -164,7 +164,7 @@ services:
         deploy:
             replicas: 2
         depends_on:
-            - kafka
+            - kafka-service
             - zookeeper
 
     ad-transcode:
@@ -174,7 +174,7 @@ services:
             - ${AD_HLS_VOLUME}:/var/www/adinsert/hls:rw
             - ${AD_STATIC_VOLUME}:/var/www/skipped:ro
         depends_on:
-            - kafka
+            - kafka-service
             - ad-decision
             - ad-insertion-frontend
             - ad-content
@@ -185,7 +185,7 @@ services:
         image: video_analytics_service_ffmpeg:latest
         depends_on:
             - content-provider
-            - kafka
+            - kafka-service
             - zookeeper
         deploy:
             replicas: 1
@@ -197,7 +197,7 @@ services:
         image: video_analytics_service_gstreamer:latest
         depends_on:
             - content-provider
-            - kafka
+            - kafka-service
             - zookeeper
         deploy:
             replicas: 1
