@@ -106,6 +106,7 @@ $("[analytics-console]").on(":initpage", function () {
                         div1.find("[baseimage]").attr("src","image/object_"+v2.d.label_id+"_"+v2.d.label+".png").width(40).height(40);
                     }
                     if ("e" in v2) {
+                        div1.find("[labelstring]").text(v2.e.label);
                         div1.find("[overlayimage]").attr("src","image/"+v2.e.label+".png").width(24).height(24);
                     }
                     if ("f" in v2) {
