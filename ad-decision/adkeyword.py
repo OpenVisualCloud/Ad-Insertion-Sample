@@ -53,7 +53,7 @@ def GetAdKeywords(data):
             for item in frame["objects"]:
                 attr = item["detection"]["label"]
                 if attr == "face":
-                    sub_item = item.get("motion")
+                    sub_item = item.get("emotion")
                     if sub_item != None:
                         PutKeyword(keywords, sub_item["label"], "emotion")
                     sub_item = item.get("face_id")
