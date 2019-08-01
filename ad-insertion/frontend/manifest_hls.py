@@ -65,6 +65,11 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
                 dst_analysis_res=ori_analysis_res
             seg_info={
                 "stream": stream_cp_url.split("/")[-1],
+                "bandwidth" : 0,
+                "resolution": {
+                    "width": 0,
+                    "height": 0,
+                },
                 "seg_time": timeline+_ad_time(ad_spec,ad_sequence),
                 "seg_duration": duration,
                 "codec": "avc",
@@ -73,6 +78,12 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
                 "ad_duration": ad_spec["duration"][ad_sequence%len(ad_spec["duration"])],
                 "ad_segment": ad_segment,
             }
+
+            if "resolution" in stream_info.keys():
+                seg_info["resolution"]=stream_info["resolution"]
+
+            if "bandwidth" in stream_info.keys():
+                seg_info["bandwidth"]=stream_info["bandwidth"]
 
             # schedule every AD_INTERVAL interval
             m1=re.search("(.*)_[0-9]+", lines[i+1])
@@ -100,10 +111,11 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
                                 seg_info["analytics"] +=[temp]
             elif segsplayed == 0 and ad_sequence == 0:
                 for _idx in range(ahead_analytic,ad_interval):
-                    temp = analytic_info.copy()
-                    temp["stream"]=stream_cp_url+"/"+lines[i+2*_idx+1].replace(ori_analysis_res, dst_analysis_res)
-                    temp["seg_time"]=timeline+_ad_time(ad_spec,ad_sequence)+duration*_idx
-                    seg_info["analytics"] +=[temp]
+                    if i+2*_idx+1<len(lines):
+                        temp = analytic_info.copy()
+                        temp["stream"]=stream_cp_url+"/"+lines[i+2*_idx+1].replace(ori_analysis_res, dst_analysis_res)
+                        temp["seg_time"]=timeline+_ad_time(ad_spec,ad_sequence)+duration*_idx
+                        seg_info["analytics"] +=[temp]
                 for _idx in range(ad_interval+ahead_analytic,2*ad_interval):
                     if i+2*_idx+1<len(lines):
                         temp = analytic_info.copy()
