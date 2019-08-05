@@ -5,6 +5,7 @@ from tornado.httpclient import AsyncHTTPClient
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor
 from zkdata import ZKData
+from zkmdata import ZKMData
 from manifest_hls import parse_hls
 from manifest_dash import parse_dash
 import os
@@ -17,9 +18,19 @@ class ManifestHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
         super(ManifestHandler, self).__init__(app, request, **kwargs)
         self.executor=ThreadPoolExecutor()
+        self.benchmode=0
 
     def check_origin(self, origin):
         return True
+
+    def _get_bench_mode(self, name):
+        zk_benchmode_path=zk_prefix+"/"+name +"/"+"benchmode"
+        zk=ZKMData()
+        enable=zk.get(zk_benchmode_path)
+        zk.close()
+        if enable == {}:
+            return 0
+        return enable
 
     @run_on_executor
     def _set_states(self, minfo, zk_path, stream_base, user):
@@ -73,7 +84,7 @@ class ManifestHandler(web.RequestHandler):
             "duration": list(map(int,os.environ.get("AD_DURATION").split(","))),    # ad duration
         }
 
-        ad_bench_mode=(int)(os.environ.get("AD_BENCH_MODE"))
+        ad_bench_mode=self._get_bench_mode(user)
         print("Bench Mode:"+str(ad_bench_mode),flush=True)
         if stream.endswith(".m3u8"):
             zk=ZKData()
@@ -100,3 +111,11 @@ class ManifestHandler(web.RequestHandler):
         self.write(minfo["manifest"])
         self.set_header('content-type',minfo["content-type"])
         #print("Manifest: "+minfo["manifest"], flush=True)
+
+    def post(self):
+        name=str(self.get_argument("name"))
+        enable=int(self.get_argument("enable"))
+        zk_benchmode_path=zk_prefix+"/"+name +"/"+"benchmode"
+        zk=ZKMData()
+        zk.set(zk_benchmode_path, enable)
+        zk.close()
