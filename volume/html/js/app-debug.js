@@ -54,6 +54,17 @@ $("[debug-console]").on(":initpage",function () {
             return;
         }
 
+        panel=$("[analyticPerf-console]");
+        if (doc.topic=="video_analytics_fps") {
+            if (panel.is(":visible")) {
+                try {
+                    panel.trigger(":update-perf",[moment(doc.value.time),doc.value.machine,doc.value.fps]);
+                } catch (e) {
+                }
+            }
+            return;
+        }
+
         panel=$("[adstats-console]");
         if (doc.topic=="adstats") {
             if (panel.is(":visible")) {
@@ -95,6 +106,7 @@ $("[analytics-console]").on(":initpage", function () {
                         div1.find("[baseimage]").attr("src","image/object_"+v2.d.label_id+"_"+v2.d.label+".png").width(40).height(40);
                     }
                     if ("e" in v2) {
+                        div1.find("[labelstring]").text(v2.e.label);
                         div1.find("[overlayimage]").attr("src","image/"+v2.e.label+".png").width(24).height(24);
                     }
                     if ("f" in v2) {
@@ -235,6 +247,98 @@ $("[workloads-console]").on(":initpage",function (e) {
         //    datasets.push({label:machine,fill:'origin',data:[]});
         //else
         //    datasets.push({label:machine,fill:'-1',data:[]});
+        datasets.push({label:machine,fill:false,data:[]});
+        m=datasets.length-1;
+    }
+
+    datasets[m].data.push({t:time,y:workload});
+    for (m=0;m<datasets.length;m++) {
+        datasets[m].data.sort(function(a,b){
+            return (a.t>b.t)-(a.t<b.t);
+        });
+    }
+
+    /* remove excessive data points */
+    if (labels.length>20) {
+        var t=labels.shift();
+        for (m=0;m<datasets.length;m++)
+            for (var i=0;i<datasets[m].data.length;i++)
+                datasets[m].data=datasets[m].data.filter(v=>v.t>t);
+    }
+
+    chart.update();
+});
+
+$("[analyticPerf-console]").on(":initpage",function (e) {
+    var page=$(this);
+
+    page.data("chart",new Chart(page.find("[analyticPerf-chart]"),{
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [],
+        },
+        options: {
+            reponsive: true,
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                text: 'Analytic Perf(FPS)',
+            },
+            scales: {
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: false
+                    },
+                    stacked: false, //true
+                }],
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: false
+                    },
+                    type: 'time',
+                    time: {
+                        displayFormats: {
+                            second: 'hh:mm:ss'
+                        }
+                    },
+                    distribution: 'linear',
+                }],
+            },
+            plugins: {
+                colorschemes: {
+                    scheme: 'tableau.Tableau20'
+                },
+            },
+            elements: {
+                line: {
+                    tension:0,
+                }
+            },
+            animation: {
+                duration:0,
+            },
+            hover: {
+                animationDuration:0,
+            },
+            responsiveAnimationDuration:0,
+        }
+    }));
+}).on(":update-perf",function (e, time, machine, workload) {
+    var page=$(this);
+    var chart=page.data("chart");
+
+    var labels=chart.config.data.labels;
+    labels.push(time);
+    labels.sort();
+
+    var datasets=chart.config.data.datasets;
+    var m=-1;
+    for (var i=0;i<datasets.length;i++)
+        if (datasets[i].label==machine) { m=i; break; }
+    if (m<0) {
         datasets.push({label:machine,fill:false,data:[]});
         m=datasets.length-1;
     }

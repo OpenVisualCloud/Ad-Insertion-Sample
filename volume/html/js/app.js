@@ -7,4 +7,5 @@ $(window).bind("load", function () {
     $("[adstats-console]").trigger(":initpage");
     $("[workloads-console]").trigger(":initpage");
     $("[analytics-console]").trigger(":initpage");
+    $("[analyticPerf-console]").trigger(":initpage");
 });
