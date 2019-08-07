@@ -1,0 +1,19 @@
+{
+    "name": "face_recognition",
+    "version": 1,
+    "type": "FFmpeg",
+    "template":"-flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_device /dev/dri/renderD128 -i \"{source[uri]}\" -vf \"detect=model={models[face_detection_retail][1][network]}:model_proc=\"{models[face_detection_retail][1][proc]}\":interval=\"{parameters[every-nth-frame]}\":device=6,classify=model=\"{models[face_reidentification][1][network]}\":model_proc=\"{models[face_reidentification][1][proc]}\":device=6\",identify=gallery=\"/gallery/face_gallery/gallery.json\":device=6\"",
+    "description":"Face Recognition",
+    "parameters": {
+        "type" : "object",
+        "properties" : {
+            "every-nth-frame": {
+                "element":"detection",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4294967295,
+                "default": 1
+            }
+        }
+    }
+}
