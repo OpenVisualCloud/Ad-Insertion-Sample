@@ -76,7 +76,7 @@ class SegmentHandler(web.RequestHandler):
         # schedule analytics
         if "analytics" in seg_info:
             self._sch.analyze(seg_info, "object_detection")
-            #self._sch.analyze(seg_info, "emotion_recognition" )
+            self._sch.analyze(seg_info, "face_reidentification" )
             self._sch.flush()
 
             # delay releasing the stream to combat player caching.

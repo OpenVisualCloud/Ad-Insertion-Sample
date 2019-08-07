@@ -9,6 +9,7 @@ export VIDEO_ARCHIVE_VOLUME=$(readlink -f "$DIR/../../volume/video/archive")
 export VIDEO_DASH_VOLUME=$(readlink -f "$DIR/../../volume/video/dash")
 export VIDEO_HLS_VOLUME=$(readlink -f "$DIR/../../volume/video/hls")
 export HTML_VOLUME=$(readlink -f "$DIR/../../volume/html")
+export GALLERY_VOLUME=$(readlink -f "$DIR/../../ad-insertion/video-analytics-service/gallery")
 
 sudo docker container prune -f
 sudo docker volume prune -f
