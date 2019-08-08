@@ -180,9 +180,11 @@ services:
             - ad-content
         deploy:
             replicas: 1
-    
+
     video-analytic-ffmpeg:
         image: video_analytics_service_ffmpeg:latest
+        volumes:
+            - ${GALLERY_VOLUME}:/gallery
         depends_on:
             - content-provider
             - kafka-service
@@ -190,11 +192,13 @@ services:
         deploy:
             replicas: 1
         environment:
-            NETWORK_PREFERENCE: "{\"CPU\":\"INT8\"}"
+            NETWORK_PREFERENCE: "{\"CPU\":\"FP32\"}"
         restart: unless-stopped
 
     video-analytic-gstreamer:
         image: video_analytics_service_gstreamer:latest
+        volumes:
+            - ${GALLERY_VOLUME}:/gallery
         depends_on:
             - content-provider
             - kafka-service

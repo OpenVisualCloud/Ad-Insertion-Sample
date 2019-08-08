@@ -103,7 +103,9 @@ class SegmentHandler(web.RequestHandler):
             if self._usecase["obj_detection"]==1:
                 self._sch.analyze(seg_info, "object_detection")
             if self._usecase["emotion"]==1:
-                self._sch.analyze(seg_info, "emotion_recognition" )
+                self._sch.analyze(seg_info, "emotion_recognition")
+            if self._usecase["face_recognition"] == 1:
+                self._sch.analyze(seg_info, "face_recognition")
             self._sch.flush()
 
             # delay releasing the stream to combat player caching.
