@@ -11,6 +11,7 @@ RUN pip3 install  --no-cache-dir -r /requirements.txt
 COPY ./samples /home/video-analytics/samples
 COPY ./app /home/video-analytics/app
 COPY ./models/ /home/video-analytics/models/
+COPY ./gallery/ /home/video-analytics/gallery/
 COPY ./platforms/Xeon/pipelines/ffmpeg /home/video-analytics/pipelines
 COPY  ./feeder/*.py /home/video-analytics/feeder/
 COPY   docker-entrypoint.sh /home/video-analytics/
