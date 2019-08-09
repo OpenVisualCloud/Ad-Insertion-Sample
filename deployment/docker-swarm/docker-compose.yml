@@ -183,8 +183,6 @@ services:
 
     video-analytic-ffmpeg:
         image: video_analytics_service_ffmpeg:latest
-        volumes:
-            - ${GALLERY_VOLUME}:/gallery
         depends_on:
             - content-provider
             - kafka-service
@@ -197,8 +195,6 @@ services:
 
     video-analytic-gstreamer:
         image: video_analytics_service_gstreamer:latest
-        volumes:
-            - ${GALLERY_VOLUME}:/gallery
         depends_on:
             - content-provider
             - kafka-service
