@@ -41,13 +41,13 @@
       </div>
   </div>
 
-  <div adstats-console style="display:none;position:absolute;background-color:white;opacity:0.9;width:300px;height:250px;top:calc(100vh - 250px);right:300px;overflow:hidden">
+  <div adstats-console style="display:none;position:absolute;background-color:white;opacity:0.9;width:300px;height:250px;top:calc(100vh - 250px);right:600px;overflow:hidden">
       <div style="width:300px;height:250px">
           <canvas adstats-chart width="300" height="250"></canvas>
       </div>
   </div>
 
-  <div analyticPerf-console style="display:none;position:absolute;background-color:white;opacity:0.9;width:300px;height:250px;top:calc(100vh - 250px);right:600px;overflow:hidden">
+  <div analyticPerf-console style="display:none;position:absolute;background-color:white;opacity:0.9;width:300px;height:250px;top:calc(100vh - 250px);right:300px;overflow:hidden">
       <div style="width:300px;height:250px">
           <canvas analyticPerf-chart width="300" height="250"></canvas>
       </div>
