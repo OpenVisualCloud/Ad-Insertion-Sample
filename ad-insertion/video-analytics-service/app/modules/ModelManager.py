@@ -26,7 +26,9 @@ class ModelsDict(MutableMapping):
                 return "{{models[{}][{}][VA_DEVICE_DEFAULT][network]}}".format(self._model_name,self._model_version)
         if (key in self._dict["networks"]):
             return self._dict["networks"][key]
-        return self._dict[key]
+        if key in self._dict:
+            return self._dict[key]
+        return None
     def __iter__(self):
         return iter(self._dict)    
     def __len__(self):
@@ -34,7 +36,7 @@ class ModelsDict(MutableMapping):
 
 class ModelManager:
     models = None
-    network_preference = {'CPU':"FP32",
+    network_preference = {'CPU':"INT8",
                           'HDDL':"FP16",
                           'GPU':"FP16",
                           'VPU':"FP16"}
@@ -62,7 +64,7 @@ class ModelManager:
         networks = {}
         default = ModelManager._get_model_network(path)
         if (default):
-            networks["default"] = ModelManager._get_model_network(path)
+            networks["default"] = default
         for network_type in os.listdir(path):
             network_type_path = os.path.join(path,network_type)
             if (os.path.isdir(network_type_path)):
@@ -72,11 +74,28 @@ class ModelManager:
         return networks
 
     @staticmethod
+    def get_network(model, network):
+        preferred_model=model.replace("VA_DEVICE_DEFAULT",network)
+        try:
+            preferred_model=string.Formatter().vformat(preferred_model, [], {'models':ModelManager.models})
+            return preferred_model
+        except Exception:
+            pass
+        return None
+        
+    @staticmethod
     def get_default_network_for_device(device,model):
-        model=model.replace("VA_DEVICE_DEFAULT",ModelManager.network_preference[device])
-        model=string.Formatter().vformat(model, [], {'models':ModelManager.models})
+        if "VA_DEVICE_DEFAULT" in model:
+            ret = ModelManager.get_network(model,ModelManager.network_preference[device])
+            if ret:
+                return ret
+            logger.info("Device preferred network {net} not found. Trying to fallback to FP32".format(net=ModelManager.network_preference[device]))
+            ret = ModelManager.get_network(model,"FP32")
+            if ret:
+                return ret
+            model=model.replace("[VA_DEVICE_DEFAULT]","")
+            logger.error("Could not resolve preferred network {net} or FP32 for model {model}".format(net=ModelManager.network_preference[device],model=model))
         return model
-    
     
     @staticmethod
     def load_config(model_dir,network_preference):
