@@ -36,7 +36,7 @@ class ModelsDict(MutableMapping):
 
 class ModelManager:
     models = None
-    network_preference = {'CPU':"INT8",
+    network_preference = {'CPU':"FP32",
                           'HDDL':"FP16",
                           'GPU':"FP16",
                           'VPU':"FP16"}
