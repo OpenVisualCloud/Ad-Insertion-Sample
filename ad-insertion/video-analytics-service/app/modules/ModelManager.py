@@ -26,9 +26,7 @@ class ModelsDict(MutableMapping):
                 return "{{models[{}][{}][VA_DEVICE_DEFAULT][network]}}".format(self._model_name,self._model_version)
         if (key in self._dict["networks"]):
             return self._dict["networks"][key]
-        if key in self._dict:
-            return self._dict[key]
-        return None
+        return self._dict.get(key, None)
     def __iter__(self):
         return iter(self._dict)    
     def __len__(self):
@@ -136,7 +134,6 @@ class ModelManager:
                 logger.error("Error Loading Model {model_name} from: {model_dir}: {err}".format(err=error,model_name=model_name,model_dir=model_dir))
 
         ModelManager.models = models
-        
         logger.info("Completed Loading Models")
 
     @staticmethod
