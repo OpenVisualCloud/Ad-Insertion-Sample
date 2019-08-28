@@ -190,7 +190,7 @@ services:
         deploy:
             replicas: 1
         environment:
-            NETWORK_PREFERENCE: "{\"CPU\":\"FP32\"}"
+            NETWORK_PREFERENCE: "{\"CPU\":\"INT8,FP32\"}"
         restart: unless-stopped
 
     video-analytic-gstreamer:

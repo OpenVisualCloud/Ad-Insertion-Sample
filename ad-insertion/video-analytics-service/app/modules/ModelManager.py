@@ -86,15 +86,13 @@ class ModelManager:
     @staticmethod
     def get_default_network_for_device(device,model):
         if "VA_DEVICE_DEFAULT" in model:
-            ret = ModelManager.get_network(model,ModelManager.network_preference[device])
-            if ret:
-                return ret
-            logger.info("Device preferred network {net} not found. Trying to fallback to FP32".format(net=ModelManager.network_preference[device]))
-            ret = ModelManager.get_network(model,"FP32")
-            if ret:
-                return ret
+            for preference in ModelManager.network_preference[device]:
+                ret = ModelManager.get_network(model,preference)
+                if ret:
+                    return ret
+                logger.info("Device preferred network {net} not found".format(net=preference))
             model=model.replace("[VA_DEVICE_DEFAULT]","")
-            logger.error("Could not resolve preferred network {net} or FP32 for model {model}".format(net=ModelManager.network_preference[device],model=model))
+            logger.error("Could not resolve any preferred network {net} for model {model}".format(net=ModelManager.network_preference[device],model=model))
         return model
     
     @staticmethod
@@ -106,6 +104,8 @@ class ModelManager:
             logger.warning("Models directory is mount point")
         models = {}
         ModelManager.network_preference.update(network_preference)
+        for key in ModelManager.network_preference:
+            ModelManager.network_preference[key] = ModelManager.network_preference[key].split(',')
         for model_name in os.listdir(model_dir):
             try:
                 model_path = os.path.join(model_dir,model_name)
