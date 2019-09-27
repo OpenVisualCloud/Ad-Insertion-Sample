@@ -32,3 +32,22 @@ Finally, start/stop services as follows:
 make start_docker_swarm
 make stop_docker_swarm
 ```
+
+### Docker Swam Single Machine Deployment with VCAC-A
+
+Initialize VCAC-A node setup if you have not:
+```
+script/setup-vcac-a.sh
+```
+
+Update the Image to the VCAC-A node:
+```
+script/update-image.sh
+```
+
+Then start/stop services as follows:
+```
+make start_docker_swarm
+make stop_docker_swarm
+```
+
