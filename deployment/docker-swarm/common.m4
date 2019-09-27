@@ -1,12 +1,3 @@
-version: '3.1'
-
-secrets:
-    cdn-ssl-key:
-        external: true
-    cdn-ssl-key:
-        external: true
-
-services:
 
     zookeeper: 
         image: confluentinc/cp-zookeeper:latest
@@ -19,8 +10,15 @@ services:
             ZOOKEEPER_LOG4J_LOGGERS: 'zookeepr=ERROR'
             ZOOKEEPER_LOG4J_ROOT_LOGLEVEL: 'ERROR'
         restart: always
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
             
     kafka-service:
         image: confluentinc/cp-kafka:latest
@@ -42,8 +40,15 @@ services:
             KAFKA_LOG4J_ROOT_LOGLEVEL: 'ERROR'
             CONFLUENT_SUPPORT_METRICS_ENABLE: 0
         restart: always
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
 
     kafka-init:
         image: confluentinc/cp-kafka:latest
@@ -61,6 +66,14 @@ services:
         environment:
             KAFKA_BROKER_ID: ignored
             KAFKA_ZOOKEEPER_CONNECT: ignored
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
+        deploy:
+            placement:
+                constraints:
+                    - node.role==manager
 
     database:
         image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.0
@@ -72,25 +85,53 @@ services:
                 soft: -1
                 hard: -1
         restart: always
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
 
     account-service:
         image: ssai_account_service:latest
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
 
     ad-decision:
         image: ad_decision_service:latest
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
 
     ad-content:
         image: ad_content_service_frontend:latest
         volumes:
             - ${AD_ARCHIVE_VOLUME}:/var/www/archive:ro
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
 
     ad-insertion-frontend:
         image: ssai_ad_insertion_frontend:latest
@@ -105,16 +146,30 @@ services:
             AD_INTERVALS: 8
             AD_DURATION: 5
             AD_BENCH_MODE: 0
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
 
     analytic-db:
         image: ssai_analytic_db:latest
         depends_on:
             - kafka-service
             - database
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
 
     cdn:
         image: ssai_cdn_service:latest
@@ -123,8 +178,15 @@ services:
         depends_on:
             - ad-insertion-frontend
             - kafka-service
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
         secrets:
             - source: self_crt
               target: /var/run/secrets/self.crt 
@@ -152,8 +214,15 @@ services:
         depends_on:
             - kafka-service
             - account-service
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
   
     content-provider-transcode:
         image: ssai_content_provider_transcode:latest
@@ -161,8 +230,15 @@ services:
             - ${VIDEO_ARCHIVE_VOLUME}:/var/www/archive:ro
             - ${VIDEO_DASH_VOLUME}:/var/www/dash:rw
             - ${VIDEO_HLS_VOLUME}:/var/www/hls:rw
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 2
+            placement:
+                constraints:
+                    - node.role==manager
         depends_on:
             - kafka-service
             - zookeeper
@@ -178,35 +254,13 @@ services:
             - ad-decision
             - ad-insertion-frontend
             - ad-content
+ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        networks:
+            - default_net
+')dnl
         deploy:
             replicas: 1
+            placement:
+                constraints:
+                    - node.role==manager
 
-    video-analytic-ffmpeg:
-        image: video_analytics_service_ffmpeg:latest
-        depends_on:
-            - content-provider
-            - kafka-service
-            - zookeeper
-        deploy:
-            replicas: 1
-        environment:
-            NETWORK_PREFERENCE: "{\"CPU\":\"INT8,FP32\"}"
-        restart: unless-stopped
-
-    video-analytic-gstreamer:
-        image: video_analytics_service_gstreamer:latest
-        depends_on:
-            - content-provider
-            - kafka-service
-            - zookeeper
-        deploy:
-            replicas: 1
-        restart: unless-stopped
-
-secrets:
-    self_key:
-        file: self.key
-    self_crt:
-        file: self.crt
-    dhparam_pem:
-        file: dhparam.pem

@@ -22,7 +22,9 @@ p=None
 video_analytic_url = "http://localhost:8080/pipelines/"
 timeout = 30
 sleep_for_status = 0.1
-machine_prefix="va"
+machine_prefix=os.environ.get("VA_PRE")
+if machine_prefix == None:
+    machine_prefix="VA-"
 
 analytic_rest_msg_template = {
     "source": {
