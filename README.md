@@ -44,6 +44,7 @@ See additional information on each service:
 (3) cmake ..    
 (4) make     
 ```
+See also how to customize the building process with [cmake options](doc/cmake.md).
 
 ### Generate DASH/HLS segments
 
@@ -61,6 +62,7 @@ Use the following commands to start/stop services via docker swarm:
 (1) make start_docker_swarm      
 (2) make stop_docker_swarm      
 ```
+See also how to setup [docker swarm](deployment/docker-swarm/README.md).
 
 Use the following commands to start/stop services via docker-compose:        
 ```bash
