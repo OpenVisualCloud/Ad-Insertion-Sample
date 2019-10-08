@@ -1,6 +1,6 @@
 
 Use the following definitions to customize the building process:
-- **PLATFORM**: Specify the target platform. Currently the supported platform is ```Xeon``` and ```VCAC-A```.
+- **PLATFORM**: Specify the target platform. Currently the supported platform are ```Xeon``` and ```VCAC-A```.
 
 ### Examples:
 
