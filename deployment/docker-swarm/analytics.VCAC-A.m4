@@ -15,7 +15,7 @@
             replicas: 1
             placement:
                 constraints:
-                    - node.labels.ad-insert_vcac_zone==yes
+                    - node.labels.vcac_zone==yes
         restart: unless-stopped
 
     video-analytic-gstreamer-vcac-a:
@@ -35,6 +35,6 @@
             replicas: 1
             placement:
                 constraints:
-                    - node.labels.ad-insert_vcac_zone==yes
+                    - node.labels.vcac_zone==yes
         restart: unless-stopped
 
