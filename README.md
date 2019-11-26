@@ -20,20 +20,24 @@ See additional information on each service:
 - The [CDN](cdn/README.md) service
 - The [Video Analytics](ad-insertion/video-analytics-service/README.md) service
 
-### Install docker engine:        
+### Install prerequisites:
 
-(1) Install [docker engine](https://docs.docker.com/install).     
-(2) Install [docker compose](https://docs.docker.com/compose/install), if you plan to deploy through docker compose. Version 1.20+ is required.    
-(3) Setup [docker swarm](https://docs.docker.com/engine/swarm), if you plan to deploy through docker swarm. See [docker swarm setup](deployment/docker-swarm/README.md) for additional setup details.
-(4) Setup [Kubernetes](https://kubernetes.io/), if you plan to deploy through Kubernetes. See [kubernetes setup](doc/kubernetes.md) for additional setup details.
+- **Timezone**: Check that the timezone setting of your host machine is correctly configured. Timezone is used during build. If you plan to run the sample on a cluster of machines managed by Docker Swarm or Kubernetes, please make sure to synchronize time among the manager/master node and worker nodes.    
 
-### Setup docker proxy:
+- **Build Tools**: Install ```cmake``` and ```m4``` if they are not available on your system.        
+
+- **Docker Engine**:        
+  - Install [docker engine](https://docs.docker.com/install).     
+  - Install [docker compose](https://docs.docker.com/compose/install), if you plan to deploy through docker compose. Version 1.20+ is required.    
+  - Setup [docker swarm](https://docs.docker.com/engine/swarm), if you plan to deploy through docker swarm. See [Docker Swarm Setup](deployment/docker-swarm/README.md) for additional setup details.  
+  - Setup [Kubernetes](https://kubernetes.io/docs/setup), if you plan to deploy through Kubernetes. See [Kubernetes Setup](deployment/kubernetes/README.md) for additional setup details.     
+  - Setup docker proxy as follows if you are behind a firewall:   
 
 ```bash
-(4) sudo mkdir -p /etc/systemd/system/docker.service.d       
-(5) printf "[Service]\nEnvironment=\"HTTPS_PROXY=$https_proxy\" \"NO_PROXY=$no_proxy\"\n" | sudo tee /etc/systemd/system/docker.service.d/proxy.conf       
-(6) sudo systemctl daemon-reload          
-(7) sudo systemctl restart docker     
+sudo mkdir -p /etc/systemd/system/docker.service.d       
+printf "[Service]\nEnvironment=\"HTTPS_PROXY=$https_proxy\" \"NO_PROXY=$no_proxy\"\n" | sudo tee /etc/systemd/system/docker.service.d/proxy.conf       
+sudo systemctl daemon-reload          
+sudo systemctl restart docker     
 ```
 
 ### Build docker images: 
