@@ -20,59 +20,63 @@ See additional information on each service:
 - The [CDN](cdn/README.md) service
 - The [Video Analytics](ad-insertion/video-analytics-service/README.md) service
 
-### Install docker engine:        
+### Install prerequisites:
 
-(1) Install [docker engine](https://docs.docker.com/install).     
-(2) Install [docker compose](https://docs.docker.com/compose/install), if you plan to deploy through docker compose. Version 1.20+ is required.    
-(3) Setup [docker swarm](https://docs.docker.com/engine/swarm), if you plan to deploy through docker swarm. See [docker swarm setup](deployment/docker-swarm/README.md) for additional setup details.
-(4) Setup [Kubernetes](https://kubernetes.io/), if you plan to deploy through Kubernetes. See [kubernetes setup](doc/kubernetes.md) for additional setup details.
+- **Timezone**: Check that the timezone setting of your host machine is correctly configured. Timezone is used during build. If you plan to run the sample on a cluster of machines managed by Docker Swarm or Kubernetes, please make sure to synchronize time among the manager/master node and worker nodes.    
 
-### Setup docker proxy:
+- **Build Tools**: Install ```cmake``` and ```m4``` if they are not available on your system.        
+
+- **Docker Engine**:        
+  - Install [docker engine](https://docs.docker.com/install).     
+  - Install [docker compose](https://docs.docker.com/compose/install), if you plan to deploy through docker compose. Version 1.20+ is required.    
+  - Setup [docker swarm](https://docs.docker.com/engine/swarm), if you plan to deploy through docker swarm. See [Docker Swarm Setup](deployment/docker-swarm/README.md) for additional setup details.  
+  - Setup [Kubernetes](https://kubernetes.io/docs/setup), if you plan to deploy through Kubernetes. See [Kubernetes Setup](deployment/kubernetes/README.md) for additional setup details.     
+  - Setup docker proxy as follows if you are behind a firewall:   
 
 ```bash
-(4) sudo mkdir -p /etc/systemd/system/docker.service.d       
-(5) printf "[Service]\nEnvironment=\"HTTPS_PROXY=$https_proxy\" \"NO_PROXY=$no_proxy\"\n" | sudo tee /etc/systemd/system/docker.service.d/proxy.conf       
-(6) sudo systemctl daemon-reload          
-(7) sudo systemctl restart docker     
+sudo mkdir -p /etc/systemd/system/docker.service.d       
+printf "[Service]\nEnvironment=\"HTTPS_PROXY=$https_proxy\" \"NO_PROXY=$no_proxy\"\n" | sudo tee /etc/systemd/system/docker.service.d/proxy.conf       
+sudo systemctl daemon-reload          
+sudo systemctl restart docker     
 ```
 
 ### Build docker images: 
 
 ```bash
-(1) mkdir build    
-(2) cd build     
-(3) cmake ..    
-(4) make     
+mkdir build    
+cd build     
+cmake ..    
+make     
 ```
-See also how to customize the building process with [cmake options](doc/cmake.md).
+See also how to customize the building process with [Build Options](doc/cmake.md).
 
 ### Generate DASH/HLS segments
 
 By default, DASH/HLS segments are generated on the fly during playback, which requires a powerful server platform to keep up with the load. If unsure, it is recommended that you use the following commands to pre-generate DASH/HLS segments:
 
 ```bash
-(5) make dash    # take a coffee break?        
-(6) make hls     # take a walk?!      
+make dash    # take a coffee break?        
+make hls     # take a walk?!      
 ```
 
 ### Start/stop services:
 
 Use the following commands to start/stop services via docker swarm:    
 ```bash
-(1) make start_docker_swarm      
-(2) make stop_docker_swarm      
+make start_docker_swarm      
+make stop_docker_swarm      
 ```
 See also how to setup [docker swarm](deployment/docker-swarm/README.md).
 
 Use the following commands to start/stop services via docker-compose:        
 ```bash
-(1) make start_docker_compose      
-(2) make stop_docker_compose      
+make start_docker_compose      
+make stop_docker_compose      
 ```
 Use the following commands to start/stop services via Kubernetes:        
 ```bash
-(1) make start_kubernetes      
-(2) make stop_kubernetes      
+make start_kubernetes      
+make stop_kubernetes      
 ```
 **Note**: This commands must be run as root.
 ### Launch browser:
