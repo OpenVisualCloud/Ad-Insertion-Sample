@@ -43,40 +43,40 @@ sudo systemctl restart docker
 ### Build docker images: 
 
 ```bash
-(1) mkdir build    
-(2) cd build     
-(3) cmake ..    
-(4) make     
+mkdir build    
+cd build     
+cmake ..    
+make     
 ```
-See also how to customize the building process with [cmake options](doc/cmake.md).
+See also how to customize the building process with [Build Options](doc/cmake.md).
 
 ### Generate DASH/HLS segments
 
 By default, DASH/HLS segments are generated on the fly during playback, which requires a powerful server platform to keep up with the load. If unsure, it is recommended that you use the following commands to pre-generate DASH/HLS segments:
 
 ```bash
-(5) make dash    # take a coffee break?        
-(6) make hls     # take a walk?!      
+make dash    # take a coffee break?        
+make hls     # take a walk?!      
 ```
 
 ### Start/stop services:
 
 Use the following commands to start/stop services via docker swarm:    
 ```bash
-(1) make start_docker_swarm      
-(2) make stop_docker_swarm      
+make start_docker_swarm      
+make stop_docker_swarm      
 ```
 See also how to setup [docker swarm](deployment/docker-swarm/README.md).
 
 Use the following commands to start/stop services via docker-compose:        
 ```bash
-(1) make start_docker_compose      
-(2) make stop_docker_compose      
+make start_docker_compose      
+make stop_docker_compose      
 ```
 Use the following commands to start/stop services via Kubernetes:        
 ```bash
-(1) make start_kubernetes      
-(2) make stop_kubernetes      
+make start_kubernetes      
+make stop_kubernetes      
 ```
 **Note**: This commands must be run as root.
 ### Launch browser:
