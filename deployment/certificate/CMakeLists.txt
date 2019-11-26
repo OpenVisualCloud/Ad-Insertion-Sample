@@ -1,2 +1,2 @@
-set(service "smtc_certificate")
+set(service "ssai_self_certificate")
 include("${CMAKE_SOURCE_DIR}/script/service.cmake")
