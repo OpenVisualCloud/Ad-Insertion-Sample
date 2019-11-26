@@ -22,7 +22,7 @@ def update_imageName(data, fileName, imageName, isVOD):
     else:
         replicas_caps = 2
     data['spec']['replicas'] = replicas_caps
-    data['spec']['template']['spec']['containers'][0]['image'] = "ovc_transcode_" + imageName + ":latest"
+    data['spec']['template']['spec']['containers'][0]['image'] = "transcode_" + imageName + ":latest"
     if imageName == "hw":
         limits_caps = { 'limits': {'gpu.intel.com/i915': 1} }
         data['spec']['template']['spec']['containers'][0]['resources'] = limits_caps

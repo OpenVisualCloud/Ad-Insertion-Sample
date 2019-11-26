@@ -1,2 +1,2 @@
-set(service "xeon_ubuntu1804_ffmpeg")
+set(service "smtc_certificate")
 include("${CMAKE_SOURCE_DIR}/script/service.cmake")

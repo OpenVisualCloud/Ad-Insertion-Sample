@@ -1,6 +1,6 @@
     video-analytic-ffmpeg-vcac-a:
         image: vcac-container-launcher:latest
-        command: ["--network","adinsert_default_net","video_analytics_service_ffmpeg_vcac_a:latest"]
+        command: ["--network","adi_default_net","video_analytics_service_ffmpeg_vcac_a:latest"]
         depends_on:
             - content-provider
             - kafka-service
@@ -20,7 +20,7 @@
 
     video-analytic-gstreamer-vcac-a:
         image: vcac-container-launcher:latest
-        command: ["--network","adinsert_default_net","video_analytics_service_gstreamer_vcac_a:latest"]
+        command: ["--network","adi_default_net","video_analytics_service_gstreamer_vcac_a:latest"]
         depends_on:
             - content-provider
             - kafka-service
