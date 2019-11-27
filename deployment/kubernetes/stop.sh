@@ -27,11 +27,11 @@ fi
 try_command hash kubectl > /dev/null
 
 
-if [ -f "$DIR/ovc-self-certificates.yaml" ]; then
-    kubectl delete -f "$DIR/ovc-self-certificates.yaml"
+if [ -f "$DIR/self-certificates.yaml" ]; then
+    kubectl delete -f "$DIR/self-certificates.yaml"
 fi
 
-rm -f $DIR/ovc-self-certificates.yaml
+rm -f $DIR/self-certificates.yaml
 for i in $(find "$DIR" -name "*-deployment.yaml" -prune -o -name "*.yaml" -print); do
 #    len=$(echo $DIR | wc -m)
 #    i1=$(echo ${i:${len}} | sed 's/-service.yaml//')
@@ -56,7 +56,7 @@ for i in $(find "$DIR" -name "*deployment.yaml"); do
 done
 
 # Delete secrets
-#if [ -f "$DIR/ovc-self-certificates.yaml" ]; then
-#    kubectl delete -f "$DIR/ovc-self-certificates.yaml"
+#if [ -f "$DIR/self-certificates.yaml" ]; then
+#    kubectl delete -f "$DIR/self-certificates.yaml"
 #fi
 

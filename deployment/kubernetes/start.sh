@@ -50,20 +50,20 @@ for i in $(find "$DIR" -name "*deployment.yaml"); do
 done
 
 
-if [ -f "$DIR/ovc-self-certificates.yaml" ]; then
-    kubectl delete -f "$DIR/ovc-self-certificates.yaml"
+if [ -f "$DIR/self-certificates.yaml" ]; then
+    kubectl delete -f "$DIR/self-certificates.yaml"
 fi
 
 
 try_command "$DIR/update_yaml.py" "$DIR"
 
-try_command "$DIR/self-sign.sh"
+try_command "$DIR/../certificate/self-sign.sh"
 
 
 # Generate Secrets
-try_command kubectl create secret generic ssl-key-secret --from-file=self.key="/home/self.key" --from-file=self.crt="/home/self.crt" --from-file=dhparam.pem="/home/dhparam.pem" --dry-run -o yaml > "$DIR/ovc-self-certificates.yaml"
+try_command kubectl create secret generic ssl-key-secret --from-file=self.key="$DIR/../certificate/self.key" --from-file=self.crt="$DIR/../certificate/self.crt" --from-file=dhparam.pem="/$DIR/../certificate/dhparam.pem" --dry-run -o yaml > "$DIR/self-certificates.yaml"
 
-try_command kubectl apply -f "$DIR/ovc-self-certificates.yaml"
+try_command kubectl apply -f "$DIR/self-certificates.yaml"
 
 
 for i in $(find "$DIR" -name "*service.yaml"); do

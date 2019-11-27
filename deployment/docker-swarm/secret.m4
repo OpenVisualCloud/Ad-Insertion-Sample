@@ -1,7 +1,7 @@
 secrets:
     self_key:
-        file: self.key
+        file: ../certificate/self.key
     self_crt:
-        file: self.crt
+        file: ../certificate/self.crt
     dhparam_pem:
-        file: dhparam.pem
+        file: ../certificate/dhparam.pem

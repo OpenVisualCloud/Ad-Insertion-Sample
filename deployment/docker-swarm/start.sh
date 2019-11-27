@@ -10,9 +10,9 @@ export VIDEO_DASH_VOLUME=$(readlink -f "$DIR/../../volume/video/dash")
 export VIDEO_HLS_VOLUME=$(readlink -f "$DIR/../../volume/video/hls")
 export HTML_VOLUME=$(readlink -f "$DIR/../../volume/html")
 
-sudo docker container prune -f
-sudo docker volume prune -f
-sudo docker network prune -f
+docker container prune -f
+docker volume prune -f
+docker network prune -f
 rm -rf "${AD_DASH_VOLUME}" "${AD_HLS_VOLUME}"
 mkdir -p "${AD_DASH_VOLUME}" "${AD_HLS_VOLUME}"
 
@@ -31,15 +31,15 @@ docker_compose)
         exit 0
     fi
 
-    . "$DIR/self-sign.sh"
+    "$DIR/../certificate/self-sign.sh"
     export USER_ID=$(id -u)
     export GROUP_ID=$(id -g)
-    sudo -E docker-compose -f "$yml" -p adinsert --compatibility up
+    docker-compose -f "$yml" -p adi --compatibility up
     ;;
 *)
-    . "$DIR/self-sign.sh"
+    "$DIR/../certificate/self-sign.sh"
     export USER_ID=$(id -u)
     export GROUP_ID=$(id -g)
-    sudo -E docker stack deploy -c "$yml" adinsert
+    docker stack deploy -c "$yml" adi
     ;;
 esac
