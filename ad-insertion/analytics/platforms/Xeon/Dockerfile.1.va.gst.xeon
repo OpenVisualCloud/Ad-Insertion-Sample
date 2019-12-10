@@ -1,0 +1,30 @@
+# ssai_analytics_gst_xeon
+
+FROM openvisualcloud/xeon-ubuntu1804-analytics-gst:19.10
+
+# Fetch python3 and Install python3
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libgirepository-1.0-1 libsoup2.4.1 python3-gi python3-kafka python3-kazoo python3-requests python3-tornado python3-pip python3-setuptools python3-wheel python3-gst-1.0 &&  \
+    rm -rf /var/lib/apt/lists/*;
+
+COPY ./app/server/requirements.txt /
+RUN pip3 install  --no-cache-dir -r /requirements.txt
+COPY ./app /home/video-analytics/app
+COPY ./models/ /home/video-analytics/models/
+COPY ./gallery/ /home/video-analytics/gallery/
+COPY ./platforms/Xeon/pipelines/gstreamer /home/video-analytics/pipelines
+COPY ./feeder/*.py /home/video-analytics/feeder/
+COPY --from=ssai_common /home/*.py /home/video-analytics/feeder/
+COPY docker-entrypoint.sh /home/video-analytics/
+
+WORKDIR /home/video-analytics
+CMD ["./docker-entrypoint.sh"]
+
+####
+ARG  USER
+ARG  GROUP
+ARG  UID
+ARG  GID
+## must use ; here to ignore user exist status code
+RUN  groupadd -f -g ${GID} ${GROUP};useradd -d /home -g ${GROUP} -K UID_MAX=${UID} -K UID_MIN=${UID} ${USER};chown -R ${USER}.${GROUP} /home; 
+USER ${USER}
+####

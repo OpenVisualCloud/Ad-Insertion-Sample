@@ -1,10 +1,8 @@
 
 FROM ssai_common
 
-COPY    *.py /home/
-CMD     ["/bin/bash","-c","/home/main.py"]
-WORKDIR /home
-EXPOSE  80
+COPY   *.py /home/
+CMD    ["/bin/bash","-c","/home/main.py"]
 
 ####
 ARG  USER
@@ -15,3 +13,4 @@ ARG  GID
 RUN  groupadd -f -g ${GID} ${GROUP};useradd -d /home -g ${GROUP} -K UID_MAX=${UID} -K UID_MIN=${UID} ${USER};chown -R ${USER}.${GROUP} /home
 USER ${USER}
 ####
+

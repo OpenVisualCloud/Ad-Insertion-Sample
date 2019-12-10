@@ -1,10 +1,9 @@
 cmake_minimum_required (VERSION 2.8)
 
 Project(ssai NONE)
-add_custom_target(update)
-add_custom_target(backup  ${CMAKE_HOME_DIRECTORY}/script/backup-image.sh)
-add_custom_target(restore ${CMAKE_HOME_DIRECTORY}/script/restore-image.sh)
-add_custom_target(upload  ${CMAKE_HOME_DIRECTORY}/script/update-image.sh)
+add_custom_target(dist  ${CMAKE_HOME_DIRECTORY}/script/mk-dist.sh)
+set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_HOME_DIRECTORY}/dist")
+add_custom_target(update  ${CMAKE_HOME_DIRECTORY}/script/update-image.sh)
 
 if (NOT DEFINED PLATFORM)
     set(PLATFORM "Xeon")

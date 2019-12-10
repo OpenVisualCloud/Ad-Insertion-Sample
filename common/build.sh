@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="ssai_cdn_service"
+IMAGE="ssai_common"
 DIR=$(dirname $(readlink -f "$0"))
 
 . "$DIR/../script/build.sh"

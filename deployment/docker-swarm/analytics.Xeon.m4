@@ -1,5 +1,5 @@
     video-analytic-ffmpeg:
-        image: video_analytics_service_ffmpeg:latest
+        image: ssai_analytics_ffmpeg_xeon:latest
         depends_on:
             - content-provider
             - kafka-service
@@ -11,8 +11,8 @@
             VA_PRE: "Xeon-"
         restart: unless-stopped
 
-    video-analytic-gstreamer:
-        image: video_analytics_service_gstreamer:latest
+    video-analytic-gst:
+        image: ssai_analytics_gst_xeon:latest
         depends_on:
             - content-provider
             - kafka-service

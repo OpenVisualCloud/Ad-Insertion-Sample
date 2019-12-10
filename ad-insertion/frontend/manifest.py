@@ -5,7 +5,6 @@ from tornado.httpclient import AsyncHTTPClient
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor
 from zkdata import ZKData
-from zkmdata import ZKMData
 from manifest_hls import parse_hls
 from manifest_dash import parse_dash
 import os
@@ -25,7 +24,7 @@ class ManifestHandler(web.RequestHandler):
 
     def _get_bench_mode(self, name):
         zk_benchmode_path=zk_prefix+"/"+name +"/"+"benchmode"
-        zk=ZKMData()
+        zk=ZKData()
         enable=zk.get(zk_benchmode_path)
         zk.close()
         if enable == {}:
@@ -116,6 +115,6 @@ class ManifestHandler(web.RequestHandler):
         name=str(self.get_argument("name"))
         enable=int(self.get_argument("enable"))
         zk_benchmode_path=zk_prefix+"/"+name +"/"+"benchmode"
-        zk=ZKMData()
+        zk=ZKData()
         zk.set(zk_benchmode_path, enable)
         zk.close()

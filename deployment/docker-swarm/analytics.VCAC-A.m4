@@ -1,6 +1,7 @@
-    video-analytic-ffmpeg-vcac-a:
+    
+    video-analytic-ffmpeg:
         image: vcac-container-launcher:latest
-        command: ["--network","adi_default_net","video_analytics_service_ffmpeg_vcac_a:latest"]
+        command: ["--network","adi_default_net","ssai_analytics_ffmpeg_vcaca:latest"]
         depends_on:
             - content-provider
             - kafka-service
@@ -18,9 +19,9 @@
                     - node.labels.vcac_zone==yes
         restart: unless-stopped
 
-    video-analytic-gstreamer-vcac-a:
+    video-analytic-gst:
         image: vcac-container-launcher:latest
-        command: ["--network","adi_default_net","video_analytics_service_gstreamer_vcac_a:latest"]
+        command: ["--network","adi_default_net","ssai_analytics_gst_vcaca:latest"]
         depends_on:
             - content-provider
             - kafka-service
@@ -37,4 +38,3 @@
                 constraints:
                     - node.labels.vcac_zone==yes
         restart: unless-stopped
-
