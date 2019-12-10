@@ -4,7 +4,7 @@ from kazoo.client import KazooClient
 from kazoo.exceptions import NoNodeError, NodeExistsError
 import json
 
-ZK_HOSTS='zookeeper:2181'
+ZK_HOSTS='zookeeper-service:2181'
 
 class ZKData(object):
     def __init__(self):

@@ -22,21 +22,21 @@ ad_decision_post_reponse_template = {
         ]
 }
 
-ad_content_server="http://ad-content:8080/"
+ad_content_server="http://ad-content-service:8080/"
 
 #TODO: add database to store this info
 inventory_template = [
-    {'uri' : 'http://ad-content:8080/car.mp4',
+    {'uri' : 'http://ad-content-service:8080/car.mp4',
      'navigation_url' : 'http://www.intel.com',
      'keywords' : ['car', 'sports'],
      'duration' : '7'
     },
-    {'uri' : 'http://ad-content:8080/cat1.mp4',
+    {'uri' : 'http://ad-content-service:8080/cat1.mp4',
      'navigation_url' : 'http://www.intel.com',
      'keywords' : ['cat', 'pets'],
      'duration' : '3'
     },
-    {'uri' : 'http://ad-content:8080/dog4.mp4',
+    {'uri' : 'http://ad-content-service:8080/dog4.mp4',
      'navigation_url' : 'http://www.intel.com',
      'keywords' : ['dog', 'pets'],
      'duration' : '7'
