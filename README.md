@@ -18,7 +18,7 @@ See additional information on each service:
 - The [AD Content](ad-content/README.md) service
 - The [Account](account/README.md) service
 - The [CDN](cdn/README.md) service
-- The [Video Analytics](ad-insertion/video-analytics-service/README.md) service
+- The [Analytics](ad-insertion/analytics/README.md) service
 
 ### Install prerequisites:
 
