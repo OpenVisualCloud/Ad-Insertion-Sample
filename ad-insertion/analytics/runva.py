@@ -21,7 +21,7 @@ class RunVA(object):
             return -1
         fps=0
         while True:
-            while self._maincontext.iteration(): pass 
+            self._maincontext.iteration()
             pinfo=PipelineManager.get_instance_status(pipeline,version,pid)
             print(pinfo, flush=True)
             if pinfo is not None: 

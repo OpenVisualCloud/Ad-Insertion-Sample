@@ -82,21 +82,19 @@ def process_stream(streamstring):
     zk.close()
 
 if __name__ == "__main__":
+    va = RunVA()
     c = Consumer(kafka_group)
     p = Producer()
-    va = RunVA()
     while True:
-        #try:
-        if True:
+        try:
             print("VA feeder: listening to messages", flush=True)
             for msg in c.messages(video_analytics_topic):
                 print("VA feeder: recieved message: " + str(msg), flush=True)
-                #try:
-                if True:
+                try:
                     process_stream(msg)
-                #except Exception as e:
-                #    print("VA feeder: "+str(e), flush=True)
-        #except Exception as e:
-        #    print("VA feeder: error in main" + str(e), flush=True)
+                except Exception as e:
+                    print("VA feeder: "+str(e), flush=True)
+        except Exception as e:
+            print("VA feeder: error in main" + str(e), flush=True)
         time.sleep(10)
     p.close()
