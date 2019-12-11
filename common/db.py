@@ -8,7 +8,7 @@ import json
 class DataBase(object):
     def __init__(self, index="analytics"):
         super(DataBase,self).__init__()
-        self._host="http://database:9200"
+        self._host="http://database-service:9200"
         self._index=index
         self._type="_doc"
         self._template=False
