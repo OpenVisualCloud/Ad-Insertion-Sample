@@ -10,7 +10,7 @@ from manifest_dash import parse_dash
 import os
 
 zk_prefix="/ad-insertion-frontend"
-content_provider_url = "http://content-provider:8080"
+content_provider_url = "http://content-provider-service:8080"
 ad_storage_root = "/var/www/adinsert"
 
 class ManifestHandler(web.RequestHandler):

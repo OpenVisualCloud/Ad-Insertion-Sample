@@ -9,13 +9,11 @@ import json
 import time
 import os
 import copy
-import gstgva # pylint: disable=import-error
+import modules.GstGVAJSONMeta as GstGVAJSONMeta  # pylint: disable=import-error
 from modules.Pipeline import Pipeline  # pylint: disable=import-error
 from modules.PipelineManager import PipelineManager  # pylint: disable=import-error
 from modules.ModelManager import ModelManager  # pylint: disable=import-error
 from common.utils import logging  # pylint: disable=import-error
-import importlib
-import inspect
 
 import gi  # pylint: disable=import-error
 gi.require_version('Gst', '1.0')
@@ -169,7 +167,8 @@ class GStreamerPipeline(Pipeline):
         times['segment.time'] = segment.time
         times['stream_time'] = segment.to_stream_time(Gst.Format.TIME,buffer.pts)                
         return times
-            
+        
+
     def format_location_callback (self,splitmux, fragment_id,sample,data=None):
         times=self.calculate_times(sample)
 
@@ -299,7 +298,7 @@ class GStreamerPipeline(Pipeline):
             if meta is None:
                 logger.debug("No GstGVAJSONMeta")
             else:
-                json_string = gstgva.JSONMeta.get_json_message(meta)  # pylint: disable=undefined-variable
+                json_string = GstGVAJSONMeta.get_json_message(meta).decode('utf-8')  # pylint: disable=undefined-variable
                 json_object = json.loads(json_string)
                 logger.debug(json.dumps(json_object))
                 if self.destination and ("objects" in json_object) and (len(json_object["objects"]) > 0):
@@ -320,7 +319,7 @@ class GStreamerPipeline(Pipeline):
             self.shutdown_and_delete_pipeline("COMPLETED")
         elif t == Gst.MessageType.ERROR:
             err, debug = message.parse_error()
-            logger.error("Error on Pipeline {id}: element: {element} : {err}, {dbg}".format(id=self.id, element=message.src.name,err=err,dbg=debug))
+            logger.error("Error on Pipeline {id}: {err}".format(id=id, err=err))
             bus.remove_signal_watch()
             self.shutdown_and_delete_pipeline("ERROR")
         elif t == Gst.MessageType.STATE_CHANGED:

@@ -24,39 +24,20 @@ va=None
 
 def process_stream(streamstring):
     streamjson = ast.literal_eval(streamstring)
-    if 'source' not in streamjson:
-        print("VA feeder: missing source object in input ", flush=True)
-        return
-    if 'pipeline' not in streamjson:
-        print("VA feeder: missing pipeline in input", flush=True)
-        return
-    if 'uri' not in streamjson['source']:
-        print("VA feeder: missing uri in source", flush=True)
-        return
-    pipeline = streamjson["pipeline"]+"/1"
-    tags = {}
-        tags = streamjson["tags"]
-    parameters = {}
-    if 'parameters' in streamjson:
-        parameters = streamjson["parameters"]
-
+    pipeline1 = streamjson["pipeline"]+"/1"
     stream = streamjson['source']['uri']
     print("VA feeder: stream: "+stream, flush=True)
-    if not stream:
-        print("VA feeder: empty uri", flush=True)
-        return
-
     init_stream = None
     zk_path = None
     if 'uri-init' in streamjson['source']:
         init_stream = streamjson['source']['uri-init']
         print("VA feeder: init_stream: "+init_stream, flush=True)
-        zk_path = stream+"/"+pipeline
+        zk_path = stream+"/"+pipeline1
 
     m1 = re.search("(.*)/.*_([0-9]+.ts)$", stream)
     if m1:
         segment = stream.split('/')[-1].split('_')[-1]
-        zk_path = m1.group(1)+"/"+segment+"/"+pipeline
+        zk_path = m1.group(1)+"/"+segment+"/"+pipeline1
 
     print("VA feeder: zk_path "+zk_path, flush=True)
     zk = ZKState(zk_path)
@@ -73,7 +54,7 @@ def process_stream(streamstring):
                 print("VA feeder: video-analytics merged segment: " +
                       stream, flush=True)
         
-        fps=va.loop(pipeline, {
+        fps=va.loop({
             "source": {
                 "uri": stream,
                 "type":"uri"
@@ -85,7 +66,7 @@ def process_stream(streamstring):
             },
             "tags": streamjson["tags"],
             "parameters": streamjson["parameters"],
-        })
+        }, streamjson["pipeline"])
         if fps<0:
             zk.process_abort()
         else:
@@ -105,16 +86,17 @@ if __name__ == "__main__":
     p = Producer()
     va = RunVA()
     while True:
-        try:
+        #try:
+        if True:
             print("VA feeder: listening to messages", flush=True)
             for msg in c.messages(video_analytics_topic):
                 print("VA feeder: recieved message: " + str(msg), flush=True)
-                try:
+                #try:
+                if True:
                     process_stream(msg)
-                except Exception as e:
-                    print("VA feeder: "+str(e), flush=True)
-        except Exception as e:
-            print("VA feeder: error in main" + str(e), flush=True)
+                #except Exception as e:
+                #    print("VA feeder: "+str(e), flush=True)
+        #except Exception as e:
+        #    print("VA feeder: error in main" + str(e), flush=True)
         time.sleep(10)
     p.close()
-    va.close()
