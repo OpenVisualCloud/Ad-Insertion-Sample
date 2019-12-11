@@ -6,9 +6,6 @@
             - ${VIDEO_ARCHIVE_VOLUME}:/var/www/archive:ro
             - ${VIDEO_DASH_VOLUME}:/var/www/dash:ro
             - ${VIDEO_HLS_VOLUME}:/var/www/hls:ro
-        depends_on:
-            - kafka-service
-            - account-service
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
             - default_net

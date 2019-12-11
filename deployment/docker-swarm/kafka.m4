@@ -1,8 +1,6 @@
 
     kafka-service:
         image: confluentinc/cp-kafka:latest
-        depends_on:
-            - zookeeper-service
         environment:
             KAFKA_BROKER_ID: 1
             KAFKA_ZOOKEEPER_CONNECT: zookeeper-service:2181
@@ -31,8 +29,6 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
 
     kafka-init:
         image: confluentinc/cp-kafka:latest
-        depends_on:
-            - kafka-service
         command: |
               bash -c 'cub kafka-ready -b kafka-service:9092 1 20 && \
                        kafka-topics --create --topic content_provider_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
@@ -53,4 +49,3 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
             placement:
                 constraints:
                     - node.role==manager
-

@@ -4,10 +4,6 @@
         volumes:
             - ${AD_DASH_VOLUME}:/var/www/adinsert/dash:ro
             - ${AD_HLS_VOLUME}:/var/www/adinsert/hls:ro
-        depends_on:
-            - content-provider
-            - kafka-service
-            - zookeeper
         environment:
             AD_INTERVALS: 8
             AD_DURATION: 5

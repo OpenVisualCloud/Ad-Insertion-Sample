@@ -3,9 +3,6 @@
         image: ssai_cdn_service:latest
         ports:
             - "443:8080"
-        depends_on:
-            - ad-insertion-frontend
-            - kafka-service
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
             - default_net

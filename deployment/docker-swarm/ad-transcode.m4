@@ -5,11 +5,6 @@
             - ${AD_DASH_VOLUME}:/var/www/adinsert/dash:rw
             - ${AD_HLS_VOLUME}:/var/www/adinsert/hls:rw
             - ${AD_STATIC_VOLUME}:/var/www/skipped:ro
-        depends_on:
-            - kafka-service
-            - ad-decision
-            - ad-insertion-frontend
-            - ad-content
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
             - default_net

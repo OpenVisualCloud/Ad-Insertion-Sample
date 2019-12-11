@@ -14,7 +14,3 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
             placement:
                 constraints:
                     - node.role==manager
-        depends_on:
-            - kafka-service
-            - zookeeper
-
