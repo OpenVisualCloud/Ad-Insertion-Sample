@@ -12,10 +12,8 @@ import time
 import os
 import re
 
-kafka_host = "kafka-service:9092"
 video_analytics_topic = "seg_analytics_sched"
 video_analytics_fps_topic="video_analytics_fps"
-kafka_group = "video_analytics"
 machine_prefix=os.environ.get("VA_PRE")
 if machine_prefix == None:
     machine_prefix="VA-"
@@ -61,7 +59,7 @@ def process_stream(streamstring):
             },
             "destination": {
                 "type": "kafka",
-                "host": kafka_host,
+                "host": socket.gethostbyname("kafka-service")+":9092",
                 "topic": "seg_analytics_data"
             },
             "tags": streamjson["tags"],
@@ -83,7 +81,7 @@ def process_stream(streamstring):
 
 if __name__ == "__main__":
     va = RunVA()
-    c = Consumer(kafka_group)
+    c = Consumer("analytics")
     p = Producer()
     while True:
         try:
@@ -96,5 +94,5 @@ if __name__ == "__main__":
                     print("VA feeder: "+str(e), flush=True)
         except Exception as e:
             print("VA feeder: error in main" + str(e), flush=True)
-        time.sleep(10)
+        time.sleep(1)
     p.close()

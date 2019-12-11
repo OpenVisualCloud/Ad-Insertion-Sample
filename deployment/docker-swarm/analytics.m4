@@ -7,6 +7,7 @@ ifelse(defn(`PLATFORM'),`Xeon',`dnl
         environment:
             NETWORK_PREFERENCE: "{\"CPU\":\"INT8,FP32\"}"
             VA_PRE: "defn(`PLATFORM')-"
+            GST_DEBUG: "4"
             NO_PROXY: "*"
             no_proxy: "*"
 ')dnl
