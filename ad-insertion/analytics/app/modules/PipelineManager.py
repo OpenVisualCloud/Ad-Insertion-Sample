@@ -217,7 +217,9 @@ class PipelineManager:
 
     @staticmethod
     def pipeline_finished():
-        PipelineManager.start_next_pipeline()
+        import tornado
+        ioloop = tornado.ioloop.IOLoop.instance()
+        ioloop.add_callback(PipelineManager.start_next_pipeline)
 
     @staticmethod
     def get_instance_parameters(name, version, instance_id):
