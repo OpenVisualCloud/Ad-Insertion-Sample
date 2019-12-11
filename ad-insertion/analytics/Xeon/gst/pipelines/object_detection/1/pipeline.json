@@ -21,10 +21,6 @@
                     "property": "address"
                 }
             },
-            "clientid": {
-                "type": "string",
-                "element": "metapublish"
-            },
             "topic": {
                 "type": "string",
                 "element": "metapublish"
