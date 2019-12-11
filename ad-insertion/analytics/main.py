@@ -17,8 +17,8 @@ video_analytics_fps_topic="video_analytics_fps"
 machine_prefix=os.environ.get("VA_PRE")
 if machine_prefix == None:
     machine_prefix="VA-"
-p=None
-va=None
+va=RunVA()
+p=Producer()
 
 def process_stream(streamstring):
     streamjson = ast.literal_eval(streamstring)
@@ -80,12 +80,10 @@ def process_stream(streamstring):
     zk.close()
 
 if __name__ == "__main__":
-    va = RunVA()
-    c = Consumer("analytics")
-    p = Producer()
     while True:
         try:
             print("VA feeder: listening to messages", flush=True)
+            c = Consumer("analytics")
             for msg in c.messages(video_analytics_topic):
                 print("VA feeder: recieved message: " + str(msg), flush=True)
                 try:
@@ -94,5 +92,5 @@ if __name__ == "__main__":
                     print("VA feeder: "+str(e), flush=True)
         except Exception as e:
             print("VA feeder: error in main" + str(e), flush=True)
-        time.sleep(1)
+            time.sleep(1)
     p.close()
