@@ -16,7 +16,6 @@
             KAFKA_LOG4J_LOGGERS: 'kafka=ERROR,kafka.controller=ERROR,state.change.logger=ERROR,org.apache.kafka=ERROR'
             KAFKA_LOG4J_ROOT_LOGLEVEL: 'ERROR'
             CONFLUENT_SUPPORT_METRICS_ENABLE: 0
-        restart: always
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
             - default_net

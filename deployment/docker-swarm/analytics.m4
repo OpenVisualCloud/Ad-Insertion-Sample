@@ -7,7 +7,9 @@ ifelse(defn(`PLATFORM'),`Xeon',`dnl
         environment:
             NETWORK_PREFERENCE: "{\"CPU\":\"INT8,FP32\"}"
             VA_PRE: "defn(`PLATFORM')-"
-        restart: unless-stopped
+            GST_DEBUG: "4"
+            NO_PROXY: "*"
+            no_proxy: "*"
 ')dnl
 
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
@@ -16,6 +18,8 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         command: ["--network","adi_default_net","`ssai_analytics_'defn(`FRAMEWORK')_vcac-a:latest"]
         environment:
             VCAC_VA_PRE: "VCAC-A-"
+            NO_PROXY: "*"
+            no_proxy: "*"
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
         networks:
@@ -25,5 +29,4 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
             placement:
                 constraints:
                     - node.labels.vcac_zone==yes
-        restart: unless-stopped
 ')dnl
