@@ -2,40 +2,8 @@
     "name": "emotion_recognition",
     "version": 1,
     "type": "GStreamer",
-    "template":"urisourcebin uri=\"{source[uri]}\" ! concat name=c ! decodebin ! video/x-raw ! videoconvert name=\"videoconvert\" ! gvadetect model=\"{models[face_detection_retail][1][network]}\" model-proc=\"{models[face_detection_retail][1][proc]}\" name=\"detection\" ! queue ! gvaclassify model=\"{models[emotion_recognition][1][network]}\" model-proc=\"{models[emotion_recognition][1][proc]}\" name=\"classification\" ! queue ! gvametaconvert converter=json method=detection name=\"metaconvert\" ! queue ! gvametapublish name=\"metapublish\" ! appsink name=appsink",
+    "template":"urisourcebin uri=\"{source[uri]}\" ! concat name=c ! decodebin ! video/x-raw ! videoconvert name=\"videoconvert\" ! gvadetect model=\"{models[face_detection_retail][1][network]}\" model-proc=\"{models[face_detection_retail][1][proc]}\" name=\"detection\" ! queue ! gvaclassify model=\"{models[emotion_recognition][1][network]}\" model-proc=\"{models[emotion_recognition][1][proc]}\" name=\"classification\" ! queue ! gvametaconvert converter=json method=detection name=\"metaconvert\" ! queue ! gvametapublish name=\"destination\" ! appsink name=appsink",
     "description": "Emotion Recognition Pipeline",
-    "destination": {
-        "type": "object",
-        "properties": {
-            "type": {
-                "type": "string",
-                "element": {
-                    "name": "metapublish",
-                    "property": "method"
-                }
-            },
-            "host": {
-                "type": "string",
-                "element": {
-                    "name": "metapublish",
-                    "property": "address"
-                }
-            },
-            "clientid": {
-                "type": "string",
-                "element": "metapublish"
-            },
-            "topic": {
-                "type": "string",
-                "element": "metapublish"
-            },
-            "timeout": {
-                "type": "integer",
-                "element": "metapublish",
-                "default": 1000
-            }
-        }
-    },
     "parameters": {
         "type" : "object",
         "properties" : {
