@@ -89,6 +89,7 @@ class FFmpegPipeline(Pipeline):
 
     def _spawn(self,args):
         self.start_time = time.time()
+        logger.debug(args)
         self._process=subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True)
         self.state = "RUNNING"
         self._process.poll()
@@ -147,7 +148,8 @@ class FFmpegPipeline(Pipeline):
                  ("VA_DEVICE_DEFAULT" in filter_params['model'])):
                 device="CPU"
                 if ("device" in filter_params):
-                    device = FFmpegPipeline.DEVICEID_MAP[int(filter_params['device'])]
+                    if isinstance(filter_params['device'],int):
+                        device = FFmpegPipeline.DEVICEID_MAP[int(filter_params['device'])]
                 filter_params["model"] = ModelManager.get_default_network_for_device(device,filter_params["model"])
                 new_filters.append(self._join_filter_params(filter_params))
             else:

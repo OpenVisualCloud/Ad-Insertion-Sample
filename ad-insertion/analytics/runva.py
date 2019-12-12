@@ -12,6 +12,10 @@ class RunVA(object):
         ModelManager.load_config("/home/models",{})
         PipelineManager.load_config("/home/pipelines",1)
         self._maincontext=GLib.MainLoop().get_context()
+        GLib.timeout_add(1000,self._noop)
+
+    def _noop(self):
+        return True
 
     def loop(self, reqs, pipeline, version="1"):
         print(reqs, flush=True)
