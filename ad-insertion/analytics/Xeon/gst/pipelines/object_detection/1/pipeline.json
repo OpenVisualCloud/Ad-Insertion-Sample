@@ -2,36 +2,8 @@
     "name": "object_detection",
     "version": 1,
     "type": "GStreamer",
-    "template":"urisourcebin uri=\"{source[uri]}\" ! concat name=c ! decodebin ! video/x-raw ! videoconvert name=\"videoconvert\" ! gvadetect infer-config=CPU_BIND_THREAD=NO model=\"{models[object_detection][1][network]}\" model-proc=\"{models[object_detection][1][proc]}\" name=\"detection\" ! gvametaconvert converter=json method=detection name=\"metaconvert\" ! queue ! gvametapublish name=\"metapublish\" ! queue ! appsink name=appsink",
+    "template":"urisourcebin uri=\"{source[uri]}\" ! concat name=c ! decodebin ! video/x-raw ! videoconvert name=\"videoconvert\" ! gvadetect infer-config=CPU_BIND_THREAD=NO model=\"{models[object_detection][1][network]}\" model-proc=\"{models[object_detection][1][proc]}\" name=\"detection\" ! gvametaconvert converter=json method=detection name=\"metaconvert\" ! queue ! gvametapublish name=\"destination\" ! queue ! appsink name=appsink",
     "description": "Object Detection Pipeline",
-    "destination": {
-        "type" : "object",
-        "properties" : {
-            "type": {
-                "type": "string",
-                "element": {
-                    "name": "metapublish",
-                    "property": "method"
-                }
-            },
-            "host": {
-                "type": "string",
-                "element": {
-                    "name": "metapublish",
-                    "property": "address"
-                }
-            },
-            "topic": {
-                "type": "string",
-                "element": "metapublish"
-            },
-            "timeout": {
-                "type": "integer",
-                "element": "metapublish",
-                "default": 1000
-            }
-        }
-    },
     "parameters": {
         "type" : "object",
         "properties" : {
