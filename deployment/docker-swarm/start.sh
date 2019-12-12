@@ -8,7 +8,6 @@ export AD_STATIC_VOLUME=$(readlink -f "$DIR/../../volume/ad/static")
 export VIDEO_ARCHIVE_VOLUME=$(readlink -f "$DIR/../../volume/video/archive")
 export VIDEO_DASH_VOLUME=$(readlink -f "$DIR/../../volume/video/dash")
 export VIDEO_HLS_VOLUME=$(readlink -f "$DIR/../../volume/video/hls")
-export HTML_VOLUME=$(readlink -f "$DIR/../../volume/html")
 
 docker container prune -f
 docker volume prune -f

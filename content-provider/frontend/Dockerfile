@@ -3,6 +3,7 @@ FROM ssai_common
 
 COPY   *.py /home/
 COPY   *.conf /etc/nginx/
+COPY   html /var/www/html
 CMD    ["/bin/bash","-c","/home/main.py&/usr/sbin/nginx"]
 VOLUME ["/var/www/archive","/var/www/dash","/var/www/hls"]
 EXPOSE 8080

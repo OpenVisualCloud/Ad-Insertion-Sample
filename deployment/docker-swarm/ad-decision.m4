@@ -1,6 +1,6 @@
 
     ad-decision-service:
-        image: ad_decision_service:latest
+        image: ssai_ad_decision_frontend:latest
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
             - default_net

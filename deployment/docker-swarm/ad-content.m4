@@ -1,6 +1,6 @@
 
     ad-content-service:
-        image: ad_content_service_frontend:latest
+        image: ssai_ad_content_frontend:latest
         volumes:
             - ${AD_ARCHIVE_VOLUME}:/var/www/archive:ro
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl

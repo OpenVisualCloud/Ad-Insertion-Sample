@@ -2,7 +2,7 @@
     cdn:
         image: ssai_cdn_service:latest
         ports:
-            - "443:8080"
+            - "443:8443"
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
             - default_net

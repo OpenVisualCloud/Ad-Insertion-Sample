@@ -2,7 +2,6 @@
     content-provider-service:
         image: ssai_content_provider_frontend:latest
         volumes:
-            - ${HTML_VOLUME}:/var/www/html:ro
             - ${VIDEO_ARCHIVE_VOLUME}:/var/www/archive:ro
             - ${VIDEO_DASH_VOLUME}:/var/www/dash:ro
             - ${VIDEO_HLS_VOLUME}:/var/www/hls:ro

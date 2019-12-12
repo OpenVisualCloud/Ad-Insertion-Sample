@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-IMAGE="ad_decision_service"
+IMAGE="ssai_ad_decision_frontend"
 DIR=$(dirname $(readlink -f "$0"))
 
 . "$DIR/../../script/shell.sh"

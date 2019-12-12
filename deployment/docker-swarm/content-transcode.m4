@@ -1,6 +1,6 @@
 
     content-transcode:
-        image: ssai_content_provider_transcode:latest
+        image: ssai_content_transcode:latest
         volumes:
             - ${VIDEO_ARCHIVE_VOLUME}:/var/www/archive:ro
             - ${VIDEO_DASH_VOLUME}:/var/www/dash:rw
