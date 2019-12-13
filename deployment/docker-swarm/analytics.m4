@@ -14,7 +14,7 @@ ifelse(defn(`PLATFORM'),`Xeon',`dnl
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
     analytics:
         image: vcac-container-launcher:latest
-        command: ["--network","adi_default_net","`ssai_analytics_'defn(`FRAMEWORK')_vcac-a:latest"]
+        command: ["--network","adi_default_net","`ssai_analytics_'defn(`FRAMEWORK')_vcaca:latest"]
         environment:
             VCAC_VA_PRE: "VCAC-A-"
             NO_PROXY: "*"
