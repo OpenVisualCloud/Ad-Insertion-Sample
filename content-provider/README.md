@@ -1,6 +1,6 @@
 The Content Provider is a web service that serves videos. Any DASH/HLS player can connect to the service and playback the videos.
 
-<IMG src="../volume/html/image/content-provider-arch.png" height="450">
+<IMG src="../doc/content-provider-arch.png" height="450">
 
 The Content Provider operates as follows:      
 - The client player requests the playlist from the Content Provider, which checks the [Account](../account/README.md) service for the user subscription information and returns the playable stream list.   
