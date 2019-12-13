@@ -2,7 +2,6 @@
 
 from tornado import web, gen
 from zkdata import ZKData
-from zkmdata import ZKMData
 from schedule import Schedule
 from os.path import isfile
 import time
@@ -22,7 +21,7 @@ class SegmentHandler(web.RequestHandler):
 
     def _get_usecase_status(self, name, usecase):
         zk_usecase_path=zk_prefix+"/"+name +"/"+usecase
-        zk=ZKMData()
+        zk=ZKData()
         enable=zk.get(zk_usecase_path)
         zk.close()
         if enable == {}:
@@ -31,7 +30,7 @@ class SegmentHandler(web.RequestHandler):
 
     def _set_usecase_status(self, name, usecase, value):
         zk_usecase_path=zk_prefix+"/"+name +"/"+usecase
-        zk=ZKMData()
+        zk=ZKData()
         zk.set(zk_usecase_path,value)
         zk.close()
 

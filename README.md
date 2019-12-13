@@ -14,11 +14,11 @@ The client player is based on dash.js and hls.js.
 See additional information on each service:     
 - The [Content Provider](content-provider/README.md) service     
 - The [AD Insertion](ad-insertion/README.md) service
-- The [AD Decision](ad-decision/README.md) service
+- The [AD Decision](ad-content/ad-decision/README.md) service
 - The [AD Content](ad-content/README.md) service
 - The [Account](account/README.md) service
 - The [CDN](cdn/README.md) service
-- The [Video Analytics](ad-insertion/video-analytics-service/README.md) service
+- The [Analytics](ad-insertion/analytics/README.md) service
 
 ### Install prerequisites:
 

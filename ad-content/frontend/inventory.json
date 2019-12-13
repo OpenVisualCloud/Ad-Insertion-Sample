@@ -1,15 +1,15 @@
 [
-    {"uri" : "http://ad-content:8080/car6.mp4",
+    {"uri" : "http://ad-content-service:8080/car6.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["car", "sports", "motorbike", "bicycle", "anger", "sad", "surprise"],
      "duration" : "5"
     },
-    {"uri" : "http://ad-content:8080/travel6.mp4",
+    {"uri" : "http://ad-content-service:8080/travel6.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["person", "diningtable", "sofa", "train", "boat", "aeroplane", "face", "tvmonitor", "chair", "happy", "neutral", "bus"],
      "duration" : "5"
     },
-    {"uri" : "http://ad-content:8080/catfood.mp4",
+    {"uri" : "http://ad-content-service:8080/catfood.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["bottle","cat", "pets", "cow", "dog", "horse", "pottedplant", "sheep", "bird"],
      "duration" : "5"

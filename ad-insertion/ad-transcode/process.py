@@ -19,8 +19,8 @@ dash_root="/var/www/adinsert/dash"
 hls_root="/var/www/adinsert/hls"
 fallback_root="/var/www/skipped"
 
-ad_decision_server="http://ad-decision:8080/metadata"
-ad_content_server="http://ad-content:8080"
+ad_decision_server="http://ad-decision-service:8080/metadata"
+ad_content_server="http://ad-content-service:8080"
 
 timeout = 30
 

@@ -1,8 +1,3 @@
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build.sh")
-    add_custom_target(build_${service} ALL "${CMAKE_CURRENT_SOURCE_DIR}/build.sh" "${PLATFORM}")
-endif()
-
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/update.sh")
-    add_custom_target(update_${service} "${CMAKE_CURRENT_SOURCE_DIR}/update.sh")
-    add_dependencies(update update_${service})
+    add_custom_target(build_${service} ALL "${CMAKE_CURRENT_SOURCE_DIR}/build.sh" "${PLATFORM}" "${FRAMEWORK}" "${NANALYTICS}" "${NINSERTIONS}")
 endif()

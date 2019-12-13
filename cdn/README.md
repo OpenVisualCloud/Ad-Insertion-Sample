@@ -4,7 +4,7 @@ In addition, the CDN service implements a debug hook to show server activities a
 
 ### Interface:
 
-The CDN service exposes the following interface(s) on port 80:    
+The CDN service exposes the following interface(s) on port 8443:    
  
 | Path | Description |
 |----|------|

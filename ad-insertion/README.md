@@ -7,7 +7,7 @@ The AD Insertion service operates as follows:
 - The AD Insertion service also schedules analysis of the video segment or construction of the AD segment before the segment is about to be played. For example, fetching video segment *i* leads to analyzing video segment *i* and constructing the next AD, assuming there is an AD break following video segment *i*.    
 - In the background, two pipelines are running, scheduled by Kafka, to analyze the video segments, and to construct AD segments. The analyzed results are saved to the database for later use. The constructed AD segments will be sent to the client player upon request.    
 - The AD Insertion service keeps track of how many AD segments are served to the client player and reports the statistics to the [AD Content](../ad-content/README.md) service.    
-- If the user clicks on any portion of the playback screen, the AD Insertion service interpret the click to be either an AD click or a question/answer click. Report the click to the [AD Content](../ad-content/README.md) service or the [AD Decision](../ad-decision/README.md) service for further action.       
+- If the user clicks on any portion of the playback screen, the AD Insertion service interpret the click to be either an AD click or a question/answer click. Report the click to the [AD Content](../ad-content/README.md) service or the [AD Decision](../ad-content/ad-decision/README.md) service for further action.       
 
 <IMG src="../volume/html/image/ad-insertion-sequence.png" height="300">
 
@@ -26,8 +26,8 @@ The following analyses are supported:
 ### Construct AD segment:
 
 The AD Insertion service constructs an AD segemnt as follows:    
-- Query the database for the past few seconds of video analytics data.    
-- Sent the request to the [AD Decision](../ad-decision/README.md) service for the relevant AD URL.   
+- Query the database for the past few seconds of the analytics data.    
+- Sent the request to the [AD Decision](../ad-content/ad-decision/README.md) service for the relevant AD URL.   
 - Transcode the AD content to match the quality (resolution and bitrate) of the video segment.  
 
 ### Interface:

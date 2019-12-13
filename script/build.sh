@@ -1,10 +1,12 @@
 #!/bin/bash -e
 
-if test -z "${DIR}"; then
+if test -z "${DIR}"; then 
     echo "This script should not be called directly."
     exit -1
-fi
+fi 
 
+PLATFORM="${1:-Xeon}"
+FRAMEWORK="${2:-gst}"
 USER="docker"
 GROUP="docker"
 
@@ -21,15 +23,11 @@ build_docker() {
 }
 
 # build image(s) in order (to satisfy dependencies)
-for dep in '.8.*' '.7.*' '.6.*' '.5.*' '.4.*' '.3.*' '.2.*' '.1.*' '.0.*' ''; do
-    dirs=("${DIR}" "${DIR}/platforms/${PLATFORM:=Xeon}")
-    if test ! -d "${dirs[1]}"; then
-        unset dirs[1]
-    fi
-    for dockerfile in `find "${dirs[@]}" -maxdepth 1 -name "Dockerfile${dep}" -print` ; do
+for dep in '.5.*' '.4.*' '.3.*' '.2.*' '.1.*' '.0.*' ''; do
+    dirs=("$DIR/$PLATFORM/$FRAMEWORK" "$DIR/$PLATFORM" "$DIR")
+    for dockerfile in $(find "${dirs[@]}" -maxdepth 1 -name "Dockerfile$dep" -print 2>/dev/null); do
         image=$(head -n 1 "$dockerfile" | grep '# ' | cut -d' ' -f2)
         if test -z "$image"; then image="$IMAGE"; fi
-        build_docker "$dockerfile" "$image"":latest"
+        build_docker "$dockerfile" "$image"
     done
 done
-
