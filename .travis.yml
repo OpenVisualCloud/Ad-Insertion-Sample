@@ -9,13 +9,14 @@ addons:
     update: true
 
 env:
-  - image=ad-decision
+  - image=ad-content/ad-decision
   - image=account
+  - image=common
   - image=ad-content/frontend
   - image=ad-content/archive
   - image=ad-insertion/frontend
   - image=ad-insertion/ad-static
-  - image=ad-insertion/analytic-db
+  - image=ad-insertion/kafka2db
   - image=ad-insertion/ad-transcode
   - image=deployment
   - image=cdn
@@ -33,11 +34,11 @@ script:
 
 matrix:
   include:
-  # ad-insertion/video-analytics-service
-    - name: ad-insertion/video-analytics-service
-      env: image=ad-insertion/video-analytics-service
+  # ad-insertion/analytic-service
+    - name: ad-insertion/analytics
+      env: image=ad-insertion/analytics
       script: 
         - mkdir build && cd build && cmake ..
-        - travis_wait 180 ${TRAVIS_BUILD_DIR}/script/travis_build.sh  ad-insertion/video-analytics-service
+        - travis_wait 180 ${TRAVIS_BUILD_DIR}/script/travis_build.sh  ad-insertion/analytics
       after_failure:
-        - tail --lines=5000 log_ad-insertion_video-analytics-service.log
+        - tail --lines=5000 log_ad-insertion_analytics.log
