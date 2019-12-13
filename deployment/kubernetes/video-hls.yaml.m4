@@ -6,6 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  volumeMode: Filesystem
-  storageClassName: cache
-
+  storageClassName: cache-storage
+  resources:
+    requests:
+      storage: 5Gi

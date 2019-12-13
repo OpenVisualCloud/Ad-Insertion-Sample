@@ -6,6 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  volumeMode: Filesystem
   storageClassName: archive
-
+  resources:
+    requests:
+      storage: 1Gi
