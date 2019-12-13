@@ -14,14 +14,14 @@ The [Content Provider](content-provider/README.md) service serves original conte
 The sample exercises the following Open Visual Cloud software stacks:  
 
 - [FFmpeg media transcoding stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/media/ffmpeg): Transcode video or Ad content to DASH or HLS, on demand.   
-- [FFmpeg media analytics stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/ffmpeg): Analyze video content for objects, emotion and faces. Also optimized for [Intel VCAC-A](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/VCAC-A/ubuntu-18.04/analytics/ffmpeg).  
-- [GStreamer media analytics stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/gst): Analyze video content for objects, emotion and faces. Also optimized for [Intel VCAC-A](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/VCAC-A/ubuntu-18.04/analytics/gst).  
+- [FFmpeg media analytics stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/ffmpeg): Analyze video content for objects, emotion and faces. Optimized for [Intel VCAC-A](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/VCAC-A/ubuntu-18.04/analytics/ffmpeg).  
+- [GStreamer media analytics stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/gst): Analyze video content for objects, emotion and faces. Optimized for [Intel VCAC-A](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/VCAC-A/ubuntu-18.04/analytics/gst).  
 
 ### Install Prerequisites:
 
 - **Timezone**: Check that the timezone setting of your host machine is correctly configured. Timezone is used during build. If you plan to run the sample on a cluster of machines managed by Docker Swarm or Kubernetes, please make sure to synchronize time among the manager/master node and worker nodes.    
 
-- **Build Tools**: Install ```cmake``` and ```m4``` if they are not available on your system.        
+- **Build Tools**: Install `cmake` and `m4` if they are not available on your system.        
 
 - **Docker Engine**:        
   - Install [docker engine](https://docs.docker.com/install).     
@@ -95,13 +95,13 @@ Launch your browser and point to `https://<hostname>` to play the streams and se
 
 ### See Also:
 
-- The [Content Provider](content-provider/README.md) Service  
-- The [AD Insertion](ad-insertion/README.md) Service  
-- The [AD Decision](ad-content/ad-decision/README.md) Service  
-- The [AD Content](ad-content/README.md) Service   
-- The [Account](account/README.md) Service  
-- The [CDN](cdn/README.md) Service  
-- The [Analytics](ad-insertion/analytics/README.md) Service  
+- [The Content Provider Service](content-provider/README.md)  
+- [The AD Insertion Service](ad-insertion/README.md)  
+- [The AD Decision Service](ad-content/ad-decision/README.md)  
+- [The AD Content Service](ad-content/README.md)  
+- [The Account Service](account/README.md) 
+- [The CDN Service](cdn/README.md) 
+- [The Analytics Service](ad-insertion/analytics/README.md) 
 - [Docker Swarm Setup](deployment/docker-swarm/README.md)  
 - [Kubernetes Setup](deployment/kubernetes/README.md)  
 - [Build Confiugration](doc/cmake.md)   
