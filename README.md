@@ -9,18 +9,15 @@ The E2E sample implements a server-side AD insertion system, which features on-d
 
 The [Content Provider](content-provider/README.md) service serves original content, with on-demand transcoding, through the DASH or HLS streaming protocol. The [AD Insertion](ad-insertion/README.md) service analyzes video content on the fly and inserts AD, with transcoding if needed, into the video stream at each AD break slot.   
 
-The client player is based on dash.js and hls.js.    
+### Software Stack: 
 
-See additional information on each service:     
-- The [Content Provider](content-provider/README.md) service     
-- The [AD Insertion](ad-insertion/README.md) service
-- The [AD Decision](ad-content/ad-decision/README.md) service
-- The [AD Content](ad-content/README.md) service
-- The [Account](account/README.md) service
-- The [CDN](cdn/README.md) service
-- The [Analytics](ad-insertion/analytics/README.md) service
+The sample exercises the following Open Visual Cloud software stacks:  
 
-### Install prerequisites:
+- [FFmpeg media transcoding stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/media/ffmpeg): Transcode video or Ad content to DASH or HLS, on demand.   
+- [FFmpeg media analytics stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/ffmpeg): Analyze video content for objects, emotion and faces. Also optimized for [Intel VCAC-A](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/VCAC-A/ubuntu-18.04/analytics/ffmpeg).  
+- [GStreamer media analytics stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/gst): Analyze video content for objects, emotion and faces. Also optimized for [Intel VCAC-A](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/VCAC-A/ubuntu-18.04/analytics/gst).  
+
+### Install Prerequisites:
 
 - **Timezone**: Check that the timezone setting of your host machine is correctly configured. Timezone is used during build. If you plan to run the sample on a cluster of machines managed by Docker Swarm or Kubernetes, please make sure to synchronize time among the manager/master node and worker nodes.    
 
@@ -40,7 +37,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker     
 ```
 
-### Build docker images: 
+### Build: 
 
 ```bash
 mkdir build    
@@ -50,7 +47,7 @@ make
 ```
 See also how to customize the building process with [Build Options](doc/cmake.md).
 
-### Generate DASH/HLS segments
+### Generate DASH/HLS
 
 By default, DASH/HLS segments are generated on the fly during playback, which requires a powerful server platform to keep up with the load. If unsure, it is recommended that you use the following commands to pre-generate DASH/HLS segments:
 
@@ -59,33 +56,53 @@ make dash    # take a coffee break?
 make hls     # take a walk?!      
 ```
 
-### Start/stop services:
+### Start/stop Services:
 
-Use the following commands to start/stop services via docker swarm:    
+Use the following commands to start/stop services via docker swarm (see also [Docker Swarm Setup](deployment/docker-swarm/README.md)).    
+
 ```bash
+make update
 make start_docker_swarm      
 make stop_docker_swarm      
 ```
-See also how to setup [docker swarm](deployment/docker-swarm/README.md).
 
 Use the following commands to start/stop services via docker-compose:        
+
 ```bash
 make start_docker_compose      
 make stop_docker_compose      
 ```
-Use the following commands to start/stop services via Kubernetes:        
+
+Use the following commands to start/stop services via Kubernetes (see also [Kubernetes Setup](deployment/kubernetes/README.md)):        
+
 ```bash
+make update
+make prep_pv
 make start_kubernetes      
 make stop_kubernetes      
 ```
-**Note**: This commands must be run as root.
+
 ### Launch browser:
 
-Launch your browser and point to `https://localhost` to play the streams and see ADs got inserted during playback. Note that if you see a browser warning of self-signed certificate, please accept it to proceed to the sample UI.    
+Launch your browser and point to `https://<hostname>` to play the streams and see ADs got inserted during playback. 
 
-In-case of Kubernetes, connect to `https://<system-ip>:30443`
+---
 
-### Customize videos:
+- For Kubernetes/Docker Swarm, `<hostname>` is the hostname of the manager/master node.
+- If you see a browser warning of self-signed certificate, please accept it to proceed to the sample UI.
 
-Customize the video playlist by adding videos under [volume/video/archive](volume/video/archive) or in the build script [content-provider/archive/build.sh](content-provider/archive/build.sh).      
-Rerun `make` and restart the service after making any changes.    
+---
+
+### See Also:
+
+- The [Content Provider](content-provider/README.md) Service  
+- The [AD Insertion](ad-insertion/README.md) Service  
+- The [AD Decision](ad-content/ad-decision/README.md) Service  
+- The [AD Content](ad-content/README.md) Service   
+- The [Account](account/README.md) Service  
+- The [CDN](cdn/README.md) Service  
+- The [Analytics](ad-insertion/analytics/README.md) Service  
+- [Docker Swarm Setup](deployment/docker-swarm/README.md)  
+- [Kubernetes Setup](deployment/kubernetes/README.md)  
+- [Build Confiugration](doc/cmake.md)   
+- [Customize Videos](doc/customize.md)   

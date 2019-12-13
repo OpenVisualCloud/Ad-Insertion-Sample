@@ -13,7 +13,7 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
             - default_net
 ')dnl
         deploy:
-            replicas: defn(`NINSERTIONS')
+            replicas: 1
             placement:
                 constraints:
                     - node.role==manager
