@@ -5,7 +5,7 @@
 
 The E2E sample implements a server-side AD insertion system, which features on-demand video transcoding and streaming, and AD insertion based on video content analysis.
 
-<img src="volume/html/image/overall-arch.png" width="800">
+<img src="doc/overall-arch.png" width="800">
 
 The [Content Provider](content-provider/README.md) service serves original content, with on-demand transcoding, through the DASH or HLS streaming protocol. The [AD Insertion](ad-insertion/README.md) service analyzes video content on the fly and inserts AD, with transcoding if needed, into the video stream at each AD break slot.   
 

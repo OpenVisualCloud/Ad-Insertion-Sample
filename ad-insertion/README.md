@@ -1,6 +1,6 @@
 The AD Insertion service implements the logic of inserting AD during video playback. 
 
-<IMG src="../volume/html/image/ad-insertion-service-arch.png" height="450">
+<IMG src="../doc/ad-insertion-service-arch.png" height="450">
 
 The AD Insertion service operates as follows:      
 - The client player starts video playback by requesting the video manifest file, which describes the DASH/HLS segments. The AD Insertion service intercepts the request, retrieves the manifest from the [Content Provider](../content-provider/README.md), and then inserts ADs into the manifest, before returning to the client player.    
@@ -9,7 +9,7 @@ The AD Insertion service operates as follows:
 - The AD Insertion service keeps track of how many AD segments are served to the client player and reports the statistics to the [AD Content](../ad-content/README.md) service.    
 - If the user clicks on any portion of the playback screen, the AD Insertion service interpret the click to be either an AD click or a question/answer click. Report the click to the [AD Content](../ad-content/README.md) service or the [AD Decision](../ad-content/ad-decision/README.md) service for further action.       
 
-<IMG src="../volume/html/image/ad-insertion-sequence.png" height="300">
+<IMG src="../doc/ad-insertion-sequence.png" height="300">
 
 ### Analyze video segment:
 
