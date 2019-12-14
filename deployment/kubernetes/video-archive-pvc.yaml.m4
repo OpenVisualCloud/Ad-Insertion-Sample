@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: archive
+  storageClassName: video-archive-storage
   resources:
     requests:
-      storage: 1Gi
+      storage: defn(`VIDEO_ARCHIVE_VOLUME_SIZE')Gi

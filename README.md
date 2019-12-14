@@ -77,7 +77,7 @@ Use the following commands to start/stop services via Kubernetes (see also [Kube
 
 ```bash
 make update
-make prep_pv
+make volume
 make start_kubernetes      
 make stop_kubernetes      
 ```

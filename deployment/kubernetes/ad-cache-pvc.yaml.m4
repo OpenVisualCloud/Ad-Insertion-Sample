@@ -2,11 +2,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: video-hls
+  name: ad-cache
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: cache-storage
+  storageClassName: ad-cache-storage
   resources:
     requests:
-      storage: 5Gi
+      storage: defn(`AD_CACHE_VOLUME_SIZE')Gi
+

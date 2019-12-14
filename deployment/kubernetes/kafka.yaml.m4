@@ -6,6 +6,7 @@ metadata:
   labels:
     app: kafka
 spec:
+  ports:
   - port: 9092
     protocol: TCP
   selector:
@@ -18,7 +19,7 @@ kind: Deployment
 metadata:
   name: kafka
   labels:
-     app: kafka
+    app: kafka
 spec:
   replicas: 1
   selector:
@@ -38,7 +39,7 @@ spec:
             - containerPort: 9092
           env:
             - name: "KAFKA_BROKER_ID"
-              value: 1
+              value: "1"
             - name: "KAFKA_ZOOKEEPER_CONNECT"
               value: "zookeeper-service:2181"
             - name: "KAFKA_ADVERTISED_LISTENERS"
@@ -48,15 +49,15 @@ spec:
             - name: "KAFKA_INTER_BROKER_LISTENER_NAME"
               value: "PLAINTEXT"
             - name: "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR"
-              value: 1
+              value: "1"
             - name: "KAFKA_DEFAULT_REPLICATION_FACTOR"
-              value: 1
+              value: "1"
             - name: "KAFKA_AUTO_CREATE_TOPICS_ENABLE"
               value: "false"
             - name: "KAFKA_NUM_PARTITIONS"
-              value: 16
+              value: "16"
             - name: "KAFKA_LOG_RETENTION_HOURS"
-              value: 8
+              value: "8"
             - name: "KAFKA_HEAP_OPTS"
               value: "-Xmx1024m -Xms1024m"
             - name: "KAFKA_LOG4J_LOGGERS"
@@ -64,7 +65,7 @@ spec:
             - name: "KAFKA_LOG4J_ROOT_LOGLEVEL"
               value: "ERROR"
             - name: "CONFLUENT_SUPPORT_METRICS_ENABLE"
-              value: 0
+              value: "0"
 
 ---
 
@@ -89,15 +90,15 @@ spec:
         - name: kafka-init
           image: confluentinc/cp-kafka:latest
           imagePullPolicy: IfNotPresent
-          command: ["/bin/sh","-c","cub kafka-ready -b kafka-service:9092 1 20 && \
-                       kafka-topics --create --topic content_provider_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic seg_analytics_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic seg_analytics_data --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic ad_transcode_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic workloads --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic adstats --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic video_analytics_fps --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       sleep infinity"]
+          command: ["/bin/bash","-c","cub kafka-ready -b kafka-service:9092 1 20 && \
+  kafka-topics --create --topic content_provider_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+  kafka-topics --create --topic seg_analytics_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+  kafka-topics --create --topic seg_analytics_data --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+  kafka-topics --create --topic ad_transcode_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+  kafka-topics --create --topic workloads --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+  kafka-topics --create --topic adstats --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+  kafka-topics --create --topic video_analytics_fps --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+  sleep infinity"]
           env:
             - name: "KAFKA_BROKER_ID"
               value: "ignored"

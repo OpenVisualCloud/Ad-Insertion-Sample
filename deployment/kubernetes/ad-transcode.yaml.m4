@@ -6,7 +6,7 @@ metadata:
   labels:
      app: ad-transcode
 spec:
-  replicas: 1
+  replicas: defn(`NTRANSCODES')
   selector:
     matchLabels:
       app: ad-transcode
@@ -21,20 +21,14 @@ spec:
           image: ssai_ad_transcode:latest
           imagePullPolicy: IfNotPresent
           volumeMounts:
-            - mountPath: /var/www/adinsert/dash
-              name: ad-dash
-            - mountPath: /var/www/adinsert/hls
-              name: ad-hls
+            - mountPath: /var/www/adinsert
+              name: ad-cache
             - mountPath: /var/www/skipped
               name: ad-static
-              readOnly: true
       volumes:
-          - name: ad-dash
+          - name: ad-cache
             persistentVolumeClaim:
-               claimName: ad-dash
-          - name: ad-hls
-            persistentVolumeClaim:
-               claimName: ad-hls
+               claimName: ad-cache
           - name: ad-static
             persistentVolumeClaim:
                claimName: ad-static

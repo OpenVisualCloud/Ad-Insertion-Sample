@@ -35,7 +35,7 @@ rate_monitor_buffer_ratio=1.5   # maximum buffer size between bitrate conformanc
 #########################################################################
 
 source="archive/${1}"
-target="dash/${source##*/}" # leave only last component of path
+target="cache/dash/${source##*/}" # leave only last component of path
 mkdir -p ${target}
 
 echo $target

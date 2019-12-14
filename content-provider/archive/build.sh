@@ -44,8 +44,8 @@ case "$(cat /proc/1/sched | head -n 1)" in
     ;;
 *) 
     mkdir -p "$DIR/../../volume/video/archive"
-    mkdir -p "$DIR/../../volume/video/dash"
-    mkdir -p "$DIR/../../volume/video/hls"
+    mkdir -p "$DIR/../../volume/video/cache/dash"
+    mkdir -p "$DIR/../../volume/video/cache/hls"
     . "$DIR/../../script/build.sh"
     . "$DIR/shell.sh" /home/build.sh $@
     ;;

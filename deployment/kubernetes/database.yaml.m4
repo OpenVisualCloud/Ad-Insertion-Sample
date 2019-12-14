@@ -6,6 +6,7 @@ metadata:
   labels:
     app: database
 spec:
+  ports:
   - port: 9200
     protocol: TCP
   selector:

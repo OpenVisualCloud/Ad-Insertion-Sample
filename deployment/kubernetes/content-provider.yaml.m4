@@ -6,6 +6,7 @@ metadata:
   labels:
     app: content-provider
 spec:
+  ports:
   - port: 8080
     protocol: TCP
   selector:
@@ -40,19 +41,13 @@ spec:
             - mountPath: /var/www/archive
               name: video-archive
               readOnly: true
-            - mountPath: /var/www/dash
-              name: video-dash
-              readOnly: true
-            - mountPath: /var/www/hls
-              name: video-dash
+            - mountPath: /var/www/video
+              name: video-cache
               readOnly: true
       volumes:
           - name: video-archive
             persistentVolumeClaim:
                claimName: video-archive
-          - name: video-dash
+          - name: video-cache
             persistentVolumeClaim:
-               claimName: video-dash
-          - name: video-hls
-            persistentVolumeClaim:
-               claimName: video-hls
+               claimName: video-cache

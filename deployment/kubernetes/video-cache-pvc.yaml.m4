@@ -2,12 +2,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ad-dash
+  name: video-cache
 spec:
   accessModes:
     - ReadWriteMany
   storageClassName: cache-storage
   resources:
     requests:
-      storage: 1Gi
-
+      storage: defn(`VIDEO_CACHE_VOLUME_SIZE')Gi

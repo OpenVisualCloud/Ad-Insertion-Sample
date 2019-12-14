@@ -2,12 +2,12 @@
 
 DIR=$(dirname $(readlink -f "$0"))
 export AD_ARCHIVE_VOLUME=$(readlink -f "$DIR/../../volume/ad/archive")
-export AD_DASH_VOLUME=$(readlink -f "$DIR/../../volume/ad/dash")
-export AD_HLS_VOLUME=$(readlink -f "$DIR/../../volume/ad/hls")
+export AD_DASH_VOLUME=$(readlink -f "$DIR/../../volume/ad/cache/dash")
+export AD_HLS_VOLUME=$(readlink -f "$DIR/../../volume/ad/cache/hls")
 export AD_STATIC_VOLUME=$(readlink -f "$DIR/../../volume/ad/static")
 export VIDEO_ARCHIVE_VOLUME=$(readlink -f "$DIR/../../volume/video/archive")
-export VIDEO_DASH_VOLUME=$(readlink -f "$DIR/../../volume/video/dash")
-export VIDEO_HLS_VOLUME=$(readlink -f "$DIR/../../volume/video/hls")
+export VIDEO_DASH_VOLUME=$(readlink -f "$DIR/../../volume/video/cache/dash")
+export VIDEO_HLS_VOLUME=$(readlink -f "$DIR/../../volume/video/cache/hls")
 
 docker container prune -f
 docker volume prune -f

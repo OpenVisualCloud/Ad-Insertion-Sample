@@ -36,7 +36,7 @@ rate_monitor_buffer_ratio=1.5   # maximum buffer size between bitrate conformanc
 
 streaming_type="hls"
 source="archive/${1}"
-target="${streaming_type}/${source##*/}" # leave only last component of path
+target="cache/${streaming_type}/${source##*/}" # leave only last component of path
 mkdir -p ${target}
 
 default_threshold=4

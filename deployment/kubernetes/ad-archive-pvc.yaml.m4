@@ -6,5 +6,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  volumeMode: Filesystem
-  storageClassName: archive
+  storageClassName: ad-archive
+  resources:
+    requests:
+      storage: defn(`AD_ARCHIVE_VOLUME_SIZE')Gi
+
