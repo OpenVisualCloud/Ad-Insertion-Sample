@@ -16,6 +16,10 @@ spec:
         app: ad-transcode
     spec:
       enableServiceLinks: false
+      securityContext:
+        runAsUser: defn(`USERID')
+        runAsGroup: defn(`GROUPID')
+        fsGroup: defn(`GROUPID')
       containers:
         - name: ad-transcode
           image: ssai_ad_transcode:latest
@@ -25,6 +29,7 @@ spec:
               name: ad-cache
             - mountPath: /var/www/skipped
               name: ad-static
+              readOnly: true
       volumes:
           - name: ad-cache
             persistentVolumeClaim:

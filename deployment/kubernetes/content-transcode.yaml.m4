@@ -18,7 +18,8 @@ spec:
       enableServiceLinks: false
       securityContext:
         runAsUser: defn(`USERID')
-        fsGroup: defn(`USERID')
+        runAsGroup: defn(`GROUPID')
+        fsGroup: defn(`GROUPID')
       containers:
         - name: content-transcode
           image: ssai_content_transcode:latest
