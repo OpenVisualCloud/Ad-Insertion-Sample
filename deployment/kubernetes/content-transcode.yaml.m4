@@ -16,6 +16,9 @@ spec:
         app: content-transcode
     spec:
       enableServiceLinks: false
+      securityContext:
+        runAsUser: defn(`USERID')
+        fsGroup: defn(`USERID')
       containers:
         - name: content-transcode
           image: ssai_content_transcode:latest

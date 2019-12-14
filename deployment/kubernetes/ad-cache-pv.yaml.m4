@@ -2,7 +2,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: video-cache
+  name: ad-cache
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 
@@ -11,16 +11,16 @@ volumeBindingMode: WaitForFirstConsumer
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: video-cache
+  name: ad-cache
 spec:
   capacity:
-    storage: defn(`VIDEO_CACHE_VOLUME_SIZE')Gi
+    storage: defn(`AD_CACHE_VOLUME_SIZE')Gi
   accessModes:
   - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: video-cache
+  storageClassName: ad-cache
   local:
-    path: defn(`VIDEO_CACHE_VOLUME_PATH')/dash
+    path: defn(`AD_CACHE_VOLUME_PATH')
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -28,5 +28,5 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - "defn(`VIDEO_CACHE_VOLUME_HOST')"
+          - "defn(`AD_CACHE_VOLUME_HOST')"
 

@@ -5,7 +5,7 @@ metadata:
   name: ad-static
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadOnlyMany
   storageClassName: ad-static
   resources:
     requests:

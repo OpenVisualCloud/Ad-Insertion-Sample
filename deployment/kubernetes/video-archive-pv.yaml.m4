@@ -2,7 +2,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: ad-static
+  name: video-archive
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 
@@ -11,16 +11,16 @@ volumeBindingMode: WaitForFirstConsumer
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: ad-static
+  name: video-archive
 spec:
   capacity:
-    storage: defn(`AD_STATIC_VOLUME_SIZE')Gi
+    storage: defn(`VIDEO_ARCHIVE_VOLUME_SIZE')Gi
   accessModes:
-  - ReadWriteOnce
+  - ReadOnlyMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: ad-static
+  storageClassName: video-archive
   local:
-    path: defn(`AD_STATIC_VOLUME_PATH')
+    path: defn(`VIDEO_ARCHIVE_VOLUME_PATH')
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -28,5 +28,5 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - "defn(`AD_STATIC_VOLUME_HOST')"
+          - "defn(`VIDEO_ARCHIVE_VOLUME_HOST')"
 

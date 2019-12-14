@@ -5,7 +5,7 @@ metadata:
   name: ad-archive
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadOnlyMany
   storageClassName: ad-archive
   resources:
     requests:
