@@ -15,7 +15,7 @@ docker network prune -f
 
 rm -rf "${AD_DASH_VOLUME}" "${AD_HLS_VOLUME}"
 mkdir -p "${AD_DASH_VOLUME}" "${AD_HLS_VOLUME}"
-mkdir -p "${VIDEO_DASH_VOLUME}" "${VIDEO_HLS_VOLME}"
+mkdir -p "${VIDEO_DASH_VOLUME}" "${VIDEO_HLS_VOLUME}"
 
 yml="$DIR/docker-compose.$(hostname).yml"
 test -f "$yml" || yml="$DIR/docker-compose.yml"
