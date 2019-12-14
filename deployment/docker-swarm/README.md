@@ -1,3 +1,4 @@
+
 The sample can be deployed with either docker-compose (v1.20+ required) or docker swarm. The deployment uses the same configuration script.   
 
 ### Docker-Compose Deployment
@@ -29,25 +30,34 @@ Follow the [instructions](https://docs.docker.com/engine/swarm/swarm-tutorial/cr
 
 Finally, start/stop services as follows:
 ```
+make update
 make start_docker_swarm
 make stop_docker_swarm
 ```
 
-### Docker Swam Single Machine Deployment with VCAC-A
+---
 
-Initialize VCAC-A node setup if you have not:
+The `make update` command uploads the sample images to each worker node. If you prefer to use a private docker registry, replace with your instructions to upload the images to your docker registry.   
+
+---
+
+### Docker Swam Deployment with Intel VCAC-A
+
+Initialize Intel VCAC-A if you have not:
+
 ```
 script/setup-vcac-a.sh
 ```
 
-Update the Image to the VCAC-A node:
-```
-script/update-image.sh
-```
-
 Then start/stop services as follows:
 ```
+make update
 make start_docker_swarm
 make stop_docker_swarm
 ```
+
+### See Also:
+
+- [Build Configuration](../../doc/cmake.md)
+- [Utility Script](../../doc/script.md)
 

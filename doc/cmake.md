@@ -28,3 +28,7 @@ cmake -DFRAMEWORK=ffmpeg -DPLATFORM=Xeon ..
 - **start/stop_docker_compose**: Start/stop the sample orchestrated by docker-compose.  
 - **start/stop_docker_swarm**: Start/stop the sample orchestrated by docker swarm.   
 - **start/stop_kubernetes**: Start/stop the sample orchestrated by Kubernetes.   
+
+### See Also:
+
+- [Sample Distribution](dist.md)   
