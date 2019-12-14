@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: ad-cache-storage
+  storageClassName: ad-cache
   resources:
     requests:
       storage: defn(`AD_CACHE_VOLUME_SIZE')Gi

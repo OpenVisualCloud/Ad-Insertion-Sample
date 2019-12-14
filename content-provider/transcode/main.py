@@ -58,9 +58,6 @@ def process_stream(stream):
    zk.close()
 
 if __name__ == "__main__":
-    os.makedirs(dash_root)
-    os.makedirs(hls_root)
-
     c=Consumer(kafka_group)
     while True:
         try:

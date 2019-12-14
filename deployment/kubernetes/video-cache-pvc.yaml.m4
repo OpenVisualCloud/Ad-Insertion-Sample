@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: cache-storage
+  storageClassName: video-cache
   resources:
     requests:
       storage: defn(`VIDEO_CACHE_VOLUME_SIZE')Gi

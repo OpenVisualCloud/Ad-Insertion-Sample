@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ad-static-storage
+  storageClassName: ad-static
   resources:
     requests:
       storage: defn(`AD_STATIC_VOLUME_SIZE')Gi
