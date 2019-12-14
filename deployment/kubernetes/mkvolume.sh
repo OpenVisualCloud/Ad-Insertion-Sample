@@ -24,4 +24,4 @@ END {
         }
     }
 }
-' "$DIR"/*-storage.yaml
+' "$DIR"/*-pv.yaml
