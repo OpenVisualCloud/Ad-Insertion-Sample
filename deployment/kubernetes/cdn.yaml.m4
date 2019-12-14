@@ -36,7 +36,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: cdn
-          image: smtc_cdn_service:latest
+          image: ssai_cdn_service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8443

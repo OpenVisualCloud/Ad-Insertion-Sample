@@ -23,8 +23,12 @@ cmake -DFRAMEWORK=ffmpeg -DPLATFORM=Xeon ..
 
 - **build**: Build the sample (docker) images.  
 - **update**: Distribute the sample images to worker nodes.  
+- **volume**: For Kubernetes, prepare persistent volumes for the ad/content storage.  
 - **dist**: Create the sample distribution package.   
 - **start/stop_docker_compose**: Start/stop the sample orchestrated by docker-compose.  
 - **start/stop_docker_swarm**: Start/stop the sample orchestrated by docker swarm.   
 - **start/stop_kubernetes**: Start/stop the sample orchestrated by Kubernetes.   
-- **prep_pv**: For Kubernetes, prepare persistent volumes for ad/content storage.  
+
+### See Also:
+
+- [Sample Distribution](dist.md)   

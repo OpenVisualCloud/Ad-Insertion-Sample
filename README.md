@@ -77,7 +77,7 @@ Use the following commands to start/stop services via Kubernetes (see also [Kube
 
 ```bash
 make update
-make prep_pv
+make volume
 make start_kubernetes      
 make stop_kubernetes      
 ```
@@ -106,3 +106,5 @@ Launch your browser and point to `https://<hostname>` to play the streams and se
 - [Kubernetes Setup](deployment/kubernetes/README.md)  
 - [Build Confiugration](doc/cmake.md)   
 - [Customize Videos](doc/customize.md)   
+- [Sample Distribution](doc/dist.md)  
+- [Utility Script](doc/script.md)  

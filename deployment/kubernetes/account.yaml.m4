@@ -6,6 +6,7 @@ metadata:
   labels:
     app: account
 spec:
+  ports:
   - port: 8080
     protocol: TCP
   selector:

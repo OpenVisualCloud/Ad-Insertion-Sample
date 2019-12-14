@@ -3,8 +3,8 @@
         image: ssai_content_transcode:latest
         volumes:
             - ${VIDEO_ARCHIVE_VOLUME}:/var/www/archive:ro
-            - ${VIDEO_DASH_VOLUME}:/var/www/dash:rw
-            - ${VIDEO_HLS_VOLUME}:/var/www/hls:rw
+            - ${VIDEO_DASH_VOLUME}:/var/www/video/dash:rw
+            - ${VIDEO_HLS_VOLUME}:/var/www/video/hls:rw
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
             - default_net

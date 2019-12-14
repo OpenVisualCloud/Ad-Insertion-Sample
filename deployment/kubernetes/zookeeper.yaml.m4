@@ -6,6 +6,7 @@ metadata:
   labels:
     app: zookeeper
 spec:
+  ports:
   - port: 2181
     protocol: TCP
   selector:
@@ -38,7 +39,7 @@ spec:
             - containerPort: 2181
           env:
             - name: "ZOOKEEPER_SERVER_ID"
-              value: 1
+              value: "1"
             - name: "ZOOKEEPER_CLIENT_PORT"
               value: "2181"
             - name: "ZOOKEEPER_TICK_TIME"

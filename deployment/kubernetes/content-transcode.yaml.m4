@@ -6,7 +6,7 @@ metadata:
   labels:
      app: content-transcode
 spec:
-  replicas: 1
+  replicas: defn(`NTRANSCODES')
   selector:
     matchLabels:
       app: content-transcode
@@ -16,25 +16,24 @@ spec:
         app: content-transcode
     spec:
       enableServiceLinks: false
+      securityContext:
+        runAsUser: defn(`USERID')
+        runAsGroup: defn(`GROUPID')
+        fsGroup: defn(`GROUPID')
       containers:
         - name: content-transcode
           image: ssai_content_transcode:latest
           imagePullPolicy: IfNotPresent
           volumeMounts:
-            - mountPath: /var/www/dash
-              name: video-dash
-            - mountPath: /var/www/hls
-              name: video-hls
+            - mountPath: /var/www/video
+              name: video-cache
             - mountPath: /var/www/archive
               name: video-archive
               readOnly: true
       volumes:
-          - name: video-dash
+          - name: video-cache
             persistentVolumeClaim:
-               claimName: video-dash
-          - name: video-hls
-            persistentVolumeClaim:
-               claimName: video-hls
+               claimName: video-cache
           - name: video-archive
             persistentVolumeClaim:
                claimName: video-archive

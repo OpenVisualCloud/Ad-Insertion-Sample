@@ -6,7 +6,7 @@ from messaging import Producer
 import time
 
 kafka_topic="content_provider_sched"
-dashls_root="/var/www"
+dashls_root="/var/www/video"
 
 class ScheduleHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):

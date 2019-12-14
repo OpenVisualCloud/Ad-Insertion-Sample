@@ -12,8 +12,8 @@ kafka_topic="content_provider_sched"
 kafka_group="content_provider_dash_hls_creator"
 
 archive_root="/var/www/archive"
-dash_root="/var/www/dash"
-hls_root="/var/www/hls"
+dash_root="/var/www/video/dash"
+hls_root="/var/www/video/hls"
 
 def process_stream(stream):
    stream_name=stream.split("/")[1]
