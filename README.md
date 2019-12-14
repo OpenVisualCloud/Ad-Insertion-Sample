@@ -11,11 +11,11 @@ The [Content Provider](content-provider/README.md) service serves original conte
 
 ### Software Stack: 
 
-The sample exercises the following Open Visual Cloud software stacks:  
+The sample is powered by the following Open Visual Cloud software stacks:  
 
-- [FFmpeg media transcoding stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/media/ffmpeg): Transcode video or Ad content to DASH or HLS, on demand.   
-- [FFmpeg media analytics stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/ffmpeg): Analyze video content for objects, emotion and faces. Optimized for [Intel VCAC-A](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/VCAC-A/ubuntu-18.04/analytics/ffmpeg).  
-- [GStreamer media analytics stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/gst): Analyze video content for objects, emotion and faces. Optimized for [Intel VCAC-A](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/VCAC-A/ubuntu-18.04/analytics/gst).  
+- The [FFmpeg-based media transcoding software stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/media/ffmpeg) is used to transcode video or Ad content to DASH or HLS during playback. The software stack is optimized for [Intel® Xeon® Scalable Processors](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/media/ffmpeg).     
+- The [FFmpeg-based media analytics software stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/ffmpeg) is used, with `FRAMEWORK=ffmpeg`, to analyze video content for objects, emotion and faces during playback. The software stack is optimized for [Intel Xeon Scalable Processors](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/ffmpeg) and [Intel VCAC-A](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/VCAC-A/ubuntu-18.04/analytics/ffmpeg).  
+- The [GStreamer-based media analytics software stack](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/gst) is used, with `FRAMEWORK=gst`, to analyze video content for objects, emotion and faces during playback. The software stack is optimized for [Intel Xeon Scalable Processors](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/Xeon/ubuntu-18.04/analytics/gst) and [Intel VCAC-A](https://github.com/OpenVisualCloud/Dockerfiles/tree/master/VCAC-A/ubuntu-18.04/analytics/gst).  
 
 ### Install Prerequisites:
 
