@@ -1,6 +1,6 @@
 
     database-service:
-        image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.0
+        image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.1
         environment:
             - 'discovery.type=single-node'
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
