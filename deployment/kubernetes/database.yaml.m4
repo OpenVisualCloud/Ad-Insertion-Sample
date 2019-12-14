@@ -33,7 +33,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: database
-          image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.0
+          image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9200
