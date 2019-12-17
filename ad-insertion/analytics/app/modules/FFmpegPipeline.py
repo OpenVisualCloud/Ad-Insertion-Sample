@@ -148,6 +148,7 @@ class FFmpegPipeline(Pipeline):
                  ("VA_DEVICE_DEFAULT" in filter_params['model'])):
                 device="CPU"
                 if ("device" in filter_params):
+                    device=filter_params["device"]
                     if isinstance(filter_params['device'],int):
                         device = FFmpegPipeline.DEVICEID_MAP[int(filter_params['device'])]
                 filter_params["model"] = ModelManager.get_default_network_for_device(device,filter_params["model"])
