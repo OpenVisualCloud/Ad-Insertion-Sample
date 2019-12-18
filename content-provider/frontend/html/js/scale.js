@@ -17,7 +17,7 @@ function mklayout() {
     var card=$("#scale [vcac-a-icon]");
     var divide_width=card.width()*0.45+20;
 
-    var ncolumns=spec("ncols")?Math.floor((parseInt(spec("ncols"),10)+1)/2)*2:4;
+    var ncolumns=spec("ncols")?Math.floor((parseInt(spec("ncols"),10)+1)/2)*2:2;
     var nrows=spec("nrows")?parseInt(spec("nrows"),10):3;
 
     var header_height=144;
@@ -46,6 +46,7 @@ function mklayout() {
                 header: "off",
                 playlist: "off",
                 videourl: "off",
+                mode: spec("mode")?spec("mode"):"object",
             };
             var tmp=$('<div screen><iframe src="/?'+$.param(args)+'" /><img src="image/screen.png"/></div>');
             var view_port_width=screen_width1-margin*2;
