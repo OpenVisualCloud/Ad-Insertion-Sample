@@ -1,6 +1,7 @@
 
 $("[debug-console]").on(":initpage",function () {
     var page=$(this);
+    if (spec("benchmark")) return;
 
     var prev;
     page.find("[console-title]").mousedown(function(e) {
@@ -80,6 +81,7 @@ $("[debug-console]").on(":initpage",function () {
 
 $("[analytics-console]").on(":initpage", function () {
     var page=$(this);
+    if (spec("benchmark")) return;
 
     $("#player video").unbind('timeupdate').on('timeupdate',function () {
         var stream=$("#player input").val();
