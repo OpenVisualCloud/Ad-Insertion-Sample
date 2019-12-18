@@ -1,0 +1,145 @@
+
+#scale {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background-color: black;
+}
+
+#scale [header] {
+  border-right: solid 3px rgba(0,255,0,.75);
+  white-space: nowrap;
+  overflow: hidden;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: black;
+  color: skyblue;
+  font-size: 56px;
+  font-weight: bold;
+  margin: 20px;
+  animation: header-animation steps(29,end) 2s 1 normal forwards
+}
+
+@keyframes header-animation {
+  from {
+    width: 0;
+    border-right-color: rgba(0,255,0,.75);
+  }
+  to {
+    width: 611px;
+    border-right-color: transparent;
+  }
+}
+
+#scale [xeon-icon] {
+  position: absolute;
+  top: calc(50vh - 228px);
+  left: calc(50vw - 228px);
+  animation-name: xeon-animation;
+  animation-fill-mode: forwards;
+  animation-duration: 6s;
+  animation-delay: 4s;
+}
+
+@keyframes xeon-animation {
+  from { 
+    transform: scale(1);
+  } 
+  to {
+    transform: scale(0.5);
+  }
+}
+
+#scale [vcac-a-icon] {
+  position: absolute;
+  opacity: 0;
+  top: calc(50vh - 420px);
+  left: calc(50vw - 437px);
+  animation-name: vcac-a-animation;
+  animation-fill-mode: forwards;
+  animation-duration: 4s;
+  animation-delay: 10s;
+}
+
+@keyframes vcac-a-animation {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(0.45);
+  }
+}
+
+#scale [lines] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+#scale [lines] svg {
+  width: 100%;
+  height: 100%;
+}
+
+#template {
+  display: none;
+}
+
+#scale [screen] {
+  position: absolute;
+}
+
+#scale [screen] iframe {
+  position: relative;
+  top: 5px;
+  left: 5px;
+  width: 100%;
+  height: 81.84%;
+  overflow: hidden;
+}
+
+#scale [screen] img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#scale [signals] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+#scale [signals] [signal] {
+  position: absolute;
+  left: 50vw;
+  top: 50vh;
+  width: 20px;
+  height: 20px;
+  border: 1px;
+  border-radius: 10px;
+  color: white;
+  background-color: white;
+  animation-name: signal-animation;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes signal-animation {
+  from {
+    transform: translate(0,0);
+  }
+  to {
+    transform: translate(var(--signalx),var(--signaly));
+  }
+}
+
