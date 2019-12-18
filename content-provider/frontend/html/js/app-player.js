@@ -100,6 +100,7 @@ $("#player").on(":initpage", function (e) {
                 return $(e).find("img").attr("alt").startsWith("hls");
             });
             streams[spec("seq")%streams.length].click();
+            $("[video-section]").css({width:"100vw",height:"100vh"});
         }
     });
 }).find("input").keydown(function (e) {
