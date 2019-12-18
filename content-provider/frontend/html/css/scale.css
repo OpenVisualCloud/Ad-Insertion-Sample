@@ -34,8 +34,8 @@
 
 #scale [home-url] {
   position: absolute;
-  top: calc(50vh - 84px);
-  left: calc(50vw - 83px);
+  top: calc(50vh - 250px);
+  left: calc(50vw - 250px);
   opacity: 1;
   animation-name: home-url-animation;
   animation-duration: 4s;
@@ -45,15 +45,12 @@
 @keyframes home-url-animation {
   0% {
      opacity: 1;
-     transform: scale(2);
   }
-  90% {
+  99% {
      opacity: 1;
-     transform: scale(2);
   }
   100% {
      opacity: 0;
-     transform: scale(2);
   }
 }
   
