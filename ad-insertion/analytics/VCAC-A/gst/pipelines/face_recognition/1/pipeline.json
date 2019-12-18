@@ -29,10 +29,10 @@
 		"default": 6
 	    },
 	    "device": {
-		"element":"detection",
+		"element":[{"name":"detection","property":"device"},{"name":"landmarksregression","property":"device"},{"name":"facereidentificationretail","property":"device"}],
 		"default":"HDDL",
 		"type":"string"
-	    }
+            }
 	}
     }
 }
