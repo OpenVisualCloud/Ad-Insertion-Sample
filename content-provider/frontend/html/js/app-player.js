@@ -95,6 +95,12 @@ $("#player").on(":initpage", function (e) {
             });
             plist.append(line);
         });
+        if (spec("benchmark")) {
+            var streams=$.grep(plist.find('a'),function (e, i) {
+                return $(e).find("img").attr("alt").startsWith("hls");
+            });
+            streams[spec("seq")%streams.length].click();
+        }
     });
 }).find("input").keydown(function (e) {
     if (e.keyCode!=13) return;

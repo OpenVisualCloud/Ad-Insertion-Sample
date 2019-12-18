@@ -13,7 +13,7 @@ $(window).bind("load", function () {
     if (spec("header")=="off") $("[ui-header]").hide();
     if (spec("playlist")=="off") $("[playlist-section]").hide();
     if (spec("videourl")=="off") $("#player [video-section] .input-group").hide();
-    if (spec("user")) settings.user(spec("user"));
+    if (spec("seq")) settings.user("u"+spec("seq"));
 
     $(".top-bar").trigger(":initpage");
     $("#player").trigger(":update");
