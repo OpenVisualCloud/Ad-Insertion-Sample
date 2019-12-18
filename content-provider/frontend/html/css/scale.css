@@ -121,8 +121,8 @@
 
 #scale [signals] [signal] {
   position: absolute;
-  left: 50vw;
-  top: 50vh;
+  left: calc(50vw - 10px);
+  top: calc(50vh - 10px);
   width: 20px;
   height: 20px;
   border: 1px;
