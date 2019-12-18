@@ -41,12 +41,11 @@ function mklayout() {
             var x=(screen_width+margin*2)*c;
             if (c>=ncolumns/2) x=x+divide_width;
             var args={ 
-                user: r*ncolumns+c, 
-                benchmark: "on",
+                seq: r*ncolumns+c, 
+                benchmark: spec("benchmark")?spec("benchmark"):"object",
                 header: "off",
                 playlist: "off",
                 videourl: "off",
-                mode: spec("mode")?spec("mode"):"object",
             };
             var tmp=$('<div screen><iframe src="/?'+$.param(args)+'" /><img src="image/screen.png"/></div>');
             var view_port_width=screen_width1-margin*2;
