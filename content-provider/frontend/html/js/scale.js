@@ -47,7 +47,7 @@ function mklayout() {
                 playlist: "off",
                 videourl: "off",
             };
-            var tmp=$('<div screen><iframe src="/?'+$.param(args)+'" /><img src="image/screen.png"/></div>');
+            var tmp=$('<div screen><iframe src="/?'+$.param(args)+'" scrolling="no" /><img src="image/screen.png"/></div>');
             var view_port_width=screen_width1-margin*2;
             var view_port_height=screen_height*0.8-margin*2;
             tmp.find("iframe").attr("width",view_port_width).attr("height",view_port_height).css({width:view_port_width+"px",height:view_port_height+"px"});
