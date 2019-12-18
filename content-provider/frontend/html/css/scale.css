@@ -27,15 +27,41 @@
     border-right-color: rgba(0,255,0,.75);
   }
   to {
-    width: 611px;
+    width: 1011px;
     border-right-color: transparent;
   }
 }
 
+#scale [home-url] {
+  position: absolute;
+  top: calc(50vh - 84px);
+  left: calc(50vw - 83px);
+  opacity: 1;
+  animation-name: home-url-animation;
+  animation-duration: 4s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes home-url-animation {
+  0% {
+     opacity: 1;
+     transform: scale(2);
+  }
+  90% {
+     opacity: 1;
+     transform: scale(2);
+  }
+  100% {
+     opacity: 0;
+     transform: scale(2);
+  }
+}
+  
 #scale [xeon-icon] {
   position: absolute;
   top: calc(50vh - 228px);
   left: calc(50vw - 228px);
+  opacity: 0;
   animation-name: xeon-animation;
   animation-fill-mode: forwards;
   animation-duration: 6s;
@@ -45,9 +71,11 @@
 @keyframes xeon-animation {
   from { 
     transform: scale(1);
+    opacity: 1;
   } 
   to {
     transform: scale(0.5);
+    opacity: 1;
   }
 }
 
