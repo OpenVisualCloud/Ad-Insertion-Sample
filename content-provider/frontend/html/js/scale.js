@@ -1,5 +1,5 @@
 
-function setting(key) {
+function spec(key) {
     var kvs=window.location.search.substring(1).split('&');
     for (var i = 0; i < kvs.length; i++) {
         var kv=kvs[i].split('=');
@@ -17,8 +17,8 @@ function mklayout() {
     var card=$("#scale [vcac-a-icon]");
     var divide_width=card.width()*0.45+20;
 
-    var ncolumns=setting("ncols")?Math.floor((parseInt(setting("ncols"),10)+1)/2)*2:4;
-    var nrows=setting("nrows")?parseInt(setting("nrows"),10):5;
+    var ncolumns=spec("ncols")?Math.floor((parseInt(spec("ncols"),10)+1)/2)*2:4;
+    var nrows=spec("nrows")?parseInt(spec("nrows"),10):3;
 
     var header_height=144;
     var margin=5;
@@ -40,7 +40,13 @@ function mklayout() {
         for (var c=0;c<ncolumns;c++) {
             var x=(screen_width+margin*2)*c;
             if (c>=ncolumns/2) x=x+divide_width;
-            var args={ user: r*ncolumns+c, benchmark: true };
+            var args={ 
+                user: r*ncolumns+c, 
+                benchmark: "on",
+                header: "off",
+                playlist: "off",
+                videourl: "off",
+            };
             var tmp=$('<div screen><iframe src="/?'+$.param(args)+'" /><img src="image/screen.png"/></div>');
             var view_port_width=screen_width1-margin*2;
             var view_port_height=screen_height*0.8-margin*2;

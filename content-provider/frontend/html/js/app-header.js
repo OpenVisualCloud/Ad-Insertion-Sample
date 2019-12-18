@@ -87,12 +87,13 @@ $("#setting").find("form").submit(function() {
 });
 
 var settings={
+    localStorage: {},
     user: function (name) {
-        if (typeof name != "undefined") localStorage.user=name;
-        return typeof localStorage.user!="undefined"?localStorage.user:"guest";
+        if (typeof name != "undefined") settings.localStorage.user=name;
+        return typeof settings.localStorage.user!="undefined"?settings.localStorage.user:"guest";
     },
     analytics_window: function (size) {
-        if (typeof size != "undefined") localStorage.analytics_window=size;
-        return typeof localStorage.analytics_window!="undefined"?parseFloat(localStorage.analytics_window):10;
+        if (typeof size != "undefined") settings.localStorage.analytics_window=size;
+        return typeof settings.localStorage.analytics_window!="undefined"?parseFloat(settings.localStorage.analytics_window):10;
     },
 }
