@@ -1,0 +1,5 @@
+set(service "ssai_ad_content_segment")
+add_custom_target(addash "${CMAKE_CURRENT_SOURCE_DIR}/build.sh" "dash" DEPENDS build_${service})
+add_custom_target(adhls "${CMAKE_CURRENT_SOURCE_DIR}/build.sh" "hls" DEPENDS build_${service})
+include("${CMAKE_SOURCE_DIR}/script/service.cmake")
+add_dependencies(build_${service} build_ssai_common)

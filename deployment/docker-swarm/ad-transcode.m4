@@ -4,6 +4,8 @@
         volumes:
             - ${AD_DASH_VOLUME}:/var/www/adinsert/dash:rw
             - ${AD_HLS_VOLUME}:/var/www/adinsert/hls:rw
+            - ${AD_SEGMENT_DASH_VOLUME}:/var/www/adinsert/segment/dash:ro
+            - ${AD_SEGMENT_HLS_VOLUME}:/var/www/adinsert/segment/hls:ro
             - ${AD_STATIC_VOLUME}:/var/www/skipped:ro
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:

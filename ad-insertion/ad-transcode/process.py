@@ -15,6 +15,8 @@ from abr_hls_dash import GetABRCommand
 import shutil
 
 adinsert_archive_root="/var/www/adinsert"
+segment_dash_root="/var/www/adinsert/segment/dash"
+segment_hls_root="/var/www/adinsert/segment/hls"
 dash_root="/var/www/adinsert/dash"
 hls_root="/var/www/adinsert/hls"
 fallback_root="/var/www/skipped"
@@ -120,7 +122,10 @@ class KafkaMsgParser(object):
         self.width = self.msg["ad_config"]["resolution"]["width"]
         self.bitrate = self.msg["ad_config"]["bandwidth"]
         self.bench_mode = self.msg["bench_mode"]
- 
+        self.segment_path = segment_hls_root
+        if self.streaming_type=="dash":
+            self.segment_path = segment_dash_root
+
     def GetRedition(self):
         redition = ([self.width, self.height, self.bitrate, 128000],)
         return redition
@@ -177,7 +182,30 @@ def CopyADStatic(msg, prefix="na"):
         if msg.streaming_type=="hls" and name.endswith(".m3u8"):
             if not isfile(complete_file) or name.startswith(prefix):
                 SignalCompletion(target_file)
-    
+
+def CopyADSegment(msg, stream, prefix="na"):
+    segment_folder = msg.segment_path + "/" +  stream.split("/")[-1]
+    # first copy all streams
+    all_files=list(listdir(segment_folder))
+    for name in all_files:
+        target_file=msg.target_path+"/"+name
+        if msg.streaming_type=="dash" and (name.endswith(".m4s") or name.endswith(".mpd")):
+            shutil.copyfile(segment_folder+"/"+name,target_file)
+        if msg.streaming_type=="hls" and (name.endswith(".ts") or name.endswith(".m3u8")):
+            shutil.copyfile(segment_folder+"/"+name,target_file)
+
+    # then signal complete for all streams.
+    for name in all_files:
+        target_file=msg.target_path+"/"+name
+        complete_file=msg.target_path+"/"+name+".complete"
+        if msg.streaming_type=="dash" and name.endswith(".mpd"):
+            if not isfile(complete_file) or name.startswith(prefix):
+                SignalCompletion(target_file)
+        if msg.streaming_type=="hls" and name.endswith(".m3u8"):
+            if not isfile(complete_file) or name.startswith(prefix):
+                SignalCompletion(target_file)
+
+
 def SignalCompletion(name):
     with open(name+".complete","w") as f:
         pass
@@ -225,16 +253,24 @@ def ADTranscode(kafkamsg,db):
         SignalIncompletion(msg.target)
 
         try:
-            # only generate one resolution for ad segment, if not generated, ad will fall back to skipped ad.
-            cmd = GetABRCommand(stream, msg.target_path, msg.streaming_type, msg.GetRedition(), duration=msg.segment_duration, fade_type="audio", content_type="ad")
-            process_id = subprocess.Popen(cmd,stdout=subprocess.PIPE)
-            # the `multiprocessing.Process` process will wait until
-            # the call to the `subprocess.Popen` object is completed
-            process_id.wait()
-            SignalCompletion(msg.target)
+            stream_folder = msg.segment_path + "/" + stream.split("/")[-1]
+
+            if isdir(stream_folder):
+                print("Prefetch the AD segment {} \n".format(stream_folder),flush=True)
+                CopyADSegment(msg,stream)
+            else:
+                print("Transcoding the AD segment {} \n".format(stream),flush=True)
+                # only generate one resolution for ad segment, if not generated, ad will fall back to skipped ad.
+                cmd = GetABRCommand(stream, msg.target_path, msg.streaming_type, msg.GetRedition(), duration=msg.segment_duration, fade_type="audio", content_type="ad")
+                process_id = subprocess.Popen(cmd,stdout=subprocess.PIPE)
+                # the `multiprocessing.Process` process will wait until
+                # the call to the `subprocess.Popen` object is completed
+                process_id.wait()
+                SignalCompletion(msg.target)
+
             zk.process_end()
         except Exception as e:
-            print(str(e))
+            print(str(e),flush=True)
             CopyADStatic(msg)
             zk.process_abort()
     zk.close()

@@ -8,6 +8,7 @@ NTRANSCODES="${4:-1}"
 
 rm -rf "$DIR/../../volume/ad/cache"
 mkdir -p "$DIR/../../volume/ad/cache/dash" "$DIR/../../volume/ad/cache/hls"
+mkdir -p "$DIR/../../volume/ad/segment/dash" "$DIR/../../volume/ad/segment/hls"
 mkdir -p "$DIR/../../volume/video/cache/dash" "$DIR/../../volume/video/cache/hls"
 
 if [ -x /usr/bin/kubectl ] || [ -x /usr/local/bin/kubectl ]; then
@@ -26,6 +27,10 @@ if [ -x /usr/bin/kubectl ] || [ -x /usr/local/bin/kubectl ]; then
     export AD_CACHE_VOLUME_PATH=/tmp/cache/ad
     export AD_CACHE_VOLUME_SIZE=1
     export AD_CACHE_VOLUME_HOST=${hosts[0]}
+
+    export AD_SEGMENT_VOLUME_PATH=/tmp/segment/ad
+    export AD_SEGMENT_VOLUME_SIZE=1
+    export AD_SEGMENT_VOLUME_HOST=${hosts[0]}
 
     export AD_STATIC_VOLUME_PATH=/tmp/static/ad
     export AD_STATIC_VOLUME_SIZE=1
