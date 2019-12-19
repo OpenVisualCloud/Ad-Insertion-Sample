@@ -87,20 +87,35 @@ $("#player").on(":initpage", function (e) {
     var plist=$(this).find("[play-list]");
     plist.empty();
     apiHost.playList(settings.user()).then(function (data) {
-        $.each(data, function (k,v) {
-            var line=$('<tr><td><a href="javascript:void(0)"><img src="'+v.img+'" alt="'+v.name+'"/><figcaption>'+v.name+'</figcaption></a></td></tr>');
-            line.find("a").click(function () {
-                var e = $.Event("keydown", { keyCode: 13 });
-                $("#player input").val(v.url).trigger(e);
-            });
-            plist.append(line);
-        });
         if (spec("benchmark")) {
-            var streams=$.grep(plist.find('a'),function (e, i) {
-                return $(e).find("img").attr("alt").startsWith("hls");
-            });
-            streams[spec("seq")%streams.length].click();
             $("[video-section]").css({width:"100vw",height:"100vh"});
+            var streams=$.grep(data,function (v, x) {
+                return v.name.startsWith("hls");
+            });
+            var stream=streams[spec("seq")%streams.length].url;
+            var seq=0;
+            var playnext=function () {
+                setTimeout(function () {
+                    var stream1=stream.replace(".mp4/","_seq"+seq+".mp4/");
+                    $("#player").trigger(":close").trigger(":play",[stream1]);
+                    seq=seq+1;
+                },100);
+            }
+            $("#player video").on({
+                'ended': playnext,
+                'abort': playnext,
+                'error': playnext
+            });
+            playnext();
+        } else {
+            $.each(data, function (k,v) {
+                var line=$('<tr><td><a href="javascript:void(0)"><img src="'+v.img+'" alt="'+v.name+'"/><figcaption>'+v.name+'</figcaption></a></td></tr>');
+                line.find("a").click(function () {
+                    var e = $.Event("keydown", { keyCode: 13 });
+                    $("#player input").val(v.url).trigger(e);
+                });
+                plist.append(line);
+            });
         }
     });
 }).find("input").keydown(function (e) {
