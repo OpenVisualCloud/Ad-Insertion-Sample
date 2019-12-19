@@ -8,7 +8,7 @@
                 <input class="input-group-field" type="text" name="url" disabled>
             </div>
             <div>
-                <video controls="true" autoplay loop muted style="width:100%;height:100%"></video>
+                <video controls="true" autoplay muted style="width:100%;height:100%"></video>
 
                 <div analytics-console style="display:block;display:none;position:absolute;opacity:0.9;width:240px;height:100%;top:60px;left:0px;background-color:white;overflow:auto;pointer-events:none">
                 </div>
