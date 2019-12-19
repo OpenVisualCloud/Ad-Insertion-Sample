@@ -4,6 +4,9 @@ DIR=$(dirname $(readlink -f "$0"))
 export AD_ARCHIVE_VOLUME=$(readlink -f "$DIR/../../volume/ad/archive")
 export AD_DASH_VOLUME=$(readlink -f "$DIR/../../volume/ad/cache/dash")
 export AD_HLS_VOLUME=$(readlink -f "$DIR/../../volume/ad/cache/hls")
+export AD_SEGMENT_ARCHIVE_VOLUME=$(readlink -f "$DIR/../../volume/ad/segment/archive")
+export AD_SEGMENT_DASH_VOLUME=$(readlink -f "$DIR/../../volume/ad/segment/dash")
+export AD_SEGMENT_HLS_VOLUME=$(readlink -f "$DIR/../../volume/ad/segment/hls")
 export AD_STATIC_VOLUME=$(readlink -f "$DIR/../../volume/ad/static")
 export VIDEO_ARCHIVE_VOLUME=$(readlink -f "$DIR/../../volume/video/archive")
 export VIDEO_DASH_VOLUME=$(readlink -f "$DIR/../../volume/video/cache/dash")
@@ -15,6 +18,7 @@ docker network prune -f
 
 rm -rf "${AD_DASH_VOLUME}" "${AD_HLS_VOLUME}"
 mkdir -p "${AD_DASH_VOLUME}" "${AD_HLS_VOLUME}"
+mkdir -p "${AD_SEGMENT_DASH_VOLUME}" "${AD_SEGMENT_HLS_VOLUME}"
 mkdir -p "${VIDEO_DASH_VOLUME}" "${VIDEO_HLS_VOLUME}"
 
 yml="$DIR/docker-compose.$(hostname).yml"
