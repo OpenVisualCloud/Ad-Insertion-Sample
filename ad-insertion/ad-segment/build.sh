@@ -12,13 +12,13 @@ case "$(cat /proc/1/sched | head -n 1)" in
         clip_name="${clip/*\//}"
         #echo $clip_name
         if test ! -f "segment/archive/$clip_name"; then
-            ffmpeg -i "archive/$clip_name" -vf "scale=1920:960,pad=1920:1080:0:60:black,drawtext=text='Server-Side AD Insertion':x=(w-text_w)/2:y=(h-text_h)/3:fontsize=100:fontcolor=white,setsar=sar=40/33" -y "segment/archive/$clip_name"
+            ffmpeg -i "archive/$clip_name" -vf "scale=1920:960,pad=1920:1080:0:60:black,drawtext=text='Server-Side AD Insertion':x=(w-text_w)/2:y=(h-text_h)/3:fontsize=100:fontcolor=white" -y "segment/archive/$clip_name"
         fi
         if test "$1" == "dash"; then
-            /home/create_dash.sh "$clip_name" &
+            /home/create_dash.sh "$clip_name" ${2} &
         fi
         if test "$1" == "hls"; then
-            /home/create_hls.sh "$clip_name" &
+            /home/create_hls.sh "$clip_name" ${2} &
         fi
     done
     wait

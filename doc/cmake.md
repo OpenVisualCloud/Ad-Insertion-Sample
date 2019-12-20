@@ -6,6 +6,7 @@ Use the following definitions to customize the building process:
 - **FRAMEWORK**: Specify the target framework: ```gst``` or ```ffmpeg```.   
 - **NANALYTICS**: Specify the number of analytics instances enabled for content analysis.  
 - **NTRANSCODES**: Specify the number of transcoding instances enabled for content or AD transcoding.  
+- **MINRESOLUTION**: Specify the mininum resolution to transcode for content and ad clip. ```360p```, ```480p```, ```720p``` etc.
 
 ### Examples:   
 
