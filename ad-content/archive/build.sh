@@ -1,6 +1,5 @@
 #!/bin/bash -e
 
-IMAGE="ssai_ad_content_archive"
 DIR=$(dirname $(readlink -f "$0"))
 clips=()
 
@@ -23,8 +22,9 @@ case "$(cat /proc/1/sched | head -n 1)" in
         fi
     done
 
+    IMAGE="ssai_ad_content_archive"
+    . "$DIR/../../script/build.sh"
     if test "$download" = "true"; then
-        . "$DIR/../../script/build.sh"
         . "$DIR/shell.sh" /home/build.sh
     fi
     ;;
