@@ -34,10 +34,10 @@ case "$(cat /proc/1/sched | head -n 1)" in
             mv -f "archive/tmp.$clip_name" "archive/$clip_name"
         fi
         if test "$1" == "dash"; then
-            /home/create_dash.sh "$clip_name" &
+            /home/create_dash.sh "$clip_name" ${2}&
         fi
         if test "$1" == "hls"; then
-            /home/create_hls.sh "$clip_name" &
+            /home/create_hls.sh "$clip_name" ${2}&
         fi
     done
     wait

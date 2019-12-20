@@ -52,8 +52,13 @@ See also how to customize the building process with [Build Options](doc/cmake.md
 By default, DASH/HLS segments are generated on the fly during playback, which requires a powerful server platform to keep up with the load. If unsure, it is recommended that you use the following commands to pre-generate DASH/HLS segments:
 
 ```bash
+#content segment
 make dash    # take a coffee break?        
 make hls     # take a walk?!      
+
+# ad segment
+make addash
+make adhls
 ```
 
 ### Start/stop Services:

@@ -3,7 +3,7 @@
 set -e
 
 # Usage create-hls.sh hls/dash SOURCE_FILE
-[[ ! "${1}" ]] && echo "Usage: create-hls.sh hls SOURCE_FILE " && exit 1
+[[ ! "${1}" ]] && echo "Usage: create-hls.sh file minres " && exit 1
 
 # comment/add lines here to control which renditions would be created
 renditions=(
@@ -39,6 +39,11 @@ source="segment/archive/${1}"
 target="segment/${streaming_type}/${source##*/}" # leave only last component of path
 mkdir -p ${target}
 
+min_height="$(echo ${2} |grep -oE '^[[:digit:]]+')"
+if [ -z ${2} ];then
+    min_height=360
+fi
+
 default_threshold=4
 count=0
 
@@ -47,7 +52,7 @@ key_frames_interval=${key_frames_interval:-50}
 key_frames_interval=$(echo `printf "%.1f\n" $(bc -l <<<"$key_frames_interval/10")`*10 | bc) # round
 key_frames_interval=${key_frames_interval%.*} # truncate to integer
 
-frame_resolution="$(echo `ffprobe ${source} 2>&1 | grep -oE '[[:digit:]]+(x[[:digit:]]+)? .SAR' | grep -oE '[[:digit:]]+(.[[:digit:]]+)?'`)"
+frame_resolution="$(ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of csv=s=x:p=0 ${source})"
 frame_width="$(echo ${frame_resolution} | grep -oE '^[[:digit:]]+')"
 frame_height="$(echo ${frame_resolution} | grep -oE '[[:digit:]]+$')"
 
@@ -80,8 +85,7 @@ for rendition in "${renditions[@]}"; do
   bufsize="$(echo "`echo ${bitrate} | grep -oE '[[:digit:]]+'`*${rate_monitor_buffer_ratio}" | bc)"
   bandwidth="$(echo ${bitrate} | grep -oE '[[:digit:]]+')000"
   name="${height}p"
-  echo ${source} $height $width ${frame_height}
-  if [ ${frame_height} -lt ${height} ]; then
+  if [ ${frame_height} -lt ${height} ] || [ ${height} -lt ${min_height} ]; then
     continue
   fi
 
