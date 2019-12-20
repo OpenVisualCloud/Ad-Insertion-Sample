@@ -33,7 +33,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: zookeeper
-          image: confluentinc/cp-zookeeper:latest
+          image: confluentinc/cp-zookeeper:5.3.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 2181
