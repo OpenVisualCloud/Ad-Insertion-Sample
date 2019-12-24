@@ -35,6 +35,11 @@ spec:
         - name: content-provider
           image: ssai_content_provider_frontend:latest
           imagePullPolicy: IfNotPresent
+          env:
+            - name: NO_PROXY
+              value: "*"
+            - name: no_proxy
+              value: "*"
           ports:
             - containerPort: 8080
           volumeMounts:

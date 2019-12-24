@@ -3,6 +3,9 @@
         image: ssai_cdn_service:latest
         ports:
             - "443:8443"
+        environment:
+            NO_PROXY: "*"
+            no_proxy: "*"
         networks:
             - appnet
         deploy:

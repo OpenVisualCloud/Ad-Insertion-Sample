@@ -13,7 +13,10 @@ mkdir -p "$DIR/../../volume/ad/segment/dash" "$DIR/../../volume/ad/segment/hls"
 mkdir -p "$DIR/../../volume/video/cache/dash" "$DIR/../../volume/video/cache/hls"
 
 if [ -x /usr/bin/kubectl ] || [ -x /usr/local/bin/kubectl ]; then
-    HOSTIP=$(kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}' --selector='node-role.kubernetes.io/master' | cut -f1 -d' ')
+    HOSTIP=$(kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}' --selector='node-role.kubernetes.io/master' 2> /dev/null | cut -f1 -d' ' )
+    if [ -z "$HOSTIP" ]; then
+        exit 0
+    fi
 
     # list all workers
     hosts=($(kubectl get nodes -o jsonpath="{.items[*].metadata.name}" --selector='!node-role.kubernetes.io/master'))

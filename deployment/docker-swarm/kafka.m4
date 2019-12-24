@@ -16,6 +16,8 @@
             KAFKA_LOG4J_LOGGERS: 'kafka=ERROR,kafka.controller=ERROR,state.change.logger=ERROR,org.apache.kafka=ERROR'
             KAFKA_LOG4J_ROOT_LOGLEVEL: 'ERROR'
             CONFLUENT_SUPPORT_METRICS_ENABLE: 0
+            NO_PROXY: "*"
+            no_proxy: "*"
         networks:
             - appnet
         deploy:
@@ -39,6 +41,8 @@
         environment:
             KAFKA_BROKER_ID: ignored
             KAFKA_ZOOKEEPER_CONNECT: ignored
+            NO_PROXY: "*"
+            no_proxy: "*"
         networks:
             - appnet
         deploy:

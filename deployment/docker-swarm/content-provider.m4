@@ -1,6 +1,9 @@
 
     content-provider-service:
         image: ssai_content_provider_frontend:latest
+        environment:
+            NO_PROXY: "*"
+            no_proxy: "*"
         volumes:
             - ${VIDEO_ARCHIVE_VOLUME}:/var/www/archive:ro
             - ${VIDEO_DASH_VOLUME}:/var/www/video/dash:ro

@@ -1,6 +1,9 @@
 
     content-transcode:
         image: ssai_content_transcode:latest
+        environment:
+            NO_PROXY: "*"
+            no_proxy: "*"
         volumes:
             - ${VIDEO_ARCHIVE_VOLUME}:/var/www/archive:ro
             - ${VIDEO_DASH_VOLUME}:/var/www/video/dash:rw

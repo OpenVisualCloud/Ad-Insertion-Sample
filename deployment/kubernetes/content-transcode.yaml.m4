@@ -24,6 +24,11 @@ spec:
         - name: content-transcode
           image: ssai_content_transcode:latest
           imagePullPolicy: IfNotPresent
+          env:
+            - name: NO_PROXY
+              value: "*"
+            - name: no_proxy
+              value: "*"
           volumeMounts:
             - mountPath: /var/www/video
               name: video-cache

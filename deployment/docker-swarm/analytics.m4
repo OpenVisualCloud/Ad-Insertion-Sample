@@ -21,6 +21,8 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
             VCAC_VA_PRE: "VCAC-A-"
             VCAC_NO_PROXY: "*"
             VCAC_no_proxy: "*"
+            VCAC_NO_PROXY: "*"
+            VCAC_no_proxy: "*"
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - /etc/localtime:/etc/localtime:ro
