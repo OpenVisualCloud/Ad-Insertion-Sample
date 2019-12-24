@@ -1,5 +1,4 @@
 networks:
-    default_net:
+    appnet:
         driver: overlay
         attachable: true
-

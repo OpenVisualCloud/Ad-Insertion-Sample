@@ -5,10 +5,8 @@
             - ${VIDEO_ARCHIVE_VOLUME}:/var/www/archive:ro
             - ${VIDEO_DASH_VOLUME}:/var/www/video/dash:rw
             - ${VIDEO_HLS_VOLUME}:/var/www/video/hls:rw
-ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
-            - default_net
-')dnl
+            - appnet
         deploy:
             replicas: defn(`NTRANSCODES')
             placement:

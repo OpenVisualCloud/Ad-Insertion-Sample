@@ -8,10 +8,8 @@
             AD_INTERVALS: 8
             AD_DURATION: 5
             AD_BENCH_MODE: 0
-ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
-            - default_net
-')dnl
+            - appnet
         deploy:
             replicas: 1
             placement:

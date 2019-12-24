@@ -7,10 +7,8 @@
             - ${AD_SEGMENT_DASH_VOLUME}:/var/www/adinsert/segment/dash:ro
             - ${AD_SEGMENT_HLS_VOLUME}:/var/www/adinsert/segment/hls:ro
             - ${AD_STATIC_VOLUME}:/var/www/skipped:ro
-ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
-            - default_net
-')dnl
+            - appnet
         deploy:
             replicas: defn(`NTRANSCODES')
             placement:

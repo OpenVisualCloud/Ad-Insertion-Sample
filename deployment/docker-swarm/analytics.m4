@@ -2,13 +2,15 @@
 ifelse(defn(`PLATFORM'),`Xeon',`dnl
     analytics:
         image: `ssai_analytics_'defn(`FRAMEWORK')_xeon:latest
-        deploy:
-            replicas: defn(`NANALYTICS')
         environment:
             NETWORK_PREFERENCE: "{\"CPU\":\"INT8,FP32\"}"
             VA_PRE: "defn(`PLATFORM')-"
             NO_PROXY: "*"
             no_proxy: "*"
+        networks:
+            - appnet
+        deploy:
+            replicas: defn(`NANALYTICS')
 ')dnl
 
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
@@ -23,7 +25,7 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
             - /var/run/docker.sock:/var/run/docker.sock
             - /etc/localtime:/etc/localtime:ro
         networks:
-            - default_net 
+            - appnet 
         deploy:
             replicas: defn(`NANALYTICS')
             placement:
