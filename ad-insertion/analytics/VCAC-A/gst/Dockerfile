@@ -1,4 +1,4 @@
-# ssai_analytics_gst_vcaca 
+# ssai_analytics_gst_vcac-a 
 
 FROM openvisualcloud/vcaca-ubuntu1804-analytics-gst:19.11
 

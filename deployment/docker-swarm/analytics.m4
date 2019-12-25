@@ -17,10 +17,8 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
     analytics:
         image: vcac-container-launcher:latest
         environment:
-            VCAC_IMAGE: `ssai_analytics_'defn(`FRAMEWORK')_vcaca:latest
+            VCAC_IMAGE: `ssai_analytics_'defn(`FRAMEWORK')_vcac-a:latest
             VCAC_VA_PRE: "VCAC-A-"
-            VCAC_NO_PROXY: "*"
-            VCAC_no_proxy: "*"
             VCAC_NO_PROXY: "*"
             VCAC_no_proxy: "*"
         volumes:
@@ -34,3 +32,4 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
                 constraints:
                     - node.labels.vcac_zone==yes
 ')dnl
+
