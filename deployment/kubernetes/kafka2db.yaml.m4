@@ -20,3 +20,9 @@ spec:
         - name: kafka2db
           image: ssai_kafka2db:latest
           imagePullPolicy: IfNotPresent
+          env:
+            - name: NO_PROXY
+              value: "*"
+            - name: no_proxy
+              value: "*"
+

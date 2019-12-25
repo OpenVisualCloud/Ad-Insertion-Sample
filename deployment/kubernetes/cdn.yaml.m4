@@ -40,6 +40,11 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8443
+          env:
+            - name: NO_PROXY
+              value: "*"
+            - name: no_proxy
+              value: "*"
           volumeMounts:
             - mountPath: /etc/localtime
               name: timezone

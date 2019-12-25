@@ -24,6 +24,11 @@ spec:
         - name: ad-transcode
           image: ssai_ad_transcode:latest
           imagePullPolicy: IfNotPresent
+          env:
+            - name: NO_PROXY
+              value: "*"
+            - name: no_proxy
+              value: "*"
           volumeMounts:
             - mountPath: /var/www/adinsert
               name: ad-cache

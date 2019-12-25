@@ -9,10 +9,10 @@
             ZOOKEEPER_MAX_CLIENT_CNXNS: '20000'
             ZOOKEEPER_LOG4J_LOGGERS: 'zookeepr=ERROR'
             ZOOKEEPER_LOG4J_ROOT_LOGLEVEL: 'ERROR'
-ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+            NO_PROXY: "*"
+            no_proxy: "*"
         networks:
-            - default_net
-')dnl
+            - appnet
         deploy:
             replicas: 1
             placement:

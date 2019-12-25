@@ -1,10 +1,11 @@
 
     kafka2db:
         image: ssai_kafka2db:latest
-ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        environment:
+            NO_PROXY: "*"
+            no_proxy: "*"
         networks:
-            - default_net
-')dnl
+            - appnet
         deploy:
             replicas: 1
             placement:

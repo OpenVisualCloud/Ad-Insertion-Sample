@@ -40,3 +40,8 @@ spec:
           env:
             - name: "discovery.type"
               value: "single-node"
+            - name: NO_PROXY
+              value: "*"
+            - name: no_proxy
+              value: "*"
+

@@ -16,10 +16,10 @@
             KAFKA_LOG4J_LOGGERS: 'kafka=ERROR,kafka.controller=ERROR,state.change.logger=ERROR,org.apache.kafka=ERROR'
             KAFKA_LOG4J_ROOT_LOGLEVEL: 'ERROR'
             CONFLUENT_SUPPORT_METRICS_ENABLE: 0
-ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+            NO_PROXY: "*"
+            no_proxy: "*"
         networks:
-            - default_net
-')dnl
+            - appnet
         deploy:
             replicas: 1
             placement:
@@ -41,10 +41,10 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         environment:
             KAFKA_BROKER_ID: ignored
             KAFKA_ZOOKEEPER_CONNECT: ignored
-ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+            NO_PROXY: "*"
+            no_proxy: "*"
         networks:
-            - default_net
-')dnl
+            - appnet
         deploy:
             placement:
                 constraints:

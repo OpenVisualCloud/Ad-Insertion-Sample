@@ -66,6 +66,10 @@ spec:
               value: "ERROR"
             - name: "CONFLUENT_SUPPORT_METRICS_ENABLE"
               value: "0"
+            - name: NO_PROXY
+              value: "*"
+            - name: no_proxy
+              value: "*"
 
 ---
 
@@ -104,3 +108,8 @@ spec:
               value: "ignored"
             - name: "KAFKA_ZOOKEEPER_CONNECT"
               value: "ignored"
+            - name: NO_PROXY
+              value: "*"
+            - name: no_proxy
+              value: "*"
+

@@ -1,10 +1,11 @@
 
     ad-decision-service:
         image: ssai_ad_decision_frontend:latest
-ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
+        environment:
+            NO_PROXY: "*"
+            no_proxy: "*"
         networks:
-            - default_net
-')dnl
+            - appnet
         deploy:
             replicas: 1
             placement:
