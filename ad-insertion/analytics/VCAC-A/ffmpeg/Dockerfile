@@ -1,4 +1,4 @@
-# ssai_analytics_ffmpeg_vcaca
+# ssai_analytics_ffmpeg_vcac-a
 
 ARG base_name=openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg:19.11
 FROM ${base_name}
