@@ -32,4 +32,4 @@ spec:
               value: "*"
 defn(`PLATFORM_VOLUME_MOUNTS')dnl
 defn(`PLATFORM_VOLUMES')dnl
-PLATFORM_NODE_SELECTOR()dnl
+defn(`PLATFORM_NODE_SELECTOR')dnl
