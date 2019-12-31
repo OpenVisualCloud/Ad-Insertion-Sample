@@ -22,7 +22,7 @@ if (NOT DEFINED NTRANSCODES)
 endif()
 
 if (NOT DEFINED MINRESOLUTION)
-    set(MINRESOLUTION "1")
+    set(MINRESOLUTION "360p")
 endif()
 
 file(GLOB dirs "deployment" "*")
