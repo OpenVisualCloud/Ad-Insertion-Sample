@@ -100,13 +100,6 @@ Launch your browser and point to `https://<hostname>` to play the streams and se
 
 ### See Also:
 
-- [The Content Provider Service](content-provider/README.md)  
-- [The AD Insertion Service](ad-insertion/README.md)  
-- [The AD Decision Service](ad-content/ad-decision/README.md)  
-- [The AD Content Service](ad-content/README.md)  
-- [The Account Service](account/README.md) 
-- [The CDN Service](cdn/README.md) 
-- [The Analytics Service](ad-insertion/analytics/README.md) 
 - [Docker Swarm Setup](deployment/docker-swarm/README.md)  
 - [Kubernetes Setup](deployment/kubernetes/README.md)  
 - [Intel VCAC-A Setup](doc/vcac-a.md)
