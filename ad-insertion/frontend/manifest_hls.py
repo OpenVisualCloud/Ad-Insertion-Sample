@@ -59,10 +59,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
             m1=re.search("EXTINF:([0-9.]+)", lines[i])
             duration=float(m1.group(1))
             ori_analysis_res=lines[i+1].split("p")[0]
-            if int(ori_analysis_res) >= 480:
-                dst_analysis_res="480"
-            else:
-                dst_analysis_res=ori_analysis_res
+            dst_analysis_res=ori_analysis_res
             seg_info={
                 "stream": stream_cp_url.split("/")[-1],
                 "bandwidth" : 0,
