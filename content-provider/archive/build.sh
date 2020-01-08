@@ -8,7 +8,7 @@ clips=("$sample_video/bottle-detection.mp4" "$sample_video/one-by-one-person-det
 case "$(cat /proc/1/sched | head -n 1)" in
 *build.sh*)
     cd /mnt
-    mkdir -p archive dash hls
+    mkdir -p archive cache/dash cache/hls
     for clip in "${clips[@]}"; do
         clip_name="${clip/*\//}"
         clip_name="${clip_name/*=/}"
