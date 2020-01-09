@@ -19,7 +19,7 @@ if [ -x /usr/bin/kubectl ] || [ -x /usr/local/bin/kubectl ]; then
     fi
 
     # list all workers
-    hosts=($(kubectl get nodes -o jsonpath="{.items[*].metadata.name}" --selector='!node-role.kubernetes.io/master'))
+    hosts=($(kubectl get nodes --selector='!node-role.kubernetes.io/master' --show-labels | grep -v 'vcac-zone=yes' | grep ' Ready ' | cut -f1 -d' '))
     if test ${#hosts[@]} -lt 2; then
         hosts=(${hosts[0]} ${hosts[0]})
     fi
