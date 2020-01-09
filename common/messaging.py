@@ -43,21 +43,12 @@ class Consumer(object):
         self._client_id=socket.gethostname()
         self._group=group
 
-    def messages(self, topic, timeout=None):
-        c=KafkaConsumer(topic, bootstrap_servers=kafka_hosts, client_id=self._client_id , group_id=self._group, api_version=(0,10))
-
-        partitions=c.partitions_for_topic(topic)
-        if not partitions: raise Exception("Topic "+topic+" not exist")
-
-        timeout1=100 if timeout is None else timeout
-        while True:
-            partitions=c.poll(timeout1)
-            if partitions:
-                for p in partitions:
-                    for msg in partitions[p]:
-                        yield msg.value.decode('utf-8')
-            if timeout is not None: yield ""
-
+    def messages(self, topic):
+        c=KafkaConsumer(topic,bootstrap_servers=kafka_hosts,
+             client_id=self._client_id,group_id=self._group,
+             auto_offset_reset="earliest",api_version=(0,10))
+        for msg in c:
+            yield msg.value.decode('utf-8')
         c.close()
 
     def debug(self, topic):
