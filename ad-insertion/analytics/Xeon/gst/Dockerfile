@@ -4,7 +4,7 @@ FROM openvisualcloud/xeon-ubuntu1804-analytics-gst:19.11
 
 # Fetch python3 and Install python3
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q python3-gst-1.0 python3-jsonschema python3-pip ca-certificates && rm -rf /var/lib/apt/lists/* && \
-    pip3 install 'kafka>=1.3.5' 'kazoo>=2.6.1'
+    pip3 install 'kafka-python>=1.4.7' 'kazoo>=2.6.1'
 
 COPY app /home/
 COPY models/ /home/models/
