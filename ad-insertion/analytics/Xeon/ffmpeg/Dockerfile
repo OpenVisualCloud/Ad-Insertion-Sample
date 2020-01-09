@@ -3,7 +3,8 @@
 From openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg:19.11
 
 # Fetch python3 and Install python3
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends python3-gst-1.0 python3-jsonschema python3-kafka python3-kazoo && rm -rf /var/lib/apt/lists/*;
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends python3-gst-1.0 python3-jsonschema python3-pip && rm -rf /var/lib/apt/lists/* && \
+    pip3 install 'kafka>=1.3.5' 'kazoo>=2.6.1'
     
 COPY app /home/
 COPY ./models/ /home/models/
