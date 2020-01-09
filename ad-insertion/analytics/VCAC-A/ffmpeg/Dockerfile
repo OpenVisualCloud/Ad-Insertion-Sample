@@ -4,8 +4,8 @@ ARG base_name=openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg:19.11
 FROM ${base_name}
  
 # Fetch python3 and Install python3
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libgirepository-1.0-1 libsoup2.4.1 libjson-c3 python3-jsonschema python3-gi python3-requests python3-tornado python3-pip python3-setuptools python3-wheel python3-kafka python3-kazoo &&  \
-    rm -rf /var/lib/apt/lists/*;
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libgirepository-1.0-1 libsoup2.4.1 libjson-c3 python3-jsonschema python3-gi python3-requests python3-tornado python3-pip python3-setuptools python3-wheel && rm -rf /var/lib/apt/lists/* && \
+    pip3 install 'kafka>=1.3.5' 'kazoo>=2.6.1'
     
 COPY app /home/
 COPY models/ /home/models/
