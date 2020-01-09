@@ -14,10 +14,7 @@ $(window).bind("load", function () {
     if (spec("playlist")=="off") $("[playlist-section]").hide();
     if (spec("videourl")=="off") $("#player [video-section] .input-group").hide();
     if (spec("seq")) settings.user("u"+spec("seq"));
-    if (spec("benchmark")) {
-        apiHost.usecase(settings.user(), spec("benchmark"), 1);
-        apiHost.benchmode(settings.user(), 1);
-    }
+    if (spec("benchmark")) apiHost.usecase(settings.user(), spec("benchmark"), 1);
 
     $(".top-bar").trigger(":initpage");
     $("#player").trigger(":update");
