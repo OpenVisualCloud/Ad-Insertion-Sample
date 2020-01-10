@@ -47,6 +47,10 @@ class Consumer(object):
         c=KafkaConsumer(topic,bootstrap_servers=kafka_hosts,
              client_id=self._client_id,group_id=self._group,
              auto_offset_reset="earliest",api_version=(0,10))
+
+        pt=c.partitions_for_topic(topic)
+        if not pt: raise Exception("Topic "+topic+" not exist")
+
         for msg in c:
             yield msg.value.decode('utf-8')
         c.close()
