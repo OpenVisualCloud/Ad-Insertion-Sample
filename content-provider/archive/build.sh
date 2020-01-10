@@ -4,6 +4,7 @@ IMAGE="ssai_content_provider_archive"
 DIR=$(dirname $(readlink -f "$0"))
 sample_video="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master"
 clips=("$sample_video/bottle-detection.mp4" "$sample_video/one-by-one-person-detection.mp4" "$sample_video/car-detection.mp4" "$sample_video/people-detection.mp4")
+clips=()
 
 case "$(cat /proc/1/sched | head -n 1)" in
 *build.sh*)

@@ -1,17 +1,32 @@
 [
-    {"uri" : "http://ad-content-service:8080/car6.mp4",
+    {"uri" : "http://ad-content-service:8080/DogFood2_10_REV.mp4",
      "navigation_url" : "http://www.intel.com",
-     "keywords" : ["car", "sports", "motorbike", "bicycle", "anger", "sad", "surprise"],
-     "duration" : "5"
+     "keywords" : ["dog", "cow", "horse", "sheep", "family"],
+     "duration" : "10"
     },
-    {"uri" : "http://ad-content-service:8080/travel6.mp4",
+    {"uri" : "http://ad-content-service:8080/BoatAdvertisement10_REV.mp4",
      "navigation_url" : "http://www.intel.com",
-     "keywords" : ["person", "diningtable", "sofa", "train", "boat", "aeroplane", "face", "tvmonitor", "chair", "happy", "neutral", "bus"],
-     "duration" : "5"
+     "keywords" : ["boat", "aeroplane", "sports"],
+     "duration" : "10"
     },
-    {"uri" : "http://ad-content-service:8080/catfood.mp4",
+    {"uri" : "http://ad-content-service:8080/BTPVP031919D_Intel_Motorcycle_FINAL_040319_SneakersONLY.mp4",
      "navigation_url" : "http://www.intel.com",
-     "keywords" : ["bottle","cat", "pets", "cow", "dog", "horse", "pottedplant", "sheep", "bird"],
-     "duration" : "5"
+     "keywords" : ["motorbike", "bicycle", "sports"],
+     "duration" : "10"
+    },
+    {"uri" : "http://ad-content-service:8080/DesertCar_10_081419.mp4",
+     "navigation_url" : "http://www.intel.com",
+     "keywords" : ["car", "family"],
+     "duration" : "10"
+    },
+    {"uri" : "http://ad-content-service:8080/BTPVP031919F_Intel_Train_FINAL_040319_Generic.mp4",
+     "navigation_url" : "http://www.intel.com",
+     "keywords" : ["train" ],
+     "duration" : "10"
+    },
+    {"uri" : "http://ad-content-service:8080/BTPVP031919F_Intel_Train_FINAL_040319_Generic.mp4",
+     "navigation_url" : "http://www.intel.com",
+     "keywords" : ["sofa", "chair", "family", "dinningtable"],
+     "duration" : "10"
     }
 ]
