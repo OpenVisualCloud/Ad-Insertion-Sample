@@ -13,7 +13,7 @@
         networks:
             - appnet
         deploy:
-            replicas: defn(`NTRANSCODES')
+            replicas: 8
             placement:
                 constraints:
                     - node.role==manager

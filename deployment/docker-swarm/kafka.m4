@@ -10,7 +10,7 @@
             KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
             KAFKA_DEFAULT_REPLICATION_FACTOR: 1
             KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
-            KAFKA_NUM_PARTITIONS: 16
+            KAFKA_NUM_PARTITIONS: 8
             KAFKA_LOG_RETENTION_HOURS: 8
             KAFKA_HEAP_OPTS: '-Xmx24g -Xms24g'
             KAFKA_LOG4J_LOGGERS: 'kafka=ERROR,kafka.controller=ERROR,state.change.logger=ERROR,org.apache.kafka=ERROR'
@@ -30,13 +30,13 @@
         image: confluentinc/cp-kafka:5.3.1
         command: |
               bash -c 'cub kafka-ready -b kafka-service:9092 1 20 && \
-                       kafka-topics --create --topic content_provider_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic seg_analytics_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic seg_analytics_data --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic ad_transcode_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic workloads --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic adstats --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-                       kafka-topics --create --topic video_analytics_fps --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+                       kafka-topics --create --topic content_provider_sched --partitions 8 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+                       kafka-topics --create --topic seg_analytics_sched --partitions 8 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+                       kafka-topics --create --topic seg_analytics_data --partitions 8 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+                       kafka-topics --create --topic ad_transcode_sched --partitions 8 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+                       kafka-topics --create --topic workloads --partitions 8 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+                       kafka-topics --create --topic adstats --partitions 8 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
+                       kafka-topics --create --topic video_analytics_fps --partitions 8 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
                        sleep infinity'
         environment:
             KAFKA_BROKER_ID: ignored
