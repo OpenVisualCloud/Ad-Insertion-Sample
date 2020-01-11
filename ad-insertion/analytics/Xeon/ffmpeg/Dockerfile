@@ -1,6 +1,6 @@
 # ssai_analytics_ffmpeg_xeon
 
-From openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg:19.11
+From openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg:20.1
 
 # Fetch python3 and Install python3
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends python3-gst-1.0 python3-jsonschema python3-pip && rm -rf /var/lib/apt/lists/* && \

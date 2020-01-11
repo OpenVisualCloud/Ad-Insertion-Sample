@@ -6,7 +6,7 @@
 
 from ctypes import *  # pylint: disable=unused-wildcard-import
 
-clib = CDLL("/usr/lib/x86_64-linux-gnu/gstreamer-1.0/libgstvideoanalyticsmeta.so")
+clib = CDLL("/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0/libgstvideoanalyticsmeta.so")
 
 # json meta
 
