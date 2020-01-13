@@ -40,7 +40,7 @@ def check_renditions(frame_height, renditions=renditions_sample):
     return min_res
 
 def GetABRCommand(in_file, target, streaming_type, renditions=renditions_sample, duration=2,segment_num=0,fade_type=None,content_type=None):
-    ffprobe_cmd = ["/usr/bin/ffprobe", "-v", "quiet", "-print_format", "json", "-show_streams",in_file]
+    ffprobe_cmd = ["ffprobe", "-v", "quiet", "-print_format", "json", "-show_streams",in_file]
 
     process_id = subprocess.Popen(ffprobe_cmd,stdout=subprocess.PIPE)
     # the `multiprocessing.Process` process will wait until
@@ -77,7 +77,7 @@ def GetABRCommand(in_file, target, streaming_type, renditions=renditions_sample,
 
     cmd = []
     cmd_abr = []
-    cmd_base = ["/usr/bin/ffmpeg", "-hide_banner", "-y","-i", in_file]
+    cmd_base = ["ffmpeg", "-hide_banner", "-y","-i", in_file]
     if clip_a_duration == 0 and content_type == "ad":
         cmd_base += ["-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate="+str(44100)]
     cmd_misc = ["-hide_banner", "-y"]
@@ -168,7 +168,7 @@ def GetABRCommand(in_file, target, streaming_type, renditions=renditions_sample,
 
 def GetFadeCommand(in_file, target, fade_type):
     # ffprobe -v quiet -print_format json -show_streams
-    ffprobe_cmd = ["/usr/bin/ffprobe", "-v", "quiet", "-print_format", "json", "-show_streams",in_file]
+    ffprobe_cmd = ["ffprobe", "-v", "quiet", "-print_format", "json", "-show_streams",in_file]
 
     process_id = subprocess.Popen(ffprobe_cmd,stdout=subprocess.PIPE)
     # the `multiprocessing.Process` process will wait until
@@ -192,7 +192,7 @@ def GetFadeCommand(in_file, target, fade_type):
         a_st = (int)(clip_a_duration - duration)
 
     cmd = []
-    cmd_base = ["/usr/bin/ffmpeg", "-i", in_file]
+    cmd_base = ["ffmpeg", "-i", in_file]
     cmd_fade_in_out = ["-af", "afade="+fade_type+":"+"st="+str(a_st)+":"+"d="+str(duration), "-c:v", "copy"]
 
     cmd = cmd_base + cmd_fade_in_out

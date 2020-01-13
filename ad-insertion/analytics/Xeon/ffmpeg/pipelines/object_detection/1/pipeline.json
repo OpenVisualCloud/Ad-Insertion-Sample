@@ -2,7 +2,7 @@
     "name": "object_detection",
     "version": 1,
     "type": "FFmpeg",
-    "template":"-i \"{source[uri]}\" -vf \"detect=model={models[object_detection][1][network]}:model_proc=\"{models[object_detection][1][proc]}\":interval={parameters[every-nth-frame]}:device=CPU\"", 
+    "template":"-i \"{source[uri]}\" -vf \"detect=model={models[object_detection][1][network]}:model_proc=\"{models[object_detection][1][proc]}\":interval={parameters[every-nth-frame]}:device=CPU,metaconvert=converter=json:method=all:source=NULL:tags=NULL\"", 
     "description": "Object Detection",
     "parameters": {
         "type" : "object",

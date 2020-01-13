@@ -91,6 +91,8 @@ make stop_kubernetes
 
 Launch your browser and point to `https://<hostname>` to play the streams and see ADs got inserted during playback. 
 
+<IMG src="doc/adi-ui.gif" height="270px"></IMG>
+
 ---
 
 - For Kubernetes/Docker Swarm, `<hostname>` is the hostname of the manager/master node.
