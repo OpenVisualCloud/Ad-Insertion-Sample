@@ -1,6 +1,6 @@
 # ssai_analytics_ffmpeg_vcac-a
 
-ARG base_name=openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg:19.11
+ARG base_name=openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg:20.1
 FROM ${base_name}
  
 # Fetch python3 and Install python3

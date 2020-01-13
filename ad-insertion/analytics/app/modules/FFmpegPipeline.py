@@ -153,6 +153,23 @@ class FFmpegPipeline(Pipeline):
                         device = FFmpegPipeline.DEVICEID_MAP[int(filter_params['device'])]
                 filter_params["model"] = ModelManager.get_default_network_for_device(device,filter_params["model"])
                 new_filters.append(self._join_filter_params(filter_params))
+            elif (filter_params['type'] == "metaconvert"):
+                # use the file to send the tags info to ffmpeg 
+                tmp_file = "/tmp/timestamp"
+                if "tags" in self.request:
+                    try:
+                        tmp_tags=""
+                        for key in self.request["tags"]:
+                            #filter_params["tags"] = "{\"%s\":%s}" % (key, self.request["tags"][key])
+                            tmp_tags = "{\"%s\":%s}" % (key, self.request["tags"][key])
+                        with open(tmp_file,'w') as f:
+                            f.write(tmp_tags)
+                    except Exception:
+                        logger.error("Error adding tags")
+                source_uri ="source=" + "'" + self.request["source"]["uri"].replace(":","\\:") + "'"
+                filter_params_str = self._join_filter_params(filter_params).replace("source=NULL",source_uri)
+                filter_params_str = filter_params_str.replace("tags=NULL","tags=file|"+tmp_file)
+                new_filters.append(filter_params_str)
             else:
                 new_filters.append(_filter)
         args[vf_index+1] =','.join(new_filters)
@@ -164,9 +181,7 @@ class FFmpegPipeline(Pipeline):
         self._ffmpeg_launch_string = string.Formatter().vformat(self.template, [], self.request)
         args = ['ffmpeg']
         args.extend(shlex.split(self._ffmpeg_launch_string))
-        iemetadata_args = ["-f", "iemetadata", "-source_url", self.request["source"]["uri"]]
-
-        self._add_tags(iemetadata_args)
+        iemetadata_args = ["-f", "metapublish", "-method", "1", "-output_format", "stream"]
 
         if 'destination' in self.request:
             if self.request['destination']['type'] == "kafka":
