@@ -168,3 +168,49 @@
   }
 }
 
+#scale [info-block] {
+  position: absolute;
+  left: calc(50vw - 172px);
+  bottom: 0px;
+  width: 350px;
+  height: 300px;
+  color: white;
+  font-size: 25px;
+  opacity: 0;
+  animation-name: info-block-animation;
+  animation-fill-mode: forwards;
+  animation-duration: 16s;
+}
+
+#scale [info-block] tr:first-child td {
+  text-align: center;
+}
+
+#scale [info-block] tr:last-child td {
+  text-align: center;
+}
+
+#scale [info-block] tr:last-child td a:link {
+  color: white;
+}
+
+#scale [info-block] tr:last-child td a:visited {
+  color: white;
+}
+
+#scale [info-block] [line-break] {
+  line-height: 0.7;
+}
+
+@keyframes info-block-animation {
+  0% {
+     opacity: 0;
+  }
+  99% {
+     opacity: 0;
+  }
+  100% {
+     opacity: 1;
+  }
+}
+
