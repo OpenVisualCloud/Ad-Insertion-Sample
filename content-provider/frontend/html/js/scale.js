@@ -19,6 +19,7 @@ function mklayout() {
 
     var ncolumns=spec("ncols")?Math.floor((parseInt(spec("ncols"),10)+1)/2)*2:2;
     var nrows=spec("nrows")?parseInt(spec("nrows"),10):3;
+    $("#scale [info-block] [channel]").text(nrows*ncolumns);
 
     var header_height=144;
     var margin=5;
