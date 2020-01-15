@@ -3,7 +3,15 @@
 DIR=$(dirname $(readlink -f "$0"))
 
 echo "Making volumes..."
-awk -v DIR="$DIR" '
+HOSTS=$(kubectl get node -o 'custom-columns=NAME:.status.addresses[?(@.type=="Hostname")].address,IP:.status.addresses[?(@.type=="InternalIP")].address' | awk '!/NAME/{print $1":"$2}')
+awk -v DIR="$DIR" -v HOSTS="$HOSTS" '
+BEGIN{
+    split(HOSTS,tmp1," ");
+    for (i in tmp1) {
+        split(tmp1[i],tmp2,":");
+        host2ip[tmp2[1]]=tmp2[2];
+    }
+}
 /name:/ {
     gsub("-","/",$2)
     content="\""DIR"/../../volume/"$2"\""
@@ -12,7 +20,7 @@ awk -v DIR="$DIR" '
     path=$2
 }
 /- ".*"/ {
-    host=substr($2,2,length($2)-2);
+    host=host2ip[substr($2,2,length($2)-2)];
     paths[host][path]=1;
     contents[host][path]=content
 }
