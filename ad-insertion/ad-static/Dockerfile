@@ -1,6 +1,5 @@
 
-FROM ubuntu:18.04
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q ffmpeg
+FROM openvisualcloud/xeon-ubuntu1804-media-ffmpeg:20.1
 
 ####
 ARG  USER
