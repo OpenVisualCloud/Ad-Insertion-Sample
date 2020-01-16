@@ -2,6 +2,7 @@
 
 from messaging import Producer
 import json
+import os
 
 analytics_topic = "seg_analytics_sched"
 transcode_topic = "ad_transcode_sched"
@@ -21,7 +22,7 @@ class Schedule(object):
                 "seg_time": 0.0
             },
             "parameters": {
-                "every-nth-frame":2
+                "every-nth-frame":int(os.environ.get("EVERY_NTH_FRAME"))
             }
         }
         for item in seg_info["analytics"]:

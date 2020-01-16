@@ -44,6 +44,8 @@ spec:
               value: "5"
             - name: AD_BENCH_MODE
               value: "0"
+            - name: EVERY_NTH_FRAME 
+              value: "3"
             - name: NO_PROXY
               value: "*"
             - name: no_proxy
