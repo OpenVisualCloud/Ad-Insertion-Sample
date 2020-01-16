@@ -30,9 +30,10 @@ class RunVA(object):
             print(pinfo, flush=True)
             if pinfo is not None: 
                 state = pinfo["state"]
-                if state == "COMPLETED": break
+                if state == "COMPLETED":
+                    fps=pinfo["avg_fps"]
+                    break
                 if state == "ABORTED" or state == "ERROR": return -1
-                fps=pinfo["avg_fps"]
 
         PipelineManager.stop_instance(pipeline,version,pid)
         return fps
