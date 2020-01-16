@@ -5,8 +5,8 @@
             - ${AD_DASH_VOLUME}:/var/www/adinsert/dash:ro
             - ${AD_HLS_VOLUME}:/var/www/adinsert/hls:ro
         environment:
-            AD_INTERVALS: 8
-            AD_DURATION: 5
+            AD_INTERVALS: 12
+            AD_DURATION: 10
             AD_BENCH_MODE: 0
             EVERY_NTH_FRAME: 3
             NO_PROXY: "*"
