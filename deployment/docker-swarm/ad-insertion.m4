@@ -8,6 +8,7 @@
             AD_INTERVALS: 8
             AD_DURATION: 5
             AD_BENCH_MODE: 0
+            EVERY_NTH_FRAME: 3
             NO_PROXY: "*"
             no_proxy: "*"
         networks:
