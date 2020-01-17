@@ -17,6 +17,7 @@ from threading import Thread
 import shutil
 import uuid
 import re
+import json
 
 logger = logging.get_logger('FFmpegPipeline', is_static=True)
 
@@ -91,17 +92,20 @@ class FFmpegPipeline(Pipeline):
     def validate_config(config):
         pass
 
-    def _get_frame_number(stream_uri):
+    def _get_frame_number(self,stream_uri):
         frame_num=0
+        cmd=['ffprobe','-i',stream_uri,'-print_format','json','-show_format','-show_streams','-v','quiet']
         try:
-            all_parameter=subprocess.check_output(['ffprobe','-i',stream_uri,'-print_format','json','-show_format','-show_streams','-v','quiet'])
+            all_parameter=subprocess.check_output(cmd)
             all_parameter=all_parameter.decode('utf8')
             all_parameter=json.loads(all_parameter)
             d=float(all_parameter["streams"][0]["duration"])
-            f==list(map(int,all_parameter["streams"][0]["avg_frame_rate"].split("/")))
+            f=list(map(int,all_parameter["streams"][0]["avg_frame_rate"].split("/")))
             frame_num=d*(f[0])/(f[1])
         except Exception:
             raise Exception('error to ffprobe the video info')
+
+        return frame_num
 
     def _spawn(self,args):
         self.start_time = time.time()
