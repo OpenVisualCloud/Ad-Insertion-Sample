@@ -75,7 +75,7 @@ class FFmpegPipeline(Pipeline):
         else:
             elapsed_time = None
 
-        if elapsed_time != None:
+        if elapsed_time != None and (abs(elapsed_time) > 1.0e-9) and (self.state == "COMPLETED"):
            self.fps = self._get_frame_number(self.request["source"]["uri"])/elapsed_time
 
         status_obj = {
