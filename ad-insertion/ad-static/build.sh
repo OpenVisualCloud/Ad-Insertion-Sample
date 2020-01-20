@@ -3,12 +3,12 @@
 IMAGE="ssai_ad_insertion_ad_static"
 DIR=$(dirname $(readlink -f "$0"))
 SIZE=(3840x2160 2560x1440 1920x1080 1280x720 842x480 640x360)
+SEG=$(awk '/AD_DURATION:/{print$2}' "$DIR/../../deployment/docker-swarm/ad-insertion.m4") # segment duration
+SEG_DASH=$(($SEG * 1000000)) # segment duration
 DS=0 # display start
-DE=5 # display end
+DE=$SEG # display end
 FID=1.0 # fade in duration
 FOD=1.0 # fade out duration
-SEG=$DE # segment duration
-SEG_DASH=$(($SEG * 1000000)) # segment duration
 FR=25
 MIN_H=360
 
