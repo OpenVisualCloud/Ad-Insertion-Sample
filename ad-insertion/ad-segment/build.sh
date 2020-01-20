@@ -7,7 +7,7 @@ clips=()
 case "$(cat /proc/1/sched | head -n 1)" in
 *build.sh*)
     cd /mnt
-    mkdir -p archive segment/dash segment/hls
+    mkdir -p segment/archive segment/dash segment/hls
     for clip in `find archive -name "*.mp4" -print`; do
         clip_name="${clip/*\//}"
         #echo $clip_name
