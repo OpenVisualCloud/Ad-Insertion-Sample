@@ -9,6 +9,8 @@ function hls_play(page, video, url) {
 	    fragLoadingMaxRetryTimeout: 16000,
 	    manifestLoadingMaxRetryTimeout: 16000,
 	    levelLoadingMaxRetryTimeout: 16000,
+            maxBufferLength: 20,
+            startLevel: 0,
             xhrSetup: function(xhr, url) {
                 xhr.setRequestHeader("X-USER", settings.user());
             }
