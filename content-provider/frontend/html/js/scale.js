@@ -81,4 +81,5 @@ function mklayout() {
 
 $(window).bind("load", function () {
     setTimeout(mklayout, 15000);
+    setTimeout(function () { window.location.reload(true); }, 30*60*1000);
 }).resize(mklayout);
