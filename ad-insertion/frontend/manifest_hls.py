@@ -4,19 +4,17 @@ import re
 import copy
 
 def _ad_template(ad_spec, name, seq, seg_duration):
-    lines=["#EXT-X-DISCONTINUITY"]
-    for i in range(int(ad_spec["duration"][seq%len(ad_spec["duration"])]/seg_duration)):
-        lines.extend([
-            "#EXTINF: " + str(seg_duration) + ",",
-            name.format(i),
-        ])
-    lines.append("#EXT-X-DISCONTINUITY")
-    return lines
+    return [
+        "#EXT-X-DISCONTINUITY",
+        "#EXTINF: " + str(seg_duration) + ",",
+        name.format(0),
+        "#EXT-X-DISCONTINUITY"
+    ]
 
 def _ad_time(ad_spec, seq):
     time=0
     for i in range(seq):
-        time=time+ad_spec["duration"][i%len(ad_spec["duration"])]
+        time=time+ad_spec["duration"]
     return time
 
 def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_bench_mode=0):
@@ -59,7 +57,10 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
             m1=re.search("EXTINF:([0-9.]+)", lines[i])
             duration=float(m1.group(1))
             ori_analysis_res=lines[i+1].split("p")[0]
-            dst_analysis_res=ori_analysis_res
+            if int(ori_analysis_res) >= 480:
+                dst_analysis_res="360"
+            else:
+                dst_analysis_res=ori_analysis_res
             seg_info={
                 "stream": stream_cp_url.split("/")[-1],
                 "bandwidth" : 0,
@@ -72,7 +73,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
                 "codec": "avc",
                 "streaming_type": "hls",
                 "analytics":[],
-                "ad_duration": ad_spec["duration"][ad_sequence%len(ad_spec["duration"])],
+                "ad_duration": ad_spec["duration"],
                 "ad_segment": ad_segment,
             }
 

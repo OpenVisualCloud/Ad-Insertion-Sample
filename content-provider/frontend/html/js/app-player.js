@@ -2,6 +2,15 @@
 function hls_play(page, video, url) {
     if (Hls.isSupported()) {
         var config = {
+            nudgeMaxRetry: 20,
+            fragLoadingMaxRetry: 3,
+	    manifestLoadingMaxRetry: 1,
+	    levelLoadingMaxRetry: 2,
+	    fragLoadingMaxRetryTimeout: 16000,
+	    manifestLoadingMaxRetryTimeout: 16000,
+	    levelLoadingMaxRetryTimeout: 16000,
+            maxBufferLength: 20,
+            startLevel: 0,
             xhrSetup: function(xhr, url) {
                 xhr.setRequestHeader("X-USER", settings.user());
             }
@@ -11,18 +20,33 @@ function hls_play(page, video, url) {
         player.attachMedia(video[0]);
         player.on(Hls.Events.MANIFEST_PARSED,function () {
             video[0].play();
+	}).on(Hls.Events.ERROR, function (e, data) {
+	    console.log(data);
+	    switch (data.type) {
+	    case Hls.ErrorTypes.NETWORK_ERROR:
+                player.startLoad();
+		break;
+	    case Hls.ErrorTypes.MEDIA_ERROR:
+		player.recoverMediaError();
+		break;
+	    default:
+	        if (data.fatal) video.trigger("abort");
+	    }
+	});
+        page.unbind(":close").on(":close", function (e) {
+            if (typeof(video[0].pause)==='function') video[0].pause();
+            player.detachMedia();
+	    player.destroy();
         });
     } else if (video[0].canPlayType('application/vnd.apple.mpegurl')) {
         video[0].src= url;
         video[0].addEventListener('canplay', function() {
             video[0].play();
         });
+        page.unbind(":close").on(":close", function (e) {
+            if (typeof(video[0].pause)==='function') video[0].pause();
+        });
     }
-
-    page.unbind(":close").on(":close", function (e) {
-        video[0].src='';
-        if (typeof(video[0].pause)==='function') video[0].pause();
-    });
 }
 
 function dash_play(page, video, url) {
@@ -96,16 +120,18 @@ $("#player").on(":initpage", function (e) {
             var seq=0;
             var playnext=function () {
                 setTimeout(function () {
+                    $("#player video").unbind('ended').unbind("abort").unbind("error");
+                    $("#player").trigger(":close");
+                    $("#player video").on({
+                        'ended': playnext,
+                        'abort': playnext,
+                        'error': playnext,
+                    });
                     var stream1=stream.replace(".mp4/","_seq"+seq+".mp4/");
-                    $("#player").trigger(":close").trigger(":play",[stream1]);
+                    $("#player").trigger(":play",[stream1]);
                     seq=seq+1;
                 },100);
-            }
-            $("#player video").on({
-                'ended': playnext,
-                'abort': playnext,
-                'error': playnext
-            });
+            };
             playnext();
         } else {
             $.each(data, function (k,v) {
