@@ -3,13 +3,12 @@
 IMAGE="ssai_ad_insertion_ad_static"
 DIR=$(dirname $(readlink -f "$0"))
 SIZE=(3840x2160 2560x1440 1920x1080 1280x720 842x480 640x360)
+SEG=$(awk '/AD_DURATION:/{print$2}' "$DIR/../../deployment/docker-swarm/ad-insertion.m4") # segment duration
+SEG_DASH=$(($SEG * 1000000)) # segment duration
 DS=0 # display start
-DE=5 # display end
-DEDASH=5 # display end
+DE=$SEG # display end
 FID=1.0 # fade in duration
 FOD=1.0 # fade out duration
-SEG=5 # segment duration
-SEG_DASH=5000000 # segment duration
 FR=25
 MIN_H=360
 
@@ -36,17 +35,18 @@ case "$(cat /proc/1/sched | head -n 1)" in
           continue
         fi
 
-        if test ! -f ${h}p_000.ts; then
-            ffmpeg -f lavfi -i anullsrc=sample_rate=48000 -f lavfi -i color=c=blue:s=$s:d=$DE -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='Server-Side AD Insertion':x=(w-text_w)/2:y=(h-text_h)/2:fontsize=45:fontcolor_expr=ffffff%{eif\\\\: clip(255*(1*between(t\\, $DS + $FID\\, $DE - $FOD) + ((t - $DS)/$FID)*between(t\\, $DS\\, $DS + $FID) + (-(t - $DE)/$FOD)*between(t\\, $DE - $FOD\\, $DE) )\\, 0\\, 255) \\\\: x\\\\: 2 }" -shortest -c:a aac -c:v libx264 -g ${FR} -keyint_min ${FR} -f hls -hls_segment_filename ${h}p_%03d.ts -hls_time $SEG -y -hls_list_size $((DE/SEG)) ${h}p.m3u8
-        fi
-        if test ! -f ${h}p-chunk-stream1-00001.m4s; then
-            ffmpeg -f lavfi -i anullsrc=sample_rate=48000 -f lavfi -i color=c=blue:s=$s:d=$DE -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='Server-Side AD Insertion':x=(w-text_w)/2:y=(h-text_h)/2:fontsize=45:fontcolor_expr=ffffff%{eif\\\\: clip(255*(1*between(t\\, $DS + $FID\\, $DE - $FOD) + ((t - $DS)/$FID)*between(t\\, $DS\\, $DS + $FID) + (-(t - $DE)/$FOD)*between(t\\, $DE - $FOD\\, $DE) )\\, 0\\, 255) \\\\: x\\\\: 2 }" -shortest -c:a aac -c:v libx264 -g ${FR} -keyint_min ${FR} -f dash -init_seg_name ${h}p-'init-stream$RepresentationID$.m4s' -media_seg_name ${h}p-'chunk-stream$RepresentationID$-$Number%05d$.m4s' -use_template 1 -min_seg_duration ${SEG_DASH} -use_timeline 0 -y ${h}p.mpd
-        fi
+        ffmpeg -f lavfi -i anullsrc=sample_rate=48000 -f lavfi -i color=c=blue:s=$s:d=$DE -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='Server-Side AD Insertion':x=(w-text_w)/2:y=(h-text_h)/2:fontsize=45:fontcolor_expr=ffffff%{eif\\\\: clip(255*(1*between(t\\, $DS + $FID\\, $DE - $FOD) + ((t - $DS)/$FID)*between(t\\, $DS\\, $DS + $FID) + (-(t - $DE)/$FOD)*between(t\\, $DE - $FOD\\, $DE) )\\, 0\\, 255) \\\\: x\\\\: 2 }" -shortest -c:a aac -c:v libx264 -g ${FR} -keyint_min ${FR} -f hls -hls_segment_filename ${h}p_%03d.ts -hls_time $SEG -y -hls_list_size $((DE/SEG)) ${h}p.m3u8
+
+        ffmpeg -f lavfi -i anullsrc=sample_rate=48000 -f lavfi -i color=c=blue:s=$s:d=$DE -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='Server-Side AD Insertion':x=(w-text_w)/2:y=(h-text_h)/2:fontsize=45:fontcolor_expr=ffffff%{eif\\\\: clip(255*(1*between(t\\, $DS + $FID\\, $DE - $FOD) + ((t - $DS)/$FID)*between(t\\, $DS\\, $DS + $FID) + (-(t - $DE)/$FOD)*between(t\\, $DE - $FOD\\, $DE) )\\, 0\\, 255) \\\\: x\\\\: 2 }" -shortest -c:a aac -c:v libx264 -g ${FR} -keyint_min ${FR} -f dash -init_seg_name ${h}p-'init-stream$RepresentationID$.m4s' -media_seg_name ${h}p-'chunk-stream$RepresentationID$-$Number%05d$.m4s' -use_template 1 -min_seg_duration ${SEG_DASH} -use_timeline 0 -y ${h}p.mpd
     done
     ;;
 *) 
-    mkdir -p "$DIR/../../volume/ad/static"
+    spath="$DIR/../../volume/ad/static"
+    mkdir -p "$spath"
     . "$DIR/../../script/build.sh"
-    . "$DIR/shell.sh" /home/build.sh $@
+    if [[ ! -f "$spath/spec.txt" ]] || [[ $(cat "$spath/spec.txt") -ne $SEG ]]; then
+        . "$DIR/shell.sh" /home/build.sh $@
+        echo "$SEG" > "$spath/spec.txt"
+    fi
     ;;
 esac

@@ -4,19 +4,17 @@ import re
 import copy
 
 def _ad_template(ad_spec, name, seq, seg_duration):
-    lines=["#EXT-X-DISCONTINUITY"]
-    for i in range(int(ad_spec["duration"][seq%len(ad_spec["duration"])]/seg_duration)):
-        lines.extend([
-            "#EXTINF: " + str(seg_duration) + ",",
-            name.format(i),
-        ])
-    lines.append("#EXT-X-DISCONTINUITY")
-    return lines
+    return [
+        "#EXT-X-DISCONTINUITY",
+        "#EXTINF: " + str(seg_duration) + ",",
+        name.format(0),
+        "#EXT-X-DISCONTINUITY"
+    ]
 
 def _ad_time(ad_spec, seq):
     time=0
     for i in range(seq):
-        time=time+ad_spec["duration"][i%len(ad_spec["duration"])]
+        time=time+ad_spec["duration"]
     return time
 
 def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_bench_mode=0):
@@ -72,7 +70,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
                 "codec": "avc",
                 "streaming_type": "hls",
                 "analytics":[],
-                "ad_duration": ad_spec["duration"][ad_sequence%len(ad_spec["duration"])],
+                "ad_duration": ad_spec["duration"],
                 "ad_segment": ad_segment,
             }
 
