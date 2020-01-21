@@ -18,24 +18,20 @@ class SegmentHandler(web.RequestHandler):
         self._sch=Schedule()
         self._usecase={"obj_detection":1, "emotion":0, "face_recognition":0}
         self.executor=ThreadPoolExecutor()
+        self._zk=ZKData()
 
     def check_origin(self, origin):
         return True
 
     def _get_usecase_status(self, name, usecase):
         zk_usecase_path=zk_prefix+"/"+name +"/"+usecase
-        zk=ZKData()
-        enable=zk.get(zk_usecase_path)
-        zk.close()
-        if enable == {}:
-            return 0
+        enable=self._zk.get(zk_usecase_path)
+        if enable == {}: return 0
         return enable
 
     def _set_usecase_status(self, name, usecase, value):
         zk_usecase_path=zk_prefix+"/"+name +"/"+usecase
-        zk=ZKData()
-        zk.set(zk_usecase_path,value)
-        zk.close()
+        self._zk.set(zk_usecase_path,value)
 
     @run_on_executor
     def _get_segment(self, stream, user):
@@ -67,14 +63,11 @@ class SegmentHandler(web.RequestHandler):
             return None
 
         # get zk data for additional scheduling instruction
-        zk=ZKData()
-        seg_info=zk.get(zk_prefix+"/"+stream_base+"/"+user+"/"+stream.split("/")[-1])
-        zk.close()
+        seg_info=self._zk.get(zk_prefix+"/"+stream_base+"/"+user+"/"+stream.split("/")[-1])
         if seg_info: 
             # schedule ad
             if "transcode" in seg_info:
                 self._sch.transcode(user, seg_info)
-                self._sch.flush()
 
             # schedule analytics
             if "analytics" in seg_info:
@@ -92,11 +85,10 @@ class SegmentHandler(web.RequestHandler):
                     self._sch.analyze(seg_info, "emotion_recognition")
                 if self._usecase["face_recognition"] == 1:
                     self._sch.analyze(seg_info, "face_recognition")
+
+            if "analytics" in seg_info or "transcode" in seg_info:
                 self._sch.flush()
 
-                # delay releasing the stream to combat player caching.
-                if "seg_duration" in seg_info and seg_info["seg_time"]:
-                    time.sleep(max(0,seg_info["seg_duration"]-1.5))
         return '/intercept/' + stream
 
     @gen.coroutine
