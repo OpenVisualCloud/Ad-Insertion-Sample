@@ -16,14 +16,21 @@ function hls_play(page, video, url) {
             video[0].play();
 	}).on(Hls.Events.ERROR, function (e, data) {
 	    console.log(data);
-            if (!data.fatal) return;
+            var abort=function () { setTimeout(function () { video.trigger("abort"); }, 100); };
             switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
-                return player.startLoad();
+                switch (data.details) {
+                case Hls.ErrorDetails.FRAG_LOAD_ERROR:
+                case Hls.ErrorDetails.FRAG_LOAD_TIMEOUT:
+                    if (data.fatal) return abort();
+                    break;
+                };
+                if (data.fatal) return player.startLoad();
+                break;
             case Hls.ErrorTypes.MEDIA_ERROR:
-                return player.recoverMediaError();
+                if (data.fatal) return player.recoverMediaError();
+                break;
             }
-            setTimeout(function () { video.trigger("abort"); }, 100);
 	});
         page.unbind(":close").on(":close", function (e) {
             if (typeof(video[0].pause)==='function') video[0].pause();
