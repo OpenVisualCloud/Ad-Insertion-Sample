@@ -63,7 +63,7 @@ _ad_template=ET.fromstring("""<?xml version="1.0" encoding="utf-8"?>
 def _ad_time(ad_spec, seq):
     time=0
     for i in range(seq):
-        time=time+ad_spec["duration"][i%len(ad_spec["duration"])]
+        time=time+ad_spec["duration"]
     return time
 
 def _start_number(ad_spec, number, seq):
@@ -155,7 +155,7 @@ def parse_dash(stream_cp_url, mpd, ad_spec, ad_segment=5.0, ad_bench_mode=0):
                     "streaming_type": "dash",
                     "initSeg": stream_cp_url+"/"+init_stream,
                     "analytics": [],
-                    "ad_duration": ad_spec["duration"][i%len(ad_spec["duration"])],
+                    "ad_duration": ad_spec["duration"],
                     "ad_segment": ad_segment,
                 }
 
@@ -229,7 +229,7 @@ def parse_dash(stream_cp_url, mpd, ad_spec, ad_segment=5.0, ad_bench_mode=0):
 
         # insert AD
         if i==len(periods)-1: continue   # do not insert AD at the last period
-        duration=ad_spec["duration"][i%len(ad_spec["duration"])]
+        duration=ad_spec["duration"]
         mediaPresentationDuration += duration
         Period2=ET.SubElement(manifest, _ns("Period"),{"id":str(i*2+1),"duration":_to_iso8601(duration)})
         k=0
