@@ -2,19 +2,20 @@
 
 IMAGE="ssai_ad_insertion_ad_static"
 DIR=$(dirname $(readlink -f "$0"))
-SIZE=(3840x2160 2560x1440 1920x1080 1280x720 842x480 640x360)
-SEG=$(awk '/AD_DURATION:/{print$2}' "$DIR/../../deployment/docker-swarm/ad-insertion.m4") # segment duration
-SEG_DASH=$(($SEG * 1000000)) # segment duration
-DS=0 # display start
-DE=$SEG # display end
-FID=1.0 # fade in duration
-FOD=1.0 # fade out duration
-FR=25
-MIN_H=360
 
 case "$(cat /proc/1/sched | head -n 1)" in
 *build.sh*)
     cd /mnt
+    SIZE=(3840x2160 2560x1440 1920x1080 1280x720 842x480 640x360)
+    SEG="$1" # segment duration
+    shift
+    SEG_DASH=$(($SEG * 1000000)) # segment duration
+    DS=0 # display start
+    DE=$SEG # display end
+    FID=1.0 # fade in duration
+    FOD=1.0 # fade out duration
+    FR=25
+    MIN_H=360
 
     if test "$1" == "adstatic"; then
         if [ -n ${2} ]; then
@@ -44,8 +45,9 @@ case "$(cat /proc/1/sched | head -n 1)" in
     spath="$DIR/../../volume/ad/static"
     mkdir -p "$spath"
     . "$DIR/../../script/build.sh"
+    SEG=$(awk '/AD_DURATION:/{print$2}' "$DIR/../../deployment/docker-swarm/ad-insertion.m4")
     if [[ ! -f "$spath/spec.txt" ]] || [[ $(cat "$spath/spec.txt") -ne $SEG ]]; then
-        . "$DIR/shell.sh" /home/build.sh $@
+        . "$DIR/shell.sh" /home/build.sh $SEG $@
         echo "$SEG" > "$spath/spec.txt"
     fi
     ;;
