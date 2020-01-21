@@ -18,29 +18,25 @@ class ManifestHandler(web.RequestHandler):
         super(ManifestHandler, self).__init__(app, request, **kwargs)
         self.executor=ThreadPoolExecutor()
         self.benchmode=0
+        self._zk=ZKData()
 
     def check_origin(self, origin):
         return True
 
     def _get_bench_mode(self, name):
         zk_benchmode_path=zk_prefix+"/"+name +"/"+"benchmode"
-        zk=ZKData()
-        enable=zk.get(zk_benchmode_path)
-        zk.close()
-        if enable == {}:
-            return 0
+        enable=self._zk.get(zk_benchmode_path)
+        if enable == {}: return 0
         return enable
 
     @run_on_executor
     def _set_states(self, minfo, zk_path, stream_base, user):
-        zk=ZKData()
         if minfo["streams"]:
             for stream1 in minfo["streams"]:
-                zk.set(zk_path+"/"+stream1, minfo["streams"][stream1])
+                self._zk.set(zk_path+"/"+stream1, minfo["streams"][stream1])
         if minfo["segs"]:
             for seg in minfo["segs"]:
-                zk.set(zk_path+"/"+user+"/"+seg, minfo["segs"][seg])
-        zk.close()
+                self._zk.set(zk_path+"/"+user+"/"+seg, minfo["segs"][seg])
 
     # fetching manifest 
     async def _fetch_manifest(self, url):
@@ -86,16 +82,14 @@ class ManifestHandler(web.RequestHandler):
         ad_bench_mode=self._get_bench_mode(user)
         print("Bench Mode:"+str(ad_bench_mode),flush=True)
         if stream.endswith(".m3u8"):
-            zk=ZKData()
             minfo=parse_hls(
                 stream_cp_url=content_provider_url+"/"+stream,
                 m3u8=manifest,
-                stream_info=zk.get(zk_path+"/"+stream.split("/")[-1]),
+                stream_info=self._zk.get(zk_path+"/"+stream.split("/")[-1]),
                 ad_spec=ad_spec,
                 ad_bench_mode=ad_bench_mode,
                 ad_segment=ad_spec["duration"]
             )
-            zk.close()
         if stream.endswith(".mpd"):
             minfo=parse_dash(
                 stream_cp_url=content_provider_url+"/"+stream,
@@ -117,6 +111,4 @@ class ManifestHandler(web.RequestHandler):
         name=str(self.get_argument("name"))
         enable=int(self.get_argument("enable"))
         zk_benchmode_path=zk_prefix+"/"+name +"/"+"benchmode"
-        zk=ZKData()
-        zk.set(zk_benchmode_path, enable)
-        zk.close()
+        self._zk.set(zk_benchmode_path, enable)
