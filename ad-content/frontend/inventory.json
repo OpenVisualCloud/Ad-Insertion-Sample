@@ -9,11 +9,6 @@
      "keywords" : ["boat", "aeroplane", "tvmonitor", "sports"],
      "duration" : "10"
     },
-    {"uri" : "http://ad-content-service:8080/BTPVP031919D_Intel_Motorcycle_FINAL_040319_SneakersONLY.mp4",
-     "navigation_url" : "http://www.intel.com",
-     "keywords" : ["motorbike", "bicycle", "sports"],
-     "duration" : "10"
-    },
     {"uri" : "http://ad-content-service:8080/DesertCar_10_081419.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["car", "family"],
