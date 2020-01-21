@@ -4,6 +4,7 @@ function hls_play(page, video, url) {
         var config = {
             nudgeMaxRetry: 30,
             maxFragLookUpTolerance: 0.5,
+            startLevel: 0,
             xhrSetup: function(xhr, url) {
                 xhr.setRequestHeader("X-USER", settings.user());
             }
@@ -15,6 +16,13 @@ function hls_play(page, video, url) {
             video[0].play();
 	}).on(Hls.Events.ERROR, function (e, data) {
 	    console.log(data);
+            if (!data.fatal) return;
+            switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+                return player.startLoad();
+            case Hls.ErrorTypes.MEDIA_ERROR:
+                return player.recoverMediaError();
+            }
             setTimeout(function () { video.trigger("abort"); }, 100);
 	});
         page.unbind(":close").on(":close", function (e) {
