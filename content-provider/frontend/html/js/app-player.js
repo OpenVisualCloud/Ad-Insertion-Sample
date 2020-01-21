@@ -3,6 +3,12 @@ function hls_play(page, video, url) {
     if (Hls.isSupported()) {
         var config = {
             nudgeMaxRetry: 20,
+            fragLoadingMaxRetry: 3,
+	    manifestLoadingMaxRetry: 1,
+	    levelLoadingMaxRetry: 2,
+	    fragLoadingMaxRetryTimeout: 16000,
+	    manifestLoadingMaxRetryTimeout: 16000,
+	    levelLoadingMaxRetryTimeout: 16000,
             xhrSetup: function(xhr, url) {
                 xhr.setRequestHeader("X-USER", settings.user());
             }
