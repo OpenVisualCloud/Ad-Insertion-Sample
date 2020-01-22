@@ -164,7 +164,7 @@ def parse_dash(stream_cp_url, mpd, ad_spec, ad_segment=5.0, ad_bench_mode=0):
                     "seg_time":S[0]/timescale+_ad_time(ad_spec,i)
                 }
 
-                if ad_bench_mode != 0:
+                if ad_bench_mode:
                     line_range=len(periods)
                     if sidx == 0 and i == 0:
                         for _idy in range(line_range):
@@ -195,12 +195,12 @@ def parse_dash(stream_cp_url, mpd, ad_spec, ad_segment=5.0, ad_bench_mode=0):
                         temp["seg_time"]=S[0]/timescale+_ad_time(ad_spec,i+1)+(S[1]/timescale)*_idx
                         minfo["segs"][stream]["analytics"] +=[temp]
 
-                if ad_bench_mode != 0:
+                if ad_bench_mode:
                     line_range=len(periods)
                     transcode_info={
                         "stream":ad_spec["path"]+"/"+ad_spec["prefix"]+"/"+str(i)+"/"+Representation1.attrib["height"]+"p.mpd",
                         "seg_time":S[0]/timescale+_ad_time(ad_spec,i) + (S[1]/timescale)*(ad_interval -sidx),
-                        "bench_mode":ad_bench_mode
+                        "bench_mode":1,
                     }
                     if sidx == 0 and i == 0:
                         minfo["segs"][stream]["transcode"]=[]
@@ -214,7 +214,7 @@ def parse_dash(stream_cp_url, mpd, ad_spec, ad_segment=5.0, ad_bench_mode=0):
                     transcode_info={
                         "stream":ad_spec["path"]+"/"+ad_spec["prefix"]+"/"+str(i)+"/"+Representation1.attrib["height"]+"p.mpd",
                         "seg_time":S[0]/timescale+_ad_time(ad_spec,i) + (S[1]/timescale)*(ad_interval -sidx),
-                        "bench_mode":ad_bench_mode
+                        "bench_mode":0,
                     }
                     minfo["segs"][stream]["transcode"]=[transcode_info]
 

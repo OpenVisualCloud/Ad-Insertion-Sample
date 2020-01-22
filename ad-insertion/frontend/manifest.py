@@ -17,17 +17,10 @@ class ManifestHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
         super(ManifestHandler, self).__init__(app, request, **kwargs)
         self.executor=ThreadPoolExecutor()
-        self.benchmode=0
         self._zk=ZKData()
 
     def check_origin(self, origin):
         return True
-
-    def _get_bench_mode(self, name):
-        zk_benchmode_path=zk_prefix+"/"+name +"/"+"benchmode"
-        enable=self._zk.get(zk_benchmode_path)
-        if enable == {}: return 0
-        return enable
 
     @run_on_executor
     def _set_states(self, minfo, zk_path, stream_base, user):
@@ -50,6 +43,10 @@ class ManifestHandler(web.RequestHandler):
         user = self.request.headers.get('X-USER')
         if not user: 
             self.set_status(400, "X-USER missing in headers")
+            return
+        bench = self.request.headers.get('X-BENCH')
+        if not bench: 
+            self.set_status(400, "X-BENCH missing in headers")
             return
 
         # Redirect if this is an AD stream.
@@ -79,15 +76,13 @@ class ManifestHandler(web.RequestHandler):
             "duration": int(os.environ.get("AD_DURATION")), # ad duration
         }
 
-        ad_bench_mode=self._get_bench_mode(user)
-        print("Bench Mode:"+str(ad_bench_mode),flush=True)
         if stream.endswith(".m3u8"):
             minfo=parse_hls(
                 stream_cp_url=content_provider_url+"/"+stream,
                 m3u8=manifest,
                 stream_info=self._zk.get(zk_path+"/"+stream.split("/")[-1]),
                 ad_spec=ad_spec,
-                ad_bench_mode=ad_bench_mode,
+                ad_bench_mode=int(bench),
                 ad_segment=ad_spec["duration"]
             )
         if stream.endswith(".mpd"):
@@ -95,7 +90,7 @@ class ManifestHandler(web.RequestHandler):
                 stream_cp_url=content_provider_url+"/"+stream,
                 mpd=manifest,
                 ad_spec=ad_spec,
-                ad_bench_mode=ad_bench_mode,
+                ad_bench_mode=int(bench),
                 ad_segment=ad_spec["duration"]
             )
 
@@ -106,9 +101,3 @@ class ManifestHandler(web.RequestHandler):
         self.write(minfo["manifest"])
         self.set_header('content-type',minfo["content-type"])
         #print("Manifest: "+minfo["manifest"], flush=True)
-
-    def post(self):
-        name=str(self.get_argument("name"))
-        enable=int(self.get_argument("enable"))
-        zk_benchmode_path=zk_prefix+"/"+name +"/"+"benchmode"
-        self._zk.set(zk_benchmode_path, enable)
