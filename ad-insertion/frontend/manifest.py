@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 
-from tornado import web
-from tornado.httpclient import AsyncHTTPClient
+from tornado import web, gen
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor
 from zkdata import ZKData
 from manifest_hls import parse_hls
 from manifest_dash import parse_dash
+import requests
 import os
 
 zk_prefix="/ad-insertion-frontend"
@@ -23,45 +23,15 @@ class ManifestHandler(web.RequestHandler):
         return True
 
     @run_on_executor
-    def _set_states(self, minfo, zk_path, stream_base, user):
-        if minfo["streams"]:
-            for stream1 in minfo["streams"]:
-                self._zk.set(zk_path+"/"+stream1, minfo["streams"][stream1])
-        if minfo["segs"]:
-            for seg in minfo["segs"]:
-                self._zk.set(zk_path+"/"+user+"/"+seg, minfo["segs"][seg])
-
-    # fetching manifest 
-    async def _fetch_manifest(self, url):
-        client=AsyncHTTPClient()
-        req = await client.fetch(url)
-        return req.body.decode('utf-8')
-
-    async def get(self):
-        stream = self.request.uri.replace("/manifest/","")
-        print("stream : " + stream, flush = True)
-        user = self.request.headers.get('X-USER')
-        if not user: 
-            self.set_status(400, "X-USER missing in headers")
-            return
-        bench = self.request.headers.get('X-BENCH')
-        if not bench: 
-            self.set_status(400, "X-BENCH missing in headers")
-            return
-
-        # Redirect if this is an AD stream.
-        #if stream.find("/adstream/") != -1:
-        #    self.set_header('X-Accel-Redirect','/adinsert/' + stream)
-        #    self.set_status(200,'OK')
-        #    return
-
+    def _get_manifest(self, stream, user, bench):
         # Retrive the manifest from upstream.
         try:
-            manifest=await self._fetch_manifest(content_provider_url+"/"+stream)
+            r=requests.get(content_provider_url+"/"+stream)
+            r.raise_for_status()
+            manifest=r.text
         except Exception as e:
-            print(str(e))
-            self.set_status(500, str(e))
-            return
+            print("Exception: "+str(e), flush=True)
+            return str(e)
 
         # launch zk
         stream_base = "/".join(stream.split("/")[:-1])
@@ -95,9 +65,32 @@ class ManifestHandler(web.RequestHandler):
             )
 
         # set zk states
-        self.executor.submit(self._set_states,minfo,zk_path,stream_base,user)
+        if minfo["streams"]:
+            for stream1 in minfo["streams"]:
+                self._zk.set(zk_path+"/"+stream1, minfo["streams"][stream1])
+        if minfo["segs"]:
+            for seg in minfo["segs"]:
+                self._zk.set(zk_path+"/"+user+"/"+seg, minfo["segs"][seg])
 
-        # return the manifest
-        self.write(minfo["manifest"])
-        self.set_header('content-type',minfo["content-type"])
-        #print("Manifest: "+minfo["manifest"], flush=True)
+        return minfo
+
+    @gen.coroutine
+    def get(self):
+        stream = self.request.uri.replace("/manifest/","")
+        print("stream : " + stream, flush = True)
+        user = self.request.headers.get('X-USER')
+        if not user: 
+            self.set_status(400, "X-USER missing in headers")
+            return
+        bench = self.request.headers.get('X-BENCH')
+        if not bench: 
+            self.set_status(400, "X-BENCH missing in headers")
+            return
+
+        minfo=yield self._get_manifest(stream, user, bench)
+        if isinstance(minfo, dict):
+            self.write(minfo["manifest"])
+            self.set_header('content-type',minfo["content-type"])
+            self.set_status(200, 'OK')
+        else:
+            self.set_status(500, str(minfo))
