@@ -94,7 +94,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
                 "seg_time":timeline+_ad_time(ad_spec,ad_sequence)
             }
 
-            if ad_bench_mode != 0:
+            if ad_bench_mode:
                 line_range=(int)((len(lines)/2+ad_interval-1)/ad_interval)
                 if segsplayed == 0 and ad_sequence == 0:
                     for _idy in range(line_range):
@@ -126,11 +126,11 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
                         seg_info["analytics"] +=[temp]
 
             # shedule transcoding every seg
-            if ad_bench_mode != 0:
+            if ad_bench_mode:
                 transcode_info={
                     "stream":ad_spec["path"]+"/"+ad_name+".m3u8",
                     "seg_time":timeline+_ad_time(ad_spec,ad_sequence)+duration*(ad_interval - segsplayed),
-                    "bench_mode":ad_bench_mode
+                    "bench_mode":1,
                 }
                 line_range=(int)((len(lines)/2+ad_interval-1)/ad_interval)
                 if segsplayed == 0 and ad_sequence == 0:
@@ -147,7 +147,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_benc
                 transcode_info={
                     "stream":ad_spec["path"]+"/"+ad_name+".m3u8",
                     "seg_time":timeline+_ad_time(ad_spec,ad_sequence)+duration*(ad_interval - segsplayed),
-                    "bench_mode":ad_bench_mode
+                    "bench_mode":0,
                 }
                 seg_info["transcode"]=[transcode_info]
 

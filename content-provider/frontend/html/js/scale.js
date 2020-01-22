@@ -43,7 +43,7 @@ function mklayout() {
             if (c>=ncolumns/2) x=x+divide_width;
             var args={ 
                 seq: r*ncolumns+c, 
-                benchmark: spec("benchmark")?spec("benchmark"):"obj_detection",
+                benchmark: spec("benchmark")?spec("benchmark"):"object",
                 header: "off",
                 playlist: "off",
                 videourl: "off",

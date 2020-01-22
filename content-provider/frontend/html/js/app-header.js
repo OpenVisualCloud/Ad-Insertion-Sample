@@ -35,51 +35,28 @@ $("#setting").find("form").submit(function() {
         $("#player [video-section]").width("100%");
     }
 
-    /* ["obj_detection", "emotion", "face_recognition"] */
     if ($("#objDetectionSwitch").is(":checked")) {
-       var casename="obj_detection"
-       var name=user
-       var enable=1
-       apiHost.usecase(name,casename,enable)
+       settings.algorithms(settings.algorithms().replace("object ","")+"object ");
     } else {
-       var casename="obj_detection"
-       var name=user
-       var enable=0
-       apiHost.usecase(name,casename,enable)
+       settings.algorithms(settings.algorithms().replace("object ",""));
     }
 
     if ($("#emotionRecognitionSwitch").is(":checked")) {
-       var casename="emotion"
-       var name=user
-       var enable=1
-       apiHost.usecase(name,casename,enable)
+       settings.algorithms(settings.algorithms().replace("emotion ","")+"emotion ");
     } else {
-       var casename="emotion"
-       var name=user
-       var enable=0
-       apiHost.usecase(name,casename,enable)
+       settings.algorithms(settings.algorithms().replace("emotion ",""));
     }
 
     if ($("#faceRecognitionSwitch").is(":checked")) {
-       var casename="face_recognition"
-       var name=user
-       var enable=1
-       apiHost.usecase(name,casename,enable)
+       settings.algorithms(settings.algorithms().replace("face ","")+"face ");
     } else {
-       var casename="face_recognition"
-       var name=user
-       var enable=0
-       apiHost.usecase(name,casename,enable)
+       settings.algorithms(settings.algorithms().replace("face ",""));
     }
 
     if ($("#benchModeSwitch").is(":checked")) {
-       var name=user
-       var enable=1
-       apiHost.benchmode(name,enable)
+       settings.benchmode(1);
     } else {
-       var name=user
-       var enable=0
-       apiHost.benchmode(name,enable)
+       settings.benchmode(0);
     }
 
     $("#player").trigger(":update");
@@ -95,5 +72,13 @@ var settings={
     analytics_window: function (size) {
         if (typeof size != "undefined") settings.localStorage.analytics_window=size;
         return typeof settings.localStorage.analytics_window!="undefined"?parseFloat(settings.localStorage.analytics_window):10;
+    },
+    algorithms: function (value) {
+        if (typeof value != "undefined") settings.localStorage.algorithms=value;
+        return typeof settings.localStorage.algorithms!="undefined"?settings.localStorage.algorithms:"object_detection ";
+    },
+    benchmode: function (enable) {
+        if (typeof enable != "undefined") settings.localStorage.benchmode=enable;
+        return typeof settings.localStorage.benchmode!="undefined"?parseInt(settings.localStorage.benchmode,10):0;
     },
 }
