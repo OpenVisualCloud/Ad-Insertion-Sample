@@ -16,25 +16,14 @@ class SegmentHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
         super(SegmentHandler, self).__init__(app, request, **kwargs)
         self._sch=Schedule()
-        self._usecase={"obj_detection":1, "emotion":0, "face_recognition":0}
         self.executor=ThreadPoolExecutor()
         self._zk=ZKData()
 
     def check_origin(self, origin):
         return True
 
-    def _get_usecase_status(self, name, usecase):
-        zk_usecase_path=zk_prefix+"/"+name +"/"+usecase
-        enable=self._zk.get(zk_usecase_path)
-        if enable == {}: return 0
-        return enable
-
-    def _set_usecase_status(self, name, usecase, value):
-        zk_usecase_path=zk_prefix+"/"+name +"/"+usecase
-        self._zk.set(zk_usecase_path,value)
-
     @run_on_executor
-    def _get_segment(self, stream, user):
+    def _get_segment(self, stream, user, algos):
         stream_base = "/".join(stream.split("/")[:-1])
         print("stream: "+stream, flush=True)
         print("stream_base: "+stream_base, flush=True)
@@ -71,19 +60,11 @@ class SegmentHandler(web.RequestHandler):
 
             # schedule analytics
             if "analytics" in seg_info:
-                flag=0
-                for usecase in ["obj_detection", "emotion", "face_recognition"]:
-                    self._usecase[usecase]=self._get_usecase_status(user,usecase)
-                    flag += self._usecase[usecase]
-                if flag == 0:
-                    self._set_usecase_status(user,"obj_detection",1)
-                    self._usecase["obj_detection"]=1
-
-                if self._usecase["obj_detection"]==1:
+                if algos.find("object")>=0:
                     self._sch.analyze(seg_info, "object_detection")
-                if self._usecase["emotion"]==1:
+                if algos.find("emotion")>=0:
                     self._sch.analyze(seg_info, "emotion_recognition")
-                if self._usecase["face_recognition"] == 1:
+                if algos.find("face")>=0:
                     self._sch.analyze(seg_info, "face_recognition")
 
             if "analytics" in seg_info or "transcode" in seg_info:
@@ -98,20 +79,13 @@ class SegmentHandler(web.RequestHandler):
         if not user: 
             self.set_status(400, "X-USER missing in headers")
             return
+        algos = self.request.headers.get('X-ALGO')
+        if not algos: 
+            self.set_status(400, "X-ALGO missing in headers")
 
-        redirect=yield self._get_segment(stream, user)
+        redirect=yield self._get_segment(stream, user, algos)
         if redirect is None:
             self.set_status(404, "AD not ready")
         else:
             self.add_header('X-Accel-Redirect',redirect)
             self.set_status(200,'OK')
-
-    @gen.coroutine
-    def post(self):
-        name=str(self.get_argument("name"))
-        casename=str(self.get_argument("casename"))
-        enable=int(self.get_argument("enable"))
-        if casename in ["obj_detection", "emotion", "face_recognition"]:
-            self._set_usecase_status(name, casename, enable)
-        for usecase in ["obj_detection", "emotion", "face_recognition"]:
-            self._usecase[usecase]=self._get_usecase_status(name,usecase)

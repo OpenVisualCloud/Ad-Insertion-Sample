@@ -25,16 +25,4 @@ var apiHost={
         //console.log("GET "+url+"?"+JSON.stringify(args));
         return $.get(url, args);
     },
-    usecase: function (name,casename,enable) {
-        var url="api/usecase";
-        var args= { name: name, casename: casename, enable: enable };
-        console.log("POST "+url+"?"+JSON.stringify(args));
-        return $.post(url, args);
-    },
-    benchmode: function (name,enable) {
-        var url="api/benchmode";
-        var args= { name: name, enable: enable };
-        console.log("POST "+url+"?"+JSON.stringify(args));
-        return $.post(url, args);
-    },
 };
