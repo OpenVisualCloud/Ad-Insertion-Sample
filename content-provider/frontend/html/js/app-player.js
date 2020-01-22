@@ -122,7 +122,7 @@ $("#player").on(":initpage", function (e) {
                 return v.name.startsWith("hls");
             });
             var stream=streams[spec("seq")%streams.length].url;
-            var seq=0;
+            sessionStorage.seq=0;
             var playnext=function () {
                 setTimeout(function () {
                     $("#player video").unbind('ended').unbind("abort").unbind("error");
@@ -132,9 +132,9 @@ $("#player").on(":initpage", function (e) {
                         'abort': playnext,
                         'error': playnext,
                     });
-                    var stream1=stream.replace(".mp4/","_seq"+seq+".mp4/");
+                    var stream1=stream.replace(".mp4/","_seq"+sessionStorage.seq+".mp4/");
                     $("#player").trigger(":play",[stream1]);
-                    seq=seq+1;
+                    sessionStorage.seq=parseInt(sessionStorage.seq,10)+1;
                 },100);
             };
             playnext();
