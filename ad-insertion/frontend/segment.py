@@ -31,24 +31,23 @@ class SegmentHandler(web.RequestHandler):
         # Redirect if this is an AD stream.
         if stream.find("/adstream/") != -1:
             start_time=time.time()
-            while time.time()-start_time<=60: # wait if AD is not ready
+            while time.time()-start_time<=2.5: # wait if AD is not ready
                 print("Testing "+ad_storage_path+"/"+stream, flush=True)
-                if isfile(ad_storage_path+"/"+stream):
-                    if stream.startswith("hls/"):
-                        m1=re.search(".*/(.*)_[0-9]+.ts",stream)
-                        if m1:
-                            testfile=ad_storage_path+"/"+stream_base+"/"+m1.group(1)+".m3u8.complete"
-                            print("Testing "+testfile, flush=True)
-                            if isfile(testfile): 
-                                return '/adinsert/'+stream
-                    if stream.startswith("dash/"):
-                        m1=re.search(".*/(.*)-(chunk|init).*",stream)
-                        if m1:
-                            testfile=ad_storage_path+"/"+stream_base+"/"+m1.group(1)+".mpd.complete"
-                            print("Testing "+testfile, flush=True)
-                            if isfile(testfile): 
-                                return '/adinsert/'+stream
-                time.sleep(0.5)
+                if stream.startswith("hls/"):
+                    m1=re.search(".*/(.*)_[0-9]+.ts",stream)
+                    if m1:
+                        testfile=ad_storage_path+"/"+stream_base+"/"+m1.group(1)+".m3u8.complete"
+                        print("Testing "+testfile, flush=True)
+                        if isfile(testfile): 
+                            return '/adinsert/'+stream
+                if stream.startswith("dash/"):
+                    m1=re.search(".*/(.*)-(chunk|init).*",stream)
+                    if m1:
+                        testfile=ad_storage_path+"/"+stream_base+"/"+m1.group(1)+".mpd.complete"
+                        print("Testing "+testfile, flush=True)
+                        if isfile(testfile): 
+                            return '/adinsert/'+stream
+                time.sleep(0.1)
             return None
 
         # get zk data for additional scheduling instruction

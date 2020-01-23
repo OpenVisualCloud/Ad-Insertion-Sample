@@ -47,6 +47,11 @@ docker_compose)
     "$DIR/../certificate/self-sign.sh"
     shift
     . "$DIR/build.sh"
-    docker stack deploy -c "$yml" adi
+    case "$1" in
+    VCAC-A)
+        docker stack deploy -c "$yml" adia;;
+    Xeon)
+        docker stack deploy -c "$yml" adix;;
+    esac
     ;;
 esac
