@@ -7,6 +7,7 @@
         environment:
             AD_INTERVALS: 12
             AD_DURATION: 10
+            AD_SEGMENT: 10
             AD_BENCH_MODE: 0
             EVERY_NTH_FRAME: 3
             NO_PROXY: "*"
@@ -27,6 +28,7 @@
         environment:
             AD_INTERVALS: 12
             AD_DURATION: 10
+            AD_SEGMENT: 10
             AD_BENCH_MODE: 0
             EVERY_NTH_FRAME: 3
             NO_PROXY: "*"
@@ -47,6 +49,7 @@
         environment:
             AD_INTERVALS: 12
             AD_DURATION: 10
+            AD_SEGMENT: 10
             AD_BENCH_MODE: 0
             EVERY_NTH_FRAME: 3
             NO_PROXY: "*"
@@ -67,6 +70,7 @@
         environment:
             AD_INTERVALS: 12
             AD_DURATION: 10
+            AD_SEGMENT: 10
             AD_BENCH_MODE: 0
             EVERY_NTH_FRAME: 3
             NO_PROXY: "*"

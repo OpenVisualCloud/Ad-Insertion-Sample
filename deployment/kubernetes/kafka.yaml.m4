@@ -57,7 +57,7 @@ spec:
             - name: "KAFKA_NUM_PARTITIONS"
               value: "16"
             - name: "KAFKA_LOG_RETENTION_HOURS"
-              value: "8"
+              value: "1"
             - name: "KAFKA_HEAP_OPTS"
               value: "-Xmx1024m -Xms1024m"
             - name: "KAFKA_LOG4J_LOGGERS"
