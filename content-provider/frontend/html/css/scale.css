@@ -1,4 +1,8 @@
 
+body {
+  overflow: hidden;
+}
+
 #scale {
   width: 100vw;
   height: 100vh;
@@ -22,12 +26,16 @@
 }
 
 @keyframes header-animation {
-  from {
+  0% {
     width: 0;
     border-right-color: rgba(0,255,0,.75);
   }
-  to {
-    width: 1051px;
+  99% {
+    width: 1200px;
+    border-right-color: rgba(0,255,0,.75);
+  }
+  100% {
+    width: auto;
     border-right-color: transparent;
   }
 }
