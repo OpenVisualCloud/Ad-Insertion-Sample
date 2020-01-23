@@ -4,7 +4,6 @@ from os.path import isfile, isdir
 from os import mkdir, makedirs, listdir, remove
 import errno
 import time
-from zkstate import ZKState
 import json
 import threading
 import subprocess
@@ -216,18 +215,13 @@ def SignalIncompletion(name):
     except:
         pass
 
-def ADTranscode(kafkamsg,db):
-    zk = None
-
+def ADTranscode(zk, kafkamsg, db):
     msg=KafkaMsgParser(kafkamsg)
     # add zk state for each resolution file if we generate the ad clip each time for one solution
-    zk=ZKState(msg.target_path, msg.target_name)
-
+    zk.set_path(msg.target_path, msg.target_name)
     if zk.processed():
         print("AD transcoding finish the clip :",msg.target, flush=True)
-        zk.close()
         return
-
 
     if zk.process_start():
         try:
@@ -246,7 +240,6 @@ def ADTranscode(kafkamsg,db):
             print("Query AD clip failed and fall back to skipped ad clip!", flush=True)
             # mark zk as incomplete (so that the valid one can be generated next time)
             zk.process_abort()
-            zk.close()
             return
 
         # try to re-generate resolution specific AD
@@ -273,7 +266,6 @@ def ADTranscode(kafkamsg,db):
             print(str(e),flush=True)
             CopyADStatic(msg)
             zk.process_abort()
-    zk.close()
 
 class Process(object):
     """This class spawns a subprocess asynchronously and calls a
