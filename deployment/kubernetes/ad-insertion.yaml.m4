@@ -42,6 +42,8 @@ spec:
               value: "8"
             - name: AD_DURATION
               value: "5"
+            - name: AD_SEGMENT
+              value: "5"
             - name: AD_BENCH_MODE
               value: "0"
             - name: EVERY_NTH_FRAME 

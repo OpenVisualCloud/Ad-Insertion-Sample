@@ -5,27 +5,21 @@ DIR=$(dirname $(readlink -f "$0"))
 
 case "$(cat /proc/1/sched | head -n 1)" in
 *build.sh*)
+    DUR=$1 # total duration
+    SEG=$2 # segement length
     cd /mnt
     SIZE=(3840x2160 2560x1440 1920x1080 1280x720 842x480 640x360)
-    SEG="$1" # segment duration
-    shift
     SEG_DASH=$(($SEG * 1000000)) # segment duration
     DS=0 # display start
-    DE=$SEG # display end
+    DE=$DUR # display end
     FID=1.0 # fade in duration
     FOD=1.0 # fade out duration
     FR=25
-    MIN_H=360
 
-    if test "$1" == "adstatic"; then
-        if [ -n ${2} ]; then
-            MIN_H="$(echo ${2} |grep -oE '^[[:digit:]]+')"
-        fi
+    if test "$3" = "adstatic"; then
+        MIN_H="$(echo ${4:-360p} |grep -oE '^[[:digit:]]+')"
     else
-        # $5 is the MINRESOLUTION if there are not args specified
-        if [ -n ${5} ]; then
-            MIN_H="$(echo ${5} |grep -oE '^[[:digit:]]+')"
-        fi
+        MIN_H="$(echo $7 |grep -oE '^[[:digit:]]+')"  # minimum resolution
     fi
 
     for s in "${SIZE[@]}"; do
@@ -45,9 +39,10 @@ case "$(cat /proc/1/sched | head -n 1)" in
     spath="$DIR/../../volume/ad/static"
     mkdir -p "$spath"
     . "$DIR/../../script/build.sh"
-    SEG=$(awk '/AD_DURATION:/{print$2}' "$DIR/../../deployment/docker-swarm/ad-insertion.m4")
+    DUR=$(awk '/AD_DURATION:/{print$2}' "$DIR/../../deployment/docker-swarm/ad-insertion.m4")
+    SEG=$(awk '/AD_SEGMENT:/{print$2}' "$DIR/../../deployment/docker-swarm/ad-insertion.m4")
     if [[ ! -f "$spath/spec.txt" ]] || [[ $(cat "$spath/spec.txt") -ne $SEG ]]; then
-        . "$DIR/shell.sh" /home/build.sh $SEG $@
+        . "$DIR/shell.sh" /home/build.sh $DUR $SEG $@
         echo "$SEG" > "$spath/spec.txt"
     fi
     ;;
