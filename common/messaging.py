@@ -14,7 +14,7 @@ class Producer(object):
     def send(self,topic,message):
         if not self._producer:
             try:
-                self._producer=KafkaProducer(bootstrap_servers=kafka_hosts,client_id=self._client_id,api_version=(0,10),retries=1)
+                self._producer=KafkaProducer(bootstrap_servers=kafka_hosts,client_id=self._client_id,api_version=(0,10),retries=1,acks=1,batch_size=10,linger_ms=5)
             except Exception as e:
                 print(str(e))
                 self._producer=None
