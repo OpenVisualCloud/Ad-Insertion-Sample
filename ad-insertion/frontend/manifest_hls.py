@@ -5,7 +5,7 @@ import copy
 
 def _ad_template(ad_spec, name, seq, seg_segment):
     lines=["#EXT-X-DISCONTINUITY"]
-    for i in range(int(ad_spec["duration"])/seg_segment):
+    for i in range(int(ad_spec["duration"]/seg_segment)):
         lines.extend([
             "#EXTINF: " + str(seg_segment) + ",",
             name.format(i),
