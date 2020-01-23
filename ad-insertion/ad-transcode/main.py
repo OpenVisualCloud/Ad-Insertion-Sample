@@ -17,17 +17,22 @@ class TranscodeTask(Process):
 def main():
     db = DataBase()
     consumer = Consumer(kafka_group)
+    zk = ZKState()
 
     while True:
         try:
             print("ad transcode service: listening to messages", flush=True)
             for msg in consumer.messages(kafka_topic):
                 print("ad transcode service: recieved message: " + str(msg), flush=True)
-                ADTranscode(msg,db)
+                ADTranscode(zk,msg,db)
         except Exception as e:
             print(str(e))
             print("ad transcode exception in service")
         time.sleep(10)
+
+    zk.close()
+    consumer.close()
+    db.close()
 
 if __name__ == "__main__":
     main()

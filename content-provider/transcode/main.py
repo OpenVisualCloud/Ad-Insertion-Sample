@@ -15,14 +15,12 @@ archive_root="/var/www/archive"
 dash_root="/var/www/video/dash"
 hls_root="/var/www/video/hls"
 
-def process_stream(stream):
+def process_stream(zk, stream):
    stream_name=stream.split("/")[1]
    if not isfile(archive_root+"/"+stream_name): return
 
-   zk=ZKState("/content_provider_transcoder/"+archive_root+"/"+stream)
-   if zk.processed():
-       zk.close()
-       return
+   zk.set_path("/content_provider_transcoder/"+archive_root+"/"+stream)
+   if zk.processed(): return
 
    if stream.endswith(".mpd"):
        try:
@@ -55,14 +53,15 @@ def process_stream(stream):
                print(str(e))
                zk.process_abort()
 
-   zk.close()
-
 if __name__ == "__main__":
     c=Consumer(kafka_group)
+    zk=ZKState()
     while True:
         try:
             for message in c.messages(kafka_topic):
-                process_stream(message)
+                process_stream(zk, message)
         except Exception as e:
             print(str(e))
         time.sleep(2)
+    c.close()
+    zk.close()
