@@ -10,7 +10,7 @@ ifelse(defn(`PLATFORM'),`Xeon',`dnl
         networks:
             - appnet
         deploy:
-            replicas: defn(`NANALYTICS')
+            replicas: 8
 ')dnl
 
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
@@ -27,7 +27,7 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
             - appnet 
         deploy:
-            replicas: defn(`NANALYTICS')
+            replicas: 8
             placement:
                 constraints:
                     - node.labels.vcac_zone==yes

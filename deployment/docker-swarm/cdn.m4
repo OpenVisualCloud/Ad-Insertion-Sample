@@ -3,6 +3,7 @@
         image: ssai_cdn_service:latest
         ports:
             - "443:8443"
+            - "80:8080"
         environment:
             NO_PROXY: "*"
             no_proxy: "*"

@@ -12,6 +12,7 @@ function hls_play(page, video, url) {
             }
         };
         var player=new Hls(config);
+        if (spec("benchmark")) player.autoLevelEnabled=false;
         player.loadSource(url);
         player.attachMedia(video[0]);
         player.on(Hls.Events.MANIFEST_PARSED,function () {

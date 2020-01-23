@@ -13,7 +13,7 @@
         networks:
             - appnet
         deploy:
-            replicas: 8
+            replicas: 4
             placement:
                 constraints:
                     - node.role==manager
