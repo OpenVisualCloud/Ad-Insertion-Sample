@@ -9,7 +9,7 @@ from manifest_dash import parse_dash
 import requests
 import os
 
-zk_prefix="/ad-insertion-frontend"
+zk_manifest_prefix="/ad-insertion-manifest"
 content_provider_url = "http://content-provider-service:8080"
 ad_storage_root = "/var/www/adinsert"
 ad_interval=list(map(int,os.environ["AD_INTERVALS"].split(",")))
@@ -38,7 +38,7 @@ class ManifestHandler(web.RequestHandler):
 
         # launch zk
         stream_base = "/".join(stream.split("/")[:-1])
-        zk_path=zk_prefix+"/"+stream_base
+        zk_path=zk_manifest_prefix+"/"+stream_base
 
         # Parse manifest
         minfo={ "segs": {}, "streams": {}, "manifest": "" }

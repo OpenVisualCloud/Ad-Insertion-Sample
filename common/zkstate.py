@@ -17,7 +17,7 @@ class ZKState(object):
             while True:
                 try:
                     self._zk.start()
-                    return
+                    break
                 except Exception as e:
                     print("Exception: "+str(e), flush=True)
                     time.sleep(5)

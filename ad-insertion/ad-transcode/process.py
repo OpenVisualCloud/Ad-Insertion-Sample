@@ -2,23 +2,22 @@
 
 from os.path import isfile, isdir
 from os import mkdir, makedirs, listdir, remove
+from abr_hls_dash import GetABRCommand
+import multiprocessing
 import errno
 import time
 import json
-import threading
 import subprocess
-import multiprocessing
 import requests
-from db import DataBase
-from abr_hls_dash import GetABRCommand
 import shutil
+import traceback
 
 adinsert_archive_root="/var/www/adinsert"
-segment_dash_root="/var/www/adinsert/segment/dash"
-segment_hls_root="/var/www/adinsert/segment/hls"
-dash_root="/var/www/adinsert/dash"
-hls_root="/var/www/adinsert/hls"
-fallback_root="/var/www/skipped"
+segment_dash_root=adinsert_archive_root+"/segment/dash"
+segment_hls_root=adinsert_archive_root+"/segment/hls"
+dash_root=adinsert_archive_root+"/dash"
+hls_root=adinsert_archive_root+"/hls"
+zk_segment_prefix="/ad-insertion-segment"
 
 ad_decision_server="http://ad-decision-service:8080/metadata"
 ad_content_server="http://ad-content-service:8080"
@@ -159,29 +158,6 @@ def CopyAD(msg,height,height_list=[2160, 1440, 1080, 720, 480, 360]):
                 if item != height:
                     shutil.copyfile(src,dst)
 
-def CopyADStatic(msg, prefix="na"):
-    # first copy all streams
-    all_files=list(listdir(fallback_root))
-    for name in all_files:
-        target_file=msg.target_path+"/"+name
-        if msg.streaming_type=="dash" and (name.endswith(".m4s") or name.endswith(".mpd")):
-            if not isfile(target_file) or name.startswith(prefix):
-                shutil.copyfile(fallback_root+"/"+name,target_file)
-        if msg.streaming_type=="hls" and (name.endswith(".ts") or name.endswith(".m3u8")):
-            if not isfile(target_file) or name.startswith(prefix):
-                shutil.copyfile(fallback_root+"/"+name,target_file)
-
-    # then signal complete for all streams.
-    for name in all_files:
-        target_file=msg.target_path+"/"+name
-        complete_file=msg.target_path+"/"+name+".complete"
-        if msg.streaming_type=="dash" and name.endswith(".mpd"):
-            if not isfile(complete_file) or name.startswith(prefix):
-                SignalCompletion(target_file)
-        if msg.streaming_type=="hls" and name.endswith(".m3u8"):
-            if not isfile(complete_file) or name.startswith(prefix):
-                SignalCompletion(target_file)
-
 def CopyADSegment(msg, stream, prefix="na"):
     segment_folder = msg.segment_path + "/" +  stream.split("/")[-1]
     # first copy all streams
@@ -193,62 +169,28 @@ def CopyADSegment(msg, stream, prefix="na"):
         if msg.streaming_type=="hls" and (name.endswith(".ts") or name.endswith(".m3u8")):
             shutil.copyfile(segment_folder+"/"+name,target_file)
 
-    # then signal complete for all streams.
-    for name in all_files:
-        target_file=msg.target_path+"/"+name
-        complete_file=msg.target_path+"/"+name+".complete"
-        if msg.streaming_type=="dash" and name.endswith(".mpd"):
-            if not isfile(complete_file) or name.startswith(prefix):
-                SignalCompletion(target_file)
-        if msg.streaming_type=="hls" and name.endswith(".m3u8"):
-            if not isfile(complete_file) or name.startswith(prefix):
-                SignalCompletion(target_file)
-
-
-def SignalCompletion(name):
-    with open(name+".complete","w") as f:
-        pass
-
-def SignalIncompletion(name):
-    try:
-        remove(name+".complete")
-    except:
-        pass
-
-def ADTranscode(zk, kafkamsg, db):
+def ADTranscode(zks, zkd, kafkamsg, db):
     msg=KafkaMsgParser(kafkamsg)
-    # add zk state for each resolution file if we generate the ad clip each time for one solution
-    zk.set_path(msg.target_path, msg.target_name)
-    if zk.processed():
+    zks.set_path(msg.target_path, msg.target_name)
+    if zks.processed():
         print("AD transcoding finish the clip :",msg.target, flush=True)
         return
 
-    if zk.process_start():
+    if zks.process_start():
         try:
-            print("mkdir -p "+msg.target_path, flush=True)
             makedirs(msg.target_path)
-        except OSError as exc: # Python >2.5 (except OSError, exc: for Python <2.5)
-            if exc.errno == errno.EEXIST and isdir(msg.target_path):
-                pass
-            else: raise
-
-        # copy static ADs to fill all resolutions
-        CopyADStatic(msg)
+        except Exception as e:
+            print("Exception: "+str(e), flush=True)
 
         stream = ADClipDecision(msg,db)
         if not stream:
             print("Query AD clip failed and fall back to skipped ad clip!", flush=True)
-            # mark zk as incomplete (so that the valid one can be generated next time)
-            zk.process_abort()
+            zks.process_abort()
             return
-
-        # try to re-generate resolution specific AD
-        SignalIncompletion(msg.target)
 
         try:
             stream_folder = msg.segment_path + "/" + stream.split("/")[-1]
-
-            if isdir(stream_folder):
+            if isdir(stream_folder): # pre-transcoded AD exists
                 print("Prefetch the AD segment {} \n".format(stream_folder),flush=True)
                 CopyADSegment(msg,stream)
             else:
@@ -259,36 +201,13 @@ def ADTranscode(zk, kafkamsg, db):
                 # the `multiprocessing.Process` process will wait until
                 # the call to the `subprocess.Popen` object is completed
                 process_id.wait()
-                SignalCompletion(msg.target)
 
-            zk.process_end()
+                # signal that we are ready
+                zkd_path="/".join(msg.target.replace(adinsert_archive_root+"/","").split("/")[:-1])
+                zkd.set(zk_segment_prefix+"/"+zkd_path+"/link","/adinsert/"+zkd_path)
+                print("set "+zk_segment_prefix+"/"+zkd_path+"/link to /adinsert/"+zkd_path, flush=True)
+
+            zks.process_end()
         except Exception as e:
-            print(str(e),flush=True)
-            CopyADStatic(msg)
-            zk.process_abort()
-
-class Process(object):
-    """This class spawns a subprocess asynchronously and calls a
-    `callback` upon completion; it is not meant to be instantiated
-    directly (derived classes are called instead)"""
-
-    def __init__(self, type):
-        self.db = DataBase()
-
-    def __call__(self, kafkamsg):
-    # store the arguments for later retrieval
-        self._kafkamsg = kafkamsg
-    # define the target function to be called by
-    # `multiprocessing.Process`
-        def target():
-
-            ADTranscode(self._kafkamsg,self.db)
-            # upon completion, call `callback`
-            return self.callback()
-        mp_process = multiprocessing.Process(target=target)
-        # this call issues the call to `target`, but returns immediately
-        mp_process.start()
-        return mp_process
-
-    def callback(self):
-        print("finished ad transcoding command ")
+            print(traceback.format_exc(), flush=True)
+            zks.process_abort()
