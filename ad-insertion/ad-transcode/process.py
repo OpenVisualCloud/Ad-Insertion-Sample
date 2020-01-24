@@ -128,36 +128,6 @@ class KafkaMsgParser(object):
         redition = ([self.width, self.height, self.bitrate, 128000],)
         return redition
 
-# this will
-def CopyAD(msg,height,height_list=[2160, 1440, 1080, 720, 480, 360]):
-    source_path = msg.target_path
-    target_path = msg.target_path
-    streaming_type = msg.streaming_type
-
-    all_files = list(listdir(source_path))
-    #all_files = list(listdir(target_path))
-    org_files = []
-    suffix=str(height)+"p"
-
-    #print(all_files)
-    for name in all_files:
-        if name.startswith(suffix):
-            org_files += [name]
-    for name in org_files:
-        src = source_path + "/" + name
-        if streaming_type=="dash" and (name.endswith(".m4s") or name.endswith(".mpd")):
-            for item in height_list:
-                tmp = name
-                dst = target_path + "/" + tmp.replace(str(height),str(item))
-                if item != height:
-                    shutil.copyfile(src,dst)
-        if streaming_type=="hls" and (name.endswith(".ts") or name.endswith(".m3u8")):
-            for item in height_list:
-                tmp = name
-                dst = target_path + "/" + tmp.replace(str(height),str(item))
-                if item != height:
-                    shutil.copyfile(src,dst)
-
 def CopyADSegment(msg, stream, prefix="na"):
     segment_folder = msg.segment_path + "/" +  stream.split("/")[-1]
     # first copy all streams
