@@ -2,6 +2,7 @@
 
 from kazoo.client import KazooClient
 from kazoo.exceptions import NoNodeError, NodeExistsError
+import traceback
 import json
 import time
 
@@ -13,29 +14,42 @@ class ZKData(object):
         self._zk=None
 
     def _connect(self):
-        if self._zk is None: 
+        if self._zk is None:
             self._zk=KazooClient(hosts=ZK_HOSTS)
-            while True:
-                try:
-                    self._zk.start()
-                    return
-                except Exception as e:
-                    print("Exception: "+str(e), flush=True)
-                    time.sleep(5)
+            try:
+                self._zk.start(timeout=3*3600)
+            except:
+                print(traceback.format_exc(), flush=True)
+
+    def _set_set_cb(self, ao):
+        try:
+            ao.get()
+        except:
+            print(traceback.format_exc(), flush=True)
+            self._set_set(ao.arg_path,ao.arg_value)
+
+    def _set_set(self, path, value):
+        ao=self._zk.set_async(path,value)
+        ao.arg_path=path
+        ao.arg_value=value
+        ao.rawlink(self._set_set_cb)
+
+    def _set_create_cb(self, ao):
+        try:
+            ao.get()
+        except NodeExistsError:
+            self._zk.set_async(ao.arg_path,ao.arg_value)
+        except:
+            print(traceback.format_exc(), flush=True)
+            self.set(ao.arg_path, ao.arg_value)
 
     def set(self, path, value):
         self._connect()
         value=json.dumps(value).encode('utf-8')
-        if self._zk.retry(self._zk.exists,path):
-            try:
-                self._zk.retry(self._zk.set,path,value)
-                return
-            except NoNodeError:
-                pass
-        try:
-            self._zk.retry(self._zk.create,path,value,makepath=True)
-        except NodeExistsError:
-            pass
+        ao=self._zk.create_async(path,value,makepath=True)
+        ao.arg_path=path
+        ao.arg_value=value
+        ao.rawlink(self._set_create_cb)
 
     def get(self, path):
         self._connect()
