@@ -5,7 +5,7 @@
             ZOOKEEPER_SERVER_ID: 1
             ZOOKEEPER_CLIENT_PORT: '2181'
             ZOOKEEPER_TICK_TIME: '3600000'
-            KAFKA_HEAP_OPTS: '-Xmx20g -Xms20g'
+            KAFKA_HEAP_OPTS: "`-Xmx'ifelse(defn(`PLATFORM'),`Xeon',4,20)g `-Xms'ifelse(defn(`PLATFORM'),`Xeon',4,20)g"
             ZOOKEEPER_MAX_CLIENT_CNXNS: '160000'
             ZOOKEEPER_SESSION_TIMEOUT_MS: '7200000'
             ZOOKEEPER_LOG4J_LOGGERS: 'zookeepr=ERROR'
