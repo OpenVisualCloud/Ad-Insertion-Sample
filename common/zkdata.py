@@ -28,12 +28,12 @@ class ZKData(object):
         value=json.dumps(value).encode('utf-8')
         if self._zk.retry(self._zk.exists,path):
             try:
-                self._zk.set(path,value)
+                self._zk.retry(self._zk.set,path,value)
                 return
             except NoNodeError:
                 pass
         try:
-            self._zk.create(path, value, makepath=True)
+            self._zk.retry(self._zk.create,path,value,makepath=True)
         except NodeExistsError:
             pass
 
