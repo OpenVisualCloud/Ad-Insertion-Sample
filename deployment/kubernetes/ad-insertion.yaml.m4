@@ -56,7 +56,13 @@ spec:
             - mountPath: /var/www/adinsert
               name: ad-cache
               readOnly: true
+            - mountPath: /var/www/adstatic
+              name: ad-static
+              readOnly: true
       volumes:
           - name: ad-cache
             persistentVolumeClaim:
                claimName: ad-cache
+          - name: ad-static
+            persistentVolumeClaim:
+               claimName: ad-static
