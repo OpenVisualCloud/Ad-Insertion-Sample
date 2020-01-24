@@ -48,6 +48,8 @@ spec:
               value: "-Xmx1024m -Xms1024m"
             - name: "ZOOKEEPER_MAX_CLIENT_CNXNS"
               value: "20000"
+            - name: "ZOOKEEPER_SESSION_TIMEOUT_MS"
+              value: "72000"
             - name: "ZOOKEEPER_LOG4J_LOGGERS"
               value: "zookeepr=ERROR"
             - name: "ZOOKEEPER_LOG4J_ROOT_LOGLEVEL"

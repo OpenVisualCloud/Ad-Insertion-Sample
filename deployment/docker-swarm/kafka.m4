@@ -11,8 +11,8 @@
             KAFKA_DEFAULT_REPLICATION_FACTOR: 1
             KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
             KAFKA_NUM_PARTITIONS: 8
-            KAFKA_LOG_RETENTION_HOURS: 1
-            KAFKA_HEAP_OPTS: '-Xmx24g -Xms24g'
+            KAFKA_LOG_RETENTION_MINUTES: 30
+            KAFKA_HEAP_OPTS: '-Xmx16g -Xms16g'
             KAFKA_LOG4J_LOGGERS: 'kafka=ERROR,kafka.controller=ERROR,state.change.logger=ERROR,org.apache.kafka=ERROR'
             KAFKA_LOG4J_ROOT_LOGLEVEL: 'ERROR'
             CONFLUENT_SUPPORT_METRICS_ENABLE: 0
