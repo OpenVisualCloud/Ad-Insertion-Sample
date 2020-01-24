@@ -44,6 +44,8 @@ spec:
               value: "5"
             - name: AD_SEGMENT
               value: "5"
+            - name: AD_BACKOFF
+              value: "3"
             - name: AD_BENCH_MODE
               value: "0"
             - name: EVERY_NTH_FRAME 
