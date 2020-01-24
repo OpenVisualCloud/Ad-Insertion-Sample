@@ -75,21 +75,12 @@ spec:
 
 ---
 
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: kafka-init
-  labels:
-     app: kafka-init
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: kafka-init
   template:
-    metadata:
-      labels:
-        app: kafka-init
     spec:
       enableServiceLinks: false
       containers:
@@ -103,8 +94,7 @@ spec:
   kafka-topics --create --topic ad_transcode_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
   kafka-topics --create --topic workloads --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
   kafka-topics --create --topic adstats --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-  kafka-topics --create --topic video_analytics_fps --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-  sleep infinity"]
+  kafka-topics --create --topic video_analytics_fps --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181"]
           env:
             - name: "KAFKA_BROKER_ID"
               value: "ignored"
@@ -114,4 +104,4 @@ spec:
               value: "*"
             - name: no_proxy
               value: "*"
-
+      restartPolicy: Never
