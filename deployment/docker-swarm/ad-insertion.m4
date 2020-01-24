@@ -9,6 +9,7 @@
             AD_INTERVALS: 8
             AD_DURATION: 5
             AD_SEGMENT: 5
+            AD_BACKOFF: 3
             AD_BENCH_MODE: 0
             EVERY_NTH_FRAME: 3
             NO_PROXY: "*"
