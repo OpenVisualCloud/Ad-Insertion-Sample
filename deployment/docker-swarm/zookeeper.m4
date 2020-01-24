@@ -4,7 +4,7 @@
         environment:
             ZOOKEEPER_SERVER_ID: 1
             ZOOKEEPER_CLIENT_PORT: '2181'
-            ZOOKEEPER_TICK_TIME: '2000'
+            ZOOKEEPER_TICK_TIME: '3600000'
             KAFKA_HEAP_OPTS: '-Xmx512m -Xms512m'
             ZOOKEEPER_MAX_CLIENT_CNXNS: '20000'
             ZOOKEEPER_SESSION_TIMEOUT_MS: '72000'
