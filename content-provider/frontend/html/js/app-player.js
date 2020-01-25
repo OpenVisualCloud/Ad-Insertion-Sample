@@ -6,7 +6,6 @@ function hls_play(page, video, url) {
             maxFragLookUpTolerance: 0.5,
             maxBufferLength: 5,
             maxBufferHole: 1.5,
-            startLevel: 0,
             xhrSetup: function(xhr, url) {
                 xhr.setRequestHeader("X-USER", settings.user());
                 xhr.setRequestHeader("X-ALGO", settings.algorithms());
@@ -14,7 +13,6 @@ function hls_play(page, video, url) {
             }
         };
         var player=new Hls(config);
-        if (spec("benchmark")) player.autoLevelEnabled=false;
         player.loadSource(url);
         player.attachMedia(video[0]);
         player.on(Hls.Events.MANIFEST_PARSED,function () {
