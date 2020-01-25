@@ -43,7 +43,7 @@ spec:
             - name: "ZOO_MAX_CLIENT_CNXNS"
               value: "20000"
             - name: "ZOO_AUTOPURGE_PURGEINTERVAL"
-              value: "8"
+              value: "1"
             - name: "ZOO_SESSION_TIMEOUT_MS"
               value: "7200000"
             - name: "ZOO_LOG4J_PROP"
