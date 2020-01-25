@@ -28,7 +28,6 @@ class ZKState(object):
         
     def process_start(self):
         if self.processed(): return False
-        if self._zk.exists(self._path+"/"+self._name+"processing"): return False
         try:
             self._zk.create(self._path+"/"+self._name+"processing",ephemeral=True)
             return True
@@ -40,13 +39,10 @@ class ZKState(object):
             self._zk.retry(self._zk.create,self._path+"/"+self._name+"complete")
         except NodeExistsError:
             pass
-        self._zk.delete(self._path+"/"+self._name+"processing")
+        self._zk.delete_async(self._path+"/"+self._name+"processing")
 
     def process_abort(self):
-        try:
-            self._zk.retry(self._zk.delete,self._path+"/"+self._name+"processing")
-        except NoNodeError:
-            pass
+        self._zk.delete_async(self._path+"/"+self._name+"processing")
 
     def close(self):
         self._zk.stop()

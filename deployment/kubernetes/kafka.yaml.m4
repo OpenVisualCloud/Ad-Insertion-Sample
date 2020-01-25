@@ -89,8 +89,7 @@ spec:
   kafka-topics --create --topic seg_analytics_data --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
   kafka-topics --create --topic ad_transcode_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
   kafka-topics --create --topic workloads --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-  kafka-topics --create --topic adstats --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \
-  kafka-topics --create --topic video_analytics_fps --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181"]
+  kafka-topics --create --topic adstats --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181"]
           env:
             - name: "KAFKA_BROKER_ID"
               value: "ignored"
