@@ -82,6 +82,7 @@ class SegmentHandler(web.RequestHandler):
             self.set_status(400, "X-USER missing in headers")
             return
         algos = self.request.headers.get('X-ALGO')
+        print("ALGOS: "+algos, flush=True)
         if not algos: 
             self.set_status(400, "X-ALGO missing in headers")
 
@@ -91,5 +92,6 @@ class SegmentHandler(web.RequestHandler):
             self.set_status(404, "AD not ready")
         else:
             print("X-Accel-Redirect: "+redirect, flush=True)
+            if stream.find("/adstream/") != -1: self.add_header('Content-Cache','no-cache')
             self.add_header('X-Accel-Redirect',redirect)
             self.set_status(200,'OK')

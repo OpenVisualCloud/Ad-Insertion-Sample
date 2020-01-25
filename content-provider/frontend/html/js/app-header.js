@@ -75,7 +75,7 @@ var settings={
     },
     algorithms: function (value) {
         if (typeof value != "undefined") settings.localStorage.algorithms=value;
-        return typeof settings.localStorage.algorithms!="undefined"?settings.localStorage.algorithms:"object_detection ";
+        return typeof settings.localStorage.algorithms!="undefined"?settings.localStorage.algorithms:"object ";
     },
     benchmode: function (enable) {
         if (typeof enable != "undefined") settings.localStorage.benchmode=enable;
