@@ -4,8 +4,6 @@ function hls_play(page, video, url) {
         var config = {
             nudgeMaxRetry: 30,
             maxFragLookUpTolerance: 0.5,
-            maxBufferLength: 5,
-            maxBufferSize: 1024*1024*3*10,
             maxBufferHole: 1.5,
             xhrSetup: function(xhr, url) {
                 xhr.setRequestHeader("X-USER", settings.user());
