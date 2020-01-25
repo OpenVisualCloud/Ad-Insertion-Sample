@@ -1,50 +1,50 @@
 [
-    {"uri" : "http://ad-content:8080/DogFood2_10_REV.mp4",
+    {"uri" : "http://ad-content-service:8080/DogFood2_10_REV.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["dog", "cow", "horse", "sheep", "family"],
      "duration" : "10"
     },
-    {"uri" : "http://ad-content:8080/BoatAdvertisement10_REV.mp4",
+    {"uri" : "http://ad-content-service:8080/BoatAdvertisement10_REV.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["boat", "aeroplane", "sports"],
      "duration" : "10"
     },
-    {"uri" : "http://ad-content:8080/BTPVP031919D_Intel_Motorcycle_FINAL_040319_SneakersONLY.mp4",
+    {"uri" : "http://ad-content-service:8080/BTPVP031919D_Intel_Motorcycle_FINAL_040319_SneakersONLY.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["motorbike", "bicycle", "sports"],
      "duration" : "10"
     },
-    {"uri" : "http://ad-content:8080/DesertCar_10_081419.mp4",
+    {"uri" : "http://ad-content-service:8080/DesertCar_10_081419.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["car", "family"],
      "duration" : "10"
     },
-    {"uri" : "http://ad-content:8080/BTPVP031919F_Intel_Train_FINAL_040319_Generic.mp4",
+    {"uri" : "http://ad-content-service:8080/BTPVP031919F_Intel_Train_FINAL_040319_Generic.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["train" ],
      "duration" : "10"
     },
-    {"uri" : "http://ad-content:8080/BTPVP031919F_Intel_Train_FINAL_040319_Generic.mp4", 
+    {"uri" : "http://ad-content-service:8080/BTPVP031919F_Intel_Train_FINAL_040319_Generic.mp4", 
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["sofa", "chair", "family", "dinningtable"],
      "duration" : "10"
     },
-    {"uri" : "http://ad-content:8080/AmusementPark10_1.mp4",
+    {"uri" : "http://ad-content-service:8080/AmusementPark10_1.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["happy"],
      "duration" : "10"
     },
-    {"uri" : "http://ad-content:8080/AmusementPark10_1.mp4",
+    {"uri" : "http://ad-content-service:8080/AmusementPark10_1.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["anger", "sad", "neutral"],
      "duration" : "10"
     },
-    {"uri" : "http://ad-content:8080/HorseSpot10_REV_081419.mp4",
+    {"uri" : "http://ad-content-service:8080/HorseSpot10_REV_081419.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["John","Jenny"],
      "duration" : "10"
     },
-    {"uri" : "http://ad-content:8080/SkateBoard_10_REV3.mp4",
+    {"uri" : "http://ad-content-service:8080/SkateBoard_10_REV3.mp4",
      "navigation_url" : "http://www.intel.com",
      "keywords" : ["Victor", "Mike"],
      "duration" : "10"
