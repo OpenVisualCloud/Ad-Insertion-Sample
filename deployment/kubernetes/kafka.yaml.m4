@@ -33,7 +33,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: kafka
-          image: confluentinc/cp-kafka:5.3.1
+          image: confluentinc/cp-kafka:5.4.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9092
@@ -81,7 +81,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: kafka-init
-          image: confluentinc/cp-kafka:5.3.1
+          image: confluentinc/cp-kafka:5.4.0
           imagePullPolicy: IfNotPresent
           command: ["/bin/bash","-c","cub kafka-ready -b kafka-service:9092 1 20 && \
   kafka-topics --create --topic content_provider_sched --partitions 16 --replication-factor 1 --if-not-exists --zookeeper zookeeper-service:2181 && \

@@ -32,8 +32,8 @@ class Producer(object):
 
     def close(self):
         if self._producer: 
-            self.flush()
             self._producer.close()
+            self._producer=None
 
 class Consumer(object):
     def __init__(self, group=None):
