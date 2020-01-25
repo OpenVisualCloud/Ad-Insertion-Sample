@@ -12,7 +12,8 @@
             KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
             KAFKA_NUM_PARTITIONS: 8
             KAFKA_LOG_RETENTION_MINUTES: 30
-            KAFKA_HEAP_OPTS: "`-Xmx'ifelse(defn(`PLATFORM'),`Xeon',1,16)g `-Xms'ifelse(defn(`PLATFORM'),`Xeon',1,16)g"
+            KAFKA_CONNECTIONS_MAX_IDLE_MS: 10800000
+            KAFKA_HEAP_OPTS: '`-Xmx'ifelse(defn(`PLATFORM'),`Xeon',2,16)g `-Xms'ifelse(defn(`PLATFORM'),`Xeon',2,16)g'
             KAFKA_LOG4J_LOGGERS: 'kafka=ERROR,kafka.controller=ERROR,state.change.logger=ERROR,org.apache.kafka=ERROR'
             KAFKA_LOG4J_ROOT_LOGLEVEL: 'ERROR'
             CONFLUENT_SUPPORT_METRICS_ENABLE: 0
