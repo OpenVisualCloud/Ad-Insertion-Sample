@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from messaging import Producer,Consumer
+from messaging import Consumer
 from runva import RunVA
 import ast
 from zkstate import ZKState
@@ -13,12 +13,10 @@ import os
 import re
 
 video_analytics_topic = "seg_analytics_sched"
-video_analytics_fps_topic="video_analytics_fps"
 machine_prefix=os.environ.get("VA_PRE")
 if machine_prefix == None:
     machine_prefix="VA-"
 va=RunVA()
-p=Producer()
 
 def process_stream(zk, streamstring):
     streamjson = ast.literal_eval(streamstring)
@@ -68,11 +66,6 @@ def process_stream(zk, streamstring):
             zk.process_abort()
         else:
             zk.process_end()
-            p.send(video_analytics_fps_topic, json.dumps({
-                "fps": fps,
-                "machine":machine_prefix+socket.gethostname()[0:3],
-                "time": datetime.datetime.utcnow().isoformat(),
-            }));
             
         if merged_segment:
             merge.delete_merged_segment(merged_segment)
