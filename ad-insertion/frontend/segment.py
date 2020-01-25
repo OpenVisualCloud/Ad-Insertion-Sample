@@ -38,6 +38,7 @@ class SegmentHandler(web.RequestHandler):
             zk_path=zk_segment_prefix+"/"+stream_base+"/link"
             print("get prefix from "+zk_path, flush=True)
             prefix=self._zk.get(zk_path)
+            print(prefix, flush=True)
             if not prefix:
                 zk_path1=zk_segment_prefix+"/"+stream_base+"/backoff"
                 prefix="/adstatic"
@@ -86,6 +87,7 @@ class SegmentHandler(web.RequestHandler):
 
         redirect=yield self._get_segment(stream, user, algos)
         if redirect is None:
+            print("Status: 404, AD not ready", flush=True)
             self.set_status(404, "AD not ready")
         else:
             print("X-Accel-Redirect: "+redirect, flush=True)
