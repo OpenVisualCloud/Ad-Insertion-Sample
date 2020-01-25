@@ -16,7 +16,6 @@
             KAFKA_HEAP_OPTS: '`-Xmx'ifelse(defn(`PLATFORM'),`Xeon',2,16)g `-Xms'ifelse(defn(`PLATFORM'),`Xeon',2,16)g'
             KAFKA_LOG4J_LOGGERS: 'kafka=ERROR,kafka.controller=ERROR,state.change.logger=ERROR,org.apache.kafka=ERROR'
             KAFKA_LOG4J_ROOT_LOGLEVEL: 'ERROR'
-            CONFLUENT_SUPPORT_METRICS_ENABLE: 0
         networks:
             - appnet
         deploy:
