@@ -42,9 +42,8 @@ class SegmentHandler(web.RequestHandler):
                 zk_path1=zk_segment_prefix+"/"+stream_base+"/backoff"
                 prefix="/adstatic"
                 try:
-                    print("get backoff "+zk_path1, flush=True)
                     backoff=self._zk.get(zk_path1)
-                    print(backoff, flush=True)
+                    if not backoff: backoff=ad_backoff
                     if int(backoff)>0:
                         self._zk.set(zk_path1,str(int(backoff)-1))
                         return None
@@ -57,10 +56,6 @@ class SegmentHandler(web.RequestHandler):
         if seg_info: 
             # schedule ad
             if "transcode" in seg_info:
-                for transcode1 in seg_info["transcode"]:
-                    zk_path1=zk_segment_prefix+"/"+"/".join(transcode1["stream"].split("/")[4:-1])+"/backoff"
-                    print("set backoff "+zk_path1+" to "+ad_backoff, flush=True)
-                    self._zk.set(zk_path1,ad_backoff)
                 self._sch.transcode(user, seg_info)
 
             # schedule analytics
