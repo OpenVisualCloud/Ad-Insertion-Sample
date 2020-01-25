@@ -10,8 +10,6 @@
             ZOOKEEPER_SESSION_TIMEOUT_MS: '7200000'
             ZOOKEEPER_LOG4J_LOGGERS: 'zookeepr=ERROR'
             ZOOKEEPER_LOG4J_ROOT_LOGLEVEL: 'ERROR'
-            NO_PROXY: "*"
-            no_proxy: "*"
         networks:
             - appnet
         deploy:
