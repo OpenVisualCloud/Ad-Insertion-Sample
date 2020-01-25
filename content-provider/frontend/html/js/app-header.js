@@ -5,8 +5,10 @@ $(".top-bar").on(":initpage", function(e) {
 
     /* disable all switches */
     $("#playListSwitch").prop("checked",true);
-    $("#objDetectionSwitch").prop("checked",true);
-    $.each(["debug","analytics","adstats","workloads","analyticPerf"],function(i,x) {
+    $("#objDetectionSwitch").prop("checked",settings.algorithms().search("object")>=0);
+    $("#emotionRecognitionSwitch").prop("checked",settings.algorithms().search("emotion")>=0);
+    $("#faceRecognitionSwitch").prop("checked",settings.algorithms().search("face")>=0);
+    $.each(["debug","analytics","adstats","workloads"],function(i,x) {
         $("#"+x+"ConsoleSwitch").prop("checked",false);
     });
 });
@@ -75,7 +77,7 @@ var settings={
     },
     algorithms: function (value) {
         if (typeof value != "undefined") settings.localStorage.algorithms=value;
-        return typeof settings.localStorage.algorithms!="undefined"?settings.localStorage.algorithms:"object ";
+        return typeof settings.localStorage.algorithms!="undefined"?settings.localStorage.algorithms:"object face emotion ";
     },
     benchmode: function (enable) {
         if (typeof enable != "undefined") settings.localStorage.benchmode=enable;
