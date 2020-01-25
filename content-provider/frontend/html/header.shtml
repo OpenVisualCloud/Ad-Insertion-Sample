@@ -28,7 +28,7 @@
 
     <div class="input-group" ui-header-setting-debug-console>
       <span class="input-group-label" style="width:40%"><b>Debug Console:</b></span>
-      <input class="input-group-field switch-input" id="debugConsoleSwitch" type="checkbox">
+      <input class="input-group-field switch-input" id="debugConsoleSwitch" type="checkbox" disabled>
       <label class="switch-paddle" for="debugConsoleSwitch">
           <span class="switch-active" aria-hidden="true">ON</span>
           <span class="switch-inactive" aria-hidden="true">OFF</span>
@@ -51,7 +51,7 @@
 
     <div class="input-group" ui-header-setting-adstats-console>
       <span class="input-group-label" style="width:40%"><b>AD Report:</b></span>
-      <input class="input-group-field switch-input" id="adstatsConsoleSwitch" type="checkbox">
+      <input class="input-group-field switch-input" id="adstatsConsoleSwitch" type="checkbox" disabled>
       <label class="switch-paddle" for="adstatsConsoleSwitch">
           <span class="switch-active" aria-hidden="true">ON</span>
           <span class="switch-inactive" aria-hidden="true">OFF</span>
@@ -60,7 +60,7 @@
 
     <div class="input-group" ui-header-setting-workloads-console>
       <span class="input-group-label" style="width:40%"><b>Server Workloads:</b></span>
-      <input class="input-group-field switch-input" id="workloadsConsoleSwitch" type="checkbox">
+      <input class="input-group-field switch-input" id="workloadsConsoleSwitch" type="checkbox" disabled>
       <label class="switch-paddle" for="workloadsConsoleSwitch">
           <span class="switch-active" aria-hidden="true">ON</span>
           <span class="switch-inactive" aria-hidden="true">OFF</span>
@@ -69,7 +69,7 @@
 
     <div class="input-group" ui-header-setting-playlist>
       <span class="input-group-label" style="width:40%"><b>Play List:</b></span>
-      <input class="input-group-field switch-input" id="playListSwitch" type="checkbox">
+      <input class="input-group-field switch-input" id="playListSwitch" type="checkbox" disabled>
       <label class="switch-paddle" for="playListSwitch">
           <span class="switch-active" aria-hidden="true">ON</span>
           <span class="switch-inactive" aria-hidden="true">OFF</span>
@@ -105,7 +105,7 @@
 
     <div class="input-group" ui-header-setting-bench-mode>
       <span class="input-group-label" style="width:40%"><b>Bench Mode:</b></span>
-      <input class="input-group-field switch-input" id="benchModeSwitch" type="checkbox">
+      <input class="input-group-field switch-input" id="benchModeSwitch" type="checkbox" disabled>
       <label class="switch-paddle" for="benchModeSwitch">
           <span class="switch-active" aria-hidden="true">ON</span>
           <span class="switch-inactive" aria-hidden="true">OFF</span>
