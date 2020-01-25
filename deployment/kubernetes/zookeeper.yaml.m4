@@ -54,7 +54,3 @@ spec:
               value: "zookeepr=ERROR"
             - name: "ZOOKEEPER_LOG4J_ROOT_LOGLEVEL"
               value: "ERROR"
-            - name: NO_PROXY
-              value: "*"
-            - name: no_proxy
-              value: "*"
