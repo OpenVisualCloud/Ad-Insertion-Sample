@@ -5,9 +5,9 @@ DIR=$(dirname $(readlink -f "$0"))
 
 case "$1" in 
     Xeon)
-        cp -f inventory.json.all inventory.json;;
+        cp -f "$DIR/inventory.json.all" "$DIR/inventory.json";;
     VCAC-A)
-        cp -f inventory.json.obj inventory.json;;
+        cp -f "$DIR/inventory.json.obj" "$DIR/inventory.json";;
 esac
 
 . "$DIR/../../script/build.sh"
