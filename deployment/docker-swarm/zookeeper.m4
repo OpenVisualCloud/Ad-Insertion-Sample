@@ -1,6 +1,6 @@
 
     zookeeper-service:
-        image: confluentinc/cp-zookeeper:5.3.1
+        image: confluentinc/cp-zookeeper:5.4.0
         environment:
             ZOOKEEPER_SERVER_ID: 1
             ZOOKEEPER_CLIENT_PORT: '2181'
