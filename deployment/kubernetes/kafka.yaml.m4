@@ -60,12 +60,8 @@ spec:
               value: "8"
             - name: "KAFKA_LOG_RETENTION_MINUTES"
               value: "30"
-            - name: "KAFKA_CONNECTIONS_MAX_IDLE_MS"
-              value: "10800000"
             - name: "KAFKA_HEAP_OPTS"
               value: "-Xmx1024m -Xms1024m"
-            - name: "KAFKA_LOG4J_LOGGERS"
-              value: "kafka=ERROR,kafka.controller=ERROR,state.change.logger=ERROR,org.apache.kafka=ERROR"
             - name: "KAFKA_LOG4J_ROOT_LOGLEVEL"
               value: "ERROR"
 
