@@ -18,7 +18,7 @@ if machine_prefix == None:
     machine_prefix="VA-"
 va=RunVA()
 
-def process_stream(zk, streamstring):
+def process_stream(streamstring):
     streamjson = ast.literal_eval(streamstring)
     pipeline1 = streamjson["pipeline"]+"/1"
     stream = streamjson['source']['uri']
@@ -36,10 +36,12 @@ def process_stream(zk, streamstring):
         zk_path = m1.group(1)+"/"+segment+"/"+pipeline1
 
     print("VA feeder: zk_path "+zk_path, flush=True)
-    zk.set_path(zk_path)
+    zk=ZKState(zk_path)
     if zk.processed():
         print("VA feeder: " + stream + " already complete", flush=True)
+        zk.close()
         return
+
     if zk.process_start():
         merged_segment = None
         if init_stream:
@@ -62,6 +64,7 @@ def process_stream(zk, streamstring):
             "tags": streamjson["tags"],
             "parameters": streamjson["parameters"],
         }, streamjson["pipeline"])
+
         if fps<0:
             zk.process_abort()
         else:
@@ -69,21 +72,20 @@ def process_stream(zk, streamstring):
             
         if merged_segment:
             merge.delete_merged_segment(merged_segment)
+    zk.close()
 
 if __name__ == "__main__":
     c = Consumer("analytics")
-    zk = ZKState()
     while True:
         try:
             print("VA feeder: listening to messages", flush=True)
             for msg in c.messages(video_analytics_topic):
                 print("VA feeder: recieved message: " + str(msg), flush=True)
                 try:
-                    process_stream(zk, msg)
+                    process_stream(msg)
                 except Exception as e:
                     print("VA feeder: "+str(e), flush=True)
         except Exception as e:
             print("VA feeder: error in main" + str(e), flush=True)
             time.sleep(1)
     c.close()
-    zk.close()
