@@ -153,8 +153,11 @@ def ADTranscode(zks, zkd, kafkamsg, db):
             print("Exception: "+str(e), flush=True)
 
         stream = ADClipDecision(msg,db)
+        zkd_path="/".join(msg.target.replace(adinsert_archive_root+"/","").split("/")[:-1])
         if not stream:
             print("Query AD clip failed and fall back to skipped ad clip!", flush=True)
+            zkd.set(zk_segment_prefix+"/"+zkd_path+"/link","/adstatic")
+            print("set "+zk_segment_prefix+"/"+zkd_path+"/link to /adstatic", flush=True)
             zks.process_abort()
             return
 
@@ -173,10 +176,11 @@ def ADTranscode(zks, zkd, kafkamsg, db):
                 process_id.wait()
 
             # signal that we are ready
-            zkd_path="/".join(msg.target.replace(adinsert_archive_root+"/","").split("/")[:-1])
             zkd.set(zk_segment_prefix+"/"+zkd_path+"/link","/adinsert/"+zkd_path)
             print("set "+zk_segment_prefix+"/"+zkd_path+"/link to /adinsert/"+zkd_path, flush=True)
             zks.process_end()
         except Exception as e:
             print(traceback.format_exc(), flush=True)
+            zkd.set(zk_segment_prefix+"/"+zkd_path+"/link","/adstatic")
+            print("set "+zk_segment_prefix+"/"+zkd_path+"/link to /adstatic", flush=True)
             zks.process_abort()
