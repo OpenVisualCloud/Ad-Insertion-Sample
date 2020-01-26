@@ -28,13 +28,13 @@ case "$(cat /proc/1/sched | head -n 1)" in
             h=${s/*x}
 
             if [ ${h} -lt ${MIN_H} ]; then
-                rm -f $color/${h}p*
+                find $color -name "${h}p*" -exec rm -f {} \;
                 continue
             fi
 
-            ffmpeg -f lavfi -i anullsrc=sample_rate=48000 -f lavfi -i color=c=$color:s=$s:d=$DE -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='Server-Side AD Insertion':x=(w-text_w)/2:y=(h-text_h)/2:fontsize=45:fontcolor_expr=ffffff%{eif\\\\: clip(255*(1*between(t\\, $DS + $FID\\, $DE - $FOD) + ((t - $DS)/$FID)*between(t\\, $DS\\, $DS + $FID) + (-(t - $DE)/$FOD)*between(t\\, $DE - $FOD\\, $DE) )\\, 0\\, 255) \\\\: x\\\\: 2 }" -shortest -c:a aac -c:v libx264 -g ${FR} -keyint_min ${FR} -f hls -hls_segment_filename ${h}p_%03d.ts -hls_time $SEG -y -hls_list_size $((DE/SEG)) $color/${h}p.m3u8
+            (cd $color; ffmpeg -f lavfi -i anullsrc=sample_rate=48000 -f lavfi -i color=c=$color:s=$s:d=$DE -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='Server-Side AD Insertion':x=(w-text_w)/2:y=(h-text_h)/2:fontsize=45:fontcolor_expr=ffffff%{eif\\\\: clip(255*(1*between(t\\, $DS + $FID\\, $DE - $FOD) + ((t - $DS)/$FID)*between(t\\, $DS\\, $DS + $FID) + (-(t - $DE)/$FOD)*between(t\\, $DE - $FOD\\, $DE) )\\, 0\\, 255) \\\\: x\\\\: 2 }" -shortest -c:a aac -c:v libx264 -g ${FR} -keyint_min ${FR} -f hls -hls_segment_filename ${h}p_%03d.ts -hls_time $SEG -y -hls_list_size $((DE/SEG)) ${h}p.m3u8)
 
-            ffmpeg -f lavfi -i anullsrc=sample_rate=48000 -f lavfi -i color=c=$color:s=$s:d=$DE -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='Server-Side AD Insertion':x=(w-text_w)/2:y=(h-text_h)/2:fontsize=45:fontcolor_expr=ffffff%{eif\\\\: clip(255*(1*between(t\\, $DS + $FID\\, $DE - $FOD) + ((t - $DS)/$FID)*between(t\\, $DS\\, $DS + $FID) + (-(t - $DE)/$FOD)*between(t\\, $DE - $FOD\\, $DE) )\\, 0\\, 255) \\\\: x\\\\: 2 }" -shortest -c:a aac -c:v libx264 -g ${FR} -keyint_min ${FR} -f dash -init_seg_name ${h}p-'init-stream$RepresentationID$.m4s' -media_seg_name ${h}p-'chunk-stream$RepresentationID$-$Number%05d$.m4s' -use_template 1 -min_seg_duration ${SEG_DASH} -use_timeline 0 -y $color/${h}p.mpd
+            (cd $color; ffmpeg -f lavfi -i anullsrc=sample_rate=48000 -f lavfi -i color=c=$color:s=$s:d=$DE -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='Server-Side AD Insertion':x=(w-text_w)/2:y=(h-text_h)/2:fontsize=45:fontcolor_expr=ffffff%{eif\\\\: clip(255*(1*between(t\\, $DS + $FID\\, $DE - $FOD) + ((t - $DS)/$FID)*between(t\\, $DS\\, $DS + $FID) + (-(t - $DE)/$FOD)*between(t\\, $DE - $FOD\\, $DE) )\\, 0\\, 255) \\\\: x\\\\: 2 }" -shortest -c:a aac -c:v libx264 -g ${FR} -keyint_min ${FR} -f dash -init_seg_name ${h}p-'init-stream$RepresentationID$.m4s' -media_seg_name ${h}p-'chunk-stream$RepresentationID$-$Number%05d$.m4s' -use_template 1 -min_seg_duration ${SEG_DASH} -use_timeline 0 -y ${h}p.mpd)
         done
     done
     ;;
