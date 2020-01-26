@@ -7,6 +7,7 @@ from zkdata import ZKData
 from schedule import Schedule
 from os.path import isfile
 import traceback
+import random
 import time
 import re
 import os
@@ -21,6 +22,8 @@ class SegmentHandler(web.RequestHandler):
         self._sch=Schedule()
         self.executor=ThreadPoolExecutor()
         self._zk=ZKData()
+        self._ads=os.lsdir("/var/www/adstatic")
+        random.seed()
 
     def check_origin(self, origin):
         return True
@@ -50,6 +53,7 @@ class SegmentHandler(web.RequestHandler):
                         return None
                 except:
                     print(traceback.format_exc(), flush=True)
+            if prefix == "/adstatic": prefix=prefix+"/"+self._ads[int(random.random()*len(self._ads))]
             return prefix+"/"+segment
 
         # get zk data for additional scheduling instruction
