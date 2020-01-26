@@ -54,7 +54,7 @@ class SegmentHandler(web.RequestHandler):
                         return None
                 except:
                     print(traceback.format_exc(), flush=True)
-            if prefix == ad_static: prefix=prefix+"/"+self._ads[int(random.random()*len(self._ads))]
+            if prefix == ad_static: prefix=prefix+"/"+self._ads[random.randint(0,len(self._ads)-1)]
             return prefix+"/"+segment
 
         # get zk data for additional scheduling instruction
