@@ -3,6 +3,8 @@
 from os.path import isfile, isdir
 from os import mkdir, makedirs, listdir, remove
 from abr_hls_dash import GetABRCommand
+from zkdata import ZKData
+from zkstate import ZKState
 import multiprocessing
 import errno
 import time
@@ -139,48 +141,52 @@ def CopyADSegment(msg, stream, prefix="na"):
         if msg.streaming_type=="hls" and (name.endswith(".ts") or name.endswith(".m3u8")):
             shutil.copyfile(segment_folder+"/"+name,target_file)
 
-def ADTranscode(zks, zkd, kafkamsg, db):
+def set_ad_path(path, value):
+    zkd=ZKData()
+    zkd.set(path, value)
+    print("set "+path+" to "+value, flush=True)
+    zkd.close()
+
+def ADTranscode(kafkamsg, db):
     msg=KafkaMsgParser(kafkamsg)
-    zks.set_path(msg.target_path, msg.target_name)
+    zks=ZKState(msg.target_path, msg.target_name)
     if zks.processed():
         print("AD transcoding finish the clip :",msg.target, flush=True)
+        zks.close()
         return
 
     if zks.process_start():
         try:
             makedirs(msg.target_path)
-        except Exception as e:
-            print("Exception: "+str(e), flush=True)
+        except:
+            pass
 
         stream = ADClipDecision(msg,db)
         zkd_path="/".join(msg.target.replace(adinsert_archive_root+"/","").split("/")[:-1])
         if not stream:
             print("Query AD clip failed and fall back to skipped ad clip!", flush=True)
-            zkd.set(zk_segment_prefix+"/"+zkd_path+"/link","/adstatic")
-            print("set "+zk_segment_prefix+"/"+zkd_path+"/link to /adstatic", flush=True)
+            set_ad_path(zk_segment_prefix+"/"+zkd_path+"/link","/adstatic")
             zks.process_abort()
-            return
+        else:
+            try:
+                stream_folder = msg.segment_path + "/" + stream.split("/")[-1]
+                if isdir(stream_folder): # pre-transcoded AD exists
+                    print("Prefetch the AD segment {} \n".format(stream_folder),flush=True)
+                    CopyADSegment(msg,stream)
+                else:
+                    print("Transcoding the AD segment {} \n".format(stream),flush=True)
+                    # only generate one resolution for ad segment, if not generated, ad will fall back to skipped ad.
+                    cmd = GetABRCommand(stream, msg.target_path, msg.streaming_type, msg.GetRedition(), duration=msg.segment_duration, fade_type="audio", content_type="ad")
+                    process_id = subprocess.Popen(cmd,stdout=subprocess.PIPE)
+                    # the `multiprocessing.Process` process will wait until
+                    # the call to the `subprocess.Popen` object is completed
+                    process_id.wait()
 
-        try:
-            stream_folder = msg.segment_path + "/" + stream.split("/")[-1]
-            if isdir(stream_folder): # pre-transcoded AD exists
-                print("Prefetch the AD segment {} \n".format(stream_folder),flush=True)
-                CopyADSegment(msg,stream)
-            else:
-                print("Transcoding the AD segment {} \n".format(stream),flush=True)
-                # only generate one resolution for ad segment, if not generated, ad will fall back to skipped ad.
-                cmd = GetABRCommand(stream, msg.target_path, msg.streaming_type, msg.GetRedition(), duration=msg.segment_duration, fade_type="audio", content_type="ad")
-                process_id = subprocess.Popen(cmd,stdout=subprocess.PIPE)
-                # the `multiprocessing.Process` process will wait until
-                # the call to the `subprocess.Popen` object is completed
-                process_id.wait()
-
-            # signal that we are ready
-            zkd.set(zk_segment_prefix+"/"+zkd_path+"/link","/adinsert/"+zkd_path)
-            print("set "+zk_segment_prefix+"/"+zkd_path+"/link to /adinsert/"+zkd_path, flush=True)
-            zks.process_end()
-        except Exception as e:
-            print(traceback.format_exc(), flush=True)
-            zkd.set(zk_segment_prefix+"/"+zkd_path+"/link","/adstatic")
-            print("set "+zk_segment_prefix+"/"+zkd_path+"/link to /adstatic", flush=True)
-            zks.process_abort()
+                # signal that we are ready
+                set_ad_path(zk_segment_prefix+"/"+zkd_path+"/link","/adinsert/"+zkd_path)
+                zks.process_end()
+            except Exception as e:
+                print(traceback.format_exc(), flush=True)
+                set_ad_path(zk_segment_prefix+"/"+zkd_path+"/link","/adstatic")
+                zks.process_abort()
+    zks.close()

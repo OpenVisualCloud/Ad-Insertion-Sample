@@ -22,7 +22,6 @@ class SegmentHandler(web.RequestHandler):
         super(SegmentHandler, self).__init__(app, request, **kwargs)
         self._sch=Schedule()
         self.executor=ThreadPoolExecutor()
-        self._zk=ZKData()
         self._ads=[x for x in os.listdir("/var/www"+ad_static) if os.path.isdir("/var/www"+ad_static+"/"+x)]
         random.seed()
 
@@ -30,7 +29,7 @@ class SegmentHandler(web.RequestHandler):
         return True
 
     @run_on_executor
-    def _get_segment(self, stream, user, algos):
+    def _get_segment(self, zk, stream, user, algos):
         stream_base = "/".join(stream.split("/")[:-1])
         segment = stream.split("/")[-1]
         print("stream: "+stream, flush=True)
@@ -41,16 +40,16 @@ class SegmentHandler(web.RequestHandler):
         if stream.find("/adstream/") != -1:
             zk_path=zk_segment_prefix+"/"+stream_base+"/link"
             print("get prefix from "+zk_path, flush=True)
-            prefix=self._zk.get(zk_path)
+            prefix=zk.get(zk_path)
             print(prefix, flush=True)
             if not prefix:
                 zk_path1=zk_segment_prefix+"/"+stream_base+"/backoff"
                 prefix=ad_static
                 try:
-                    backoff=self._zk.get(zk_path1)
+                    backoff=zk.get(zk_path1)
                     if not backoff: backoff=ad_backoff
                     if int(backoff)>0:
-                        self._zk.set(zk_path1,str(int(backoff)-1))
+                        zk.set(zk_path1,str(int(backoff)-1))
                         return None
                 except:
                     print(traceback.format_exc(), flush=True)
@@ -58,7 +57,7 @@ class SegmentHandler(web.RequestHandler):
             return prefix+"/"+segment
 
         # get zk data for additional scheduling instruction
-        seg_info=self._zk.get(zk_manifest_prefix+"/"+stream_base+"/"+user+"/"+segment)
+        seg_info=zk.get(zk_manifest_prefix+"/"+stream_base+"/"+user+"/"+segment)
         if seg_info: 
             # schedule ad
             if "transcode" in seg_info:
@@ -91,7 +90,10 @@ class SegmentHandler(web.RequestHandler):
         if not algos: 
             self.set_status(400, "X-ALGO missing in headers")
 
-        redirect=yield self._get_segment(stream, user, algos)
+        zk=ZKData()
+        redirect=yield self._get_segment(zk, stream, user, algos)
+        zk.close()
+
         if redirect is None:
             print("Status: 404, AD not ready", flush=True)
             self.set_status(404, "AD not ready")
