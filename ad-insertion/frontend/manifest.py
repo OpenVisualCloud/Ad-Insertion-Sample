@@ -9,9 +9,12 @@ from manifest_dash import parse_dash
 import requests
 import os
 
-zk_prefix="/ad-insertion-frontend"
+zk_manifest_prefix="/ad-insertion-manifest"
 content_provider_url = "http://content-provider-service:8080"
 ad_storage_root = "/var/www/adinsert"
+ad_interval=list(map(int,os.environ["AD_INTERVALS"].split(",")))
+ad_duration=int(os.environ.get("AD_DURATION"))
+ad_segment=int(os.environ.get("AD_SEGMENT"))
 
 class ManifestHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
@@ -35,15 +38,15 @@ class ManifestHandler(web.RequestHandler):
 
         # launch zk
         stream_base = "/".join(stream.split("/")[:-1])
-        zk_path=zk_prefix+"/"+stream_base
+        zk_path=zk_manifest_prefix+"/"+stream_base
 
         # Parse manifest
         minfo={ "segs": {}, "streams": {}, "manifest": "" }
         ad_spec={
             "prefix": "adstream/"+user,
             "path": ad_storage_root+"/"+stream_base,
-            "interval": list(map(int,os.environ.get("AD_INTERVALS").split(","))), # ad interval (#segments)
-            "duration": int(os.environ.get("AD_DURATION")), # ad duration
+            "interval": ad_interval, # ad interval (#segments)
+            "duration": ad_duration, # ad duration
         }
 
         if stream.endswith(".m3u8"):
@@ -53,7 +56,7 @@ class ManifestHandler(web.RequestHandler):
                 stream_info=self._zk.get(zk_path+"/"+stream.split("/")[-1]),
                 ad_spec=ad_spec,
                 ad_bench_mode=int(bench),
-                ad_segment=ad_spec["duration"]
+                ad_segment=ad_segment
             )
         if stream.endswith(".mpd"):
             minfo=parse_dash(
@@ -61,7 +64,7 @@ class ManifestHandler(web.RequestHandler):
                 mpd=manifest,
                 ad_spec=ad_spec,
                 ad_bench_mode=int(bench),
-                ad_segment=ad_spec["duration"]
+                ad_segment=ad_segment
             )
 
         # set zk states

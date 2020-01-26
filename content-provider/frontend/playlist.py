@@ -44,4 +44,5 @@ class PlayListHandler(web.RequestHandler):
         self.set_status(200,"OK")
         self.set_header("Content-Type", "application/json")
         types=[("hls",".m3u8"),("dash",".mpd")]
+        types=[("hls",".m3u8")]
         self.write(json.dumps([{"name":t[0]+"-"+s,"url":t[0]+"/"+s+"/index"+t[1],"img":"thumbnail/"+s+".png"} for t in types for s in streams]))

@@ -42,6 +42,10 @@ spec:
               value: "8"
             - name: AD_DURATION
               value: "5"
+            - name: AD_SEGMENT
+              value: "5"
+            - name: AD_BACKOFF
+              value: "3"
             - name: AD_BENCH_MODE
               value: "0"
             - name: EVERY_NTH_FRAME 
@@ -54,7 +58,13 @@ spec:
             - mountPath: /var/www/adinsert
               name: ad-cache
               readOnly: true
+            - mountPath: /var/www/adstatic
+              name: ad-static
+              readOnly: true
       volumes:
           - name: ad-cache
             persistentVolumeClaim:
                claimName: ad-cache
+          - name: ad-static
+            persistentVolumeClaim:
+               claimName: ad-static

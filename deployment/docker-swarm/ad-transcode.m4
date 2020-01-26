@@ -9,11 +9,10 @@
             - ${AD_HLS_VOLUME}:/var/www/adinsert/hls:rw
             - ${AD_SEGMENT_DASH_VOLUME}:/var/www/adinsert/segment/dash:ro
             - ${AD_SEGMENT_HLS_VOLUME}:/var/www/adinsert/segment/hls:ro
-            - ${AD_STATIC_VOLUME}:/var/www/skipped:ro
         networks:
             - appnet
         deploy:
-            replicas: 8
+            replicas: 4
             placement:
                 constraints:
                     - node.role==manager

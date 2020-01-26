@@ -1,6 +1,6 @@
 
     ad-content-service:
-        image: ssai_ad_content_frontend:latest
+        image: `ssai_ad_content_frontend_'translit(defn(`PLATFORM'),`A-Z',`a-z'):latest
         environment:
             NO_PROXY: "*"
             no_proxy: "*"

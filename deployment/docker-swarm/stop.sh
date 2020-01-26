@@ -18,9 +18,16 @@ docker_compose)
     docker-compose -f "$yml" -p adi --compatibility down
     ;;
 *)
-    docker stack services adi
-    echo "Shuting down stack adi..."
-    while test -z "$(docker stack rm adi 2>&1 | grep 'Nothing found in stack')"; do
+    case "$2" in
+    VCAC-A) 
+        name="adia";;
+    Xeon)
+        name="adix";;
+    esac
+
+    docker stack services $name 
+    echo "Shuting down stack $name..."
+    while test -z "$(docker stack rm $name 2>&1 | grep 'Nothing found in stack')"; do
         sleep 2
     done
     ;;
