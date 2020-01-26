@@ -15,6 +15,7 @@ import os
 zk_manifest_prefix="/ad-insertion-manifest"
 zk_segment_prefix="/ad-insertion-segment"
 ad_backoff=str(os.environ["AD_BACKOFF"])
+ad_static="/adstatic"
 
 class SegmentHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
@@ -22,7 +23,7 @@ class SegmentHandler(web.RequestHandler):
         self._sch=Schedule()
         self.executor=ThreadPoolExecutor()
         self._zk=ZKData()
-        self._ads=os.lsdir("/var/www/adstatic")
+        self._ads=os.listdir("/var/www"+ad_static)
         random.seed()
 
     def check_origin(self, origin):
@@ -44,7 +45,7 @@ class SegmentHandler(web.RequestHandler):
             print(prefix, flush=True)
             if not prefix:
                 zk_path1=zk_segment_prefix+"/"+stream_base+"/backoff"
-                prefix="/adstatic"
+                prefix=ad_static
                 try:
                     backoff=self._zk.get(zk_path1)
                     if not backoff: backoff=ad_backoff
@@ -53,7 +54,7 @@ class SegmentHandler(web.RequestHandler):
                         return None
                 except:
                     print(traceback.format_exc(), flush=True)
-            if prefix == "/adstatic": prefix=prefix+"/"+self._ads[int(random.random()*len(self._ads))]
+            if prefix == ad_static: prefix=prefix+"/"+self._ads[int(random.random()*len(self._ads))]
             return prefix+"/"+segment
 
         # get zk data for additional scheduling instruction
