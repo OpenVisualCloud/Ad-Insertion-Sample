@@ -17,7 +17,7 @@
         networks:
             - appnet
         deploy:
-            replicas: 1
+            replicas: ifelse(defn(`PLATFORM'),`Xeon',1,2)
             placement:
                 constraints:
                     - node.role==manager
