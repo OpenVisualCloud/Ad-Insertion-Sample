@@ -27,7 +27,7 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         networks:
             - appnet 
         deploy:
-            replicas: 4
+            replicas: 8
             placement:
                 constraints:
                     - node.labels.vcac_zone==yes
