@@ -23,7 +23,7 @@ class SegmentHandler(web.RequestHandler):
         self._sch=Schedule()
         self.executor=ThreadPoolExecutor()
         self._zk=ZKData()
-        self._ads=[x for x in os.listdir("/var/www"+ad_static) if os.path.isdir(x)]
+        self._ads=[x for x in os.listdir("/var/www"+ad_static) if os.path.isdir("/var/www"+ad_static+"/"+x)]
         random.seed()
 
     def check_origin(self, origin):
