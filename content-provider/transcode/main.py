@@ -6,6 +6,7 @@ from os import mkdir
 from zkstate import ZKState
 from abr_hls_dash import GetABRCommand
 from messaging import Consumer
+import traceback
 import time
 
 kafka_topic="content_provider_sched"
@@ -15,53 +16,54 @@ archive_root="/var/www/archive"
 dash_root="/var/www/video/dash"
 hls_root="/var/www/video/hls"
 
-def process_stream(zk, stream):
-   stream_name=stream.split("/")[1]
-   if not isfile(archive_root+"/"+stream_name): return
+def process_stream(stream):
+    stream_name=stream.split("/")[1]
+    if not isfile(archive_root+"/"+stream_name): return
 
-   zk.set_path("/content_provider_transcoder/"+archive_root+"/"+stream)
-   if zk.processed(): return
+    zk=ZKState("/content_provider_transcoder/"+archive_root+"/"+stream)
+    if zk.processed(): 
+        zk.close()
+        return
 
-   if stream.endswith(".mpd"):
-       try:
-           mkdir(dash_root+"/"+stream_name)
-       except Exception as e:
-           print(str(e))
-
-       if zk.process_start():
-           try:
-               cmd = GetABRCommand(archive_root+"/"+stream_name,dash_root+"/"+stream_name,"dash")
-               r=call(cmd)
-               if r: raise Exception("status code: "+str(r))
-               zk.process_end()
-           except Exception as e:
-               print(str(e))
-               zk.process_abort()
-   if stream.endswith(".m3u8"):
-       try:
-           mkdir(hls_root+"/"+stream_name)
-       except Exception as e:
-           print(str(e))
-
-       if zk.process_start():
-           try:
-               cmd = GetABRCommand(archive_root+"/"+stream_name,hls_root+"/"+stream_name,"hls")
-               r=call(cmd)
-               if r: raise Exception("status code: "+str(r))
-               zk.process_end()
-           except Exception as e:
-               print(str(e))
-               zk.process_abort()
-
-if __name__ == "__main__":
-    c=Consumer(kafka_group)
-    zk=ZKState()
-    while True:
+    if stream.endswith(".mpd"):
         try:
-            for message in c.messages(kafka_topic):
-                process_stream(zk, message)
-        except Exception as e:
-            print(str(e))
-        time.sleep(2)
-    c.close()
+            mkdir(dash_root+"/"+stream_name)
+        except:
+            pass
+
+        if zk.process_start():
+            try:
+                cmd = GetABRCommand(archive_root+"/"+stream_name,dash_root+"/"+stream_name,"dash")
+                r=call(cmd)
+                if r: raise Exception("status code: "+str(r))
+                zk.process_end()
+            except:
+                print(traceback.format_exc(), flush=True)
+                zk.process_abort()
+
+    if stream.endswith(".m3u8"):
+        try:
+            mkdir(hls_root+"/"+stream_name)
+        except:
+            pass
+
+        if zk.process_start():
+            try:
+                cmd = GetABRCommand(archive_root+"/"+stream_name,hls_root+"/"+stream_name,"hls")
+                r=call(cmd)
+                if r: raise Exception("status code: "+str(r))
+                zk.process_end()
+            except:
+                print(traceback.format_exc(), flush=True)
+                zk.process_abort()
     zk.close()
+
+c=Consumer(kafka_group)
+while True:
+    try:
+        for message in c.messages(kafka_topic):
+            process_stream(message)
+    except:
+        print(traceback.format_exc(), flush=True)
+        time.sleep(2)
+c.close()

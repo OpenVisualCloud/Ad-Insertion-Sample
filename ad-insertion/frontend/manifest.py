@@ -20,7 +20,6 @@ class ManifestHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
         super(ManifestHandler, self).__init__(app, request, **kwargs)
         self.executor=ThreadPoolExecutor()
-        self._zk=ZKData()
 
     def check_origin(self, origin):
         return True
@@ -49,11 +48,12 @@ class ManifestHandler(web.RequestHandler):
             "duration": ad_duration, # ad duration
         }
 
+        zk=ZKData()
         if stream.endswith(".m3u8"):
             minfo=parse_hls(
                 stream_cp_url=content_provider_url+"/"+stream,
                 m3u8=manifest,
-                stream_info=self._zk.get(zk_path+"/"+stream.split("/")[-1]),
+                stream_info=zk.get(zk_path+"/"+stream.split("/")[-1]),
                 ad_spec=ad_spec,
                 ad_bench_mode=int(bench),
                 ad_segment=ad_segment
@@ -70,11 +70,12 @@ class ManifestHandler(web.RequestHandler):
         # set zk states
         if minfo["streams"]:
             for stream1 in minfo["streams"]:
-                self._zk.set(zk_path+"/"+stream1, minfo["streams"][stream1])
+                zk.set(zk_path+"/"+stream1, minfo["streams"][stream1])
         if minfo["segs"]:
             for seg in minfo["segs"]:
-                self._zk.set(zk_path+"/"+user+"/"+seg, minfo["segs"][seg])
+                zk.set(zk_path+"/"+user+"/"+seg, minfo["segs"][seg])
 
+        zk.close()
         return minfo
 
     @gen.coroutine
