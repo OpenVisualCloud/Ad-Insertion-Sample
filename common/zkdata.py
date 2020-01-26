@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from kazoo.client import KazooClient
+from kazoo.client import KazooClient, KazooState
 from kazoo.exceptions import NoNodeError, NodeExistsError
 import traceback
 import json
@@ -15,7 +15,8 @@ class ZKData(object):
 
     def _connect(self):
         if self._zk is None:
-            self._zk=KazooClient(hosts=ZK_HOSTS)
+            options={"max_tries":-1,"max_delay":5,"ignore_expire":True}
+            self._zk=KazooClient(hosts=ZK_HOSTS,connection_retry=options)
             try:
                 self._zk.start(timeout=3*3600)
             except:
@@ -64,3 +65,4 @@ class ZKData(object):
         if self._zk:
             self._zk.stop()
             self._zk.close()
+            self._zk=None
