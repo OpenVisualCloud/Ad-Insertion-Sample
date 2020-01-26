@@ -12,9 +12,7 @@
             KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
             KAFKA_NUM_PARTITIONS: 8
             KAFKA_LOG_RETENTION_MINUTES: 30
-            KAFKA_CONNECTIONS_MAX_IDLE_MS: 10800000
             KAFKA_HEAP_OPTS: '-Xmx1024m -Xms1024m'
-            KAFKA_LOG4J_LOGGERS: 'kafka=ERROR,kafka.controller=ERROR,state.change.logger=ERROR,org.apache.kafka=ERROR'
             KAFKA_LOG4J_ROOT_LOGLEVEL: 'ERROR'
         networks:
             - appnet
