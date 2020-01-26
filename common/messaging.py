@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
 from kafka import KafkaProducer, KafkaConsumer, TopicPartition
+import traceback
 import socket
+import time
 
 kafka_hosts=["kafka-service:9092"]
 
@@ -14,28 +16,24 @@ class Producer(object):
     def send(self,topic,message):
         if not self._producer:
             try:
-                self._producer=KafkaProducer(bootstrap_servers=kafka_hosts,client_id=self._client_id,api_version=(0,10),retries=1)
-            except Exception as e:
-                print(str(e))
+                self._producer=KafkaProducer(bootstrap_servers=kafka_hosts,api_version=(0,10),acks=0)
+            except:
+                print(traceback.format_exc(), flush=True)
                 self._producer=None
 
-        if self._producer:
-            try:
-                self._producer.send(topic,message.encode('utf-8'))
-                print("send "+topic+": ")
-                print(message)
-            except Exception as e:
-                print(str(e))
-        else:
-            print("producer not available")
+        try:
+            self._producer.send(topic,message.encode('utf-8'))
+        except:
+            print(traceback.format_exc(), flush=True)
 
     def flush(self):
-        if self._producer: self._producer.flush()
+        if self._producer: 
+            self._producer.flush()
 
     def close(self):
         if self._producer: 
-            self.flush()
             self._producer.close()
+            self._producer=None
 
 class Consumer(object):
     def __init__(self, group=None):
@@ -47,9 +45,6 @@ class Consumer(object):
         c=KafkaConsumer(topic,bootstrap_servers=kafka_hosts,
              client_id=self._client_id,group_id=self._group,
              auto_offset_reset="earliest",api_version=(0,10))
-
-        pt=c.partitions_for_topic(topic)
-        if not pt: raise Exception("Topic "+topic+" not exist")
 
         for msg in c:
             yield msg.value.decode('utf-8')

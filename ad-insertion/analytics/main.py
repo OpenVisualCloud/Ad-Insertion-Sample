@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from messaging import Producer,Consumer
+from messaging import Consumer
 from runva import RunVA
 import ast
 from zkstate import ZKState
@@ -13,14 +13,12 @@ import os
 import re
 
 video_analytics_topic = "seg_analytics_sched"
-video_analytics_fps_topic="video_analytics_fps"
 machine_prefix=os.environ.get("VA_PRE")
 if machine_prefix == None:
     machine_prefix="VA-"
 va=RunVA()
-p=Producer()
 
-def process_stream(streamstring):
+def process_stream(zk, streamstring):
     streamjson = ast.literal_eval(streamstring)
     pipeline1 = streamjson["pipeline"]+"/1"
     stream = streamjson['source']['uri']
@@ -38,10 +36,9 @@ def process_stream(streamstring):
         zk_path = m1.group(1)+"/"+segment+"/"+pipeline1
 
     print("VA feeder: zk_path "+zk_path, flush=True)
-    zk = ZKState(zk_path)
+    zk.set_path(zk_path)
     if zk.processed():
         print("VA feeder: " + stream + " already complete", flush=True)
-        zk.close()
         return
     if zk.process_start():
         merged_segment = None
@@ -69,28 +66,24 @@ def process_stream(streamstring):
             zk.process_abort()
         else:
             zk.process_end()
-            p.send(video_analytics_fps_topic, json.dumps({
-                "fps": fps,
-                "machine":machine_prefix+socket.gethostname()[0:3],
-                "time": datetime.datetime.utcnow().isoformat(),
-            }));
             
         if merged_segment:
             merge.delete_merged_segment(merged_segment)
-    zk.close()
 
 if __name__ == "__main__":
+    c = Consumer("analytics")
+    zk = ZKState()
     while True:
         try:
             print("VA feeder: listening to messages", flush=True)
-            c = Consumer("analytics")
             for msg in c.messages(video_analytics_topic):
                 print("VA feeder: recieved message: " + str(msg), flush=True)
                 try:
-                    process_stream(msg)
+                    process_stream(zk, msg)
                 except Exception as e:
                     print("VA feeder: "+str(e), flush=True)
         except Exception as e:
             print("VA feeder: error in main" + str(e), flush=True)
             time.sleep(1)
-    p.close()
+    c.close()
+    zk.close()

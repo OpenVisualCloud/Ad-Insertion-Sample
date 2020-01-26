@@ -6,11 +6,14 @@ from concurrent.futures import ThreadPoolExecutor
 from zkdata import ZKData
 from schedule import Schedule
 from os.path import isfile
+import traceback
 import time
 import re
+import os
 
-zk_prefix="/ad-insertion-frontend"
-ad_storage_path="/var/www/adinsert"
+zk_manifest_prefix="/ad-insertion-manifest"
+zk_segment_prefix="/ad-insertion-segment"
+ad_backoff=str(os.environ["AD_BACKOFF"])
 
 class SegmentHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
@@ -25,34 +28,32 @@ class SegmentHandler(web.RequestHandler):
     @run_on_executor
     def _get_segment(self, stream, user, algos):
         stream_base = "/".join(stream.split("/")[:-1])
+        segment = stream.split("/")[-1]
         print("stream: "+stream, flush=True)
         print("stream_base: "+stream_base, flush=True)
+        print("segment: "+segment, flush=True)
 
-        # Redirect if this is an AD stream.
+        # Redirect if this is an AD stream
         if stream.find("/adstream/") != -1:
-            start_time=time.time()
-            while time.time()-start_time<=60: # wait if AD is not ready
-                print("Testing "+ad_storage_path+"/"+stream, flush=True)
-                if isfile(ad_storage_path+"/"+stream):
-                    if stream.startswith("hls/"):
-                        m1=re.search(".*/(.*)_[0-9]+.ts",stream)
-                        if m1:
-                            testfile=ad_storage_path+"/"+stream_base+"/"+m1.group(1)+".m3u8.complete"
-                            print("Testing "+testfile, flush=True)
-                            if isfile(testfile): 
-                                return '/adinsert/'+stream
-                    if stream.startswith("dash/"):
-                        m1=re.search(".*/(.*)-(chunk|init).*",stream)
-                        if m1:
-                            testfile=ad_storage_path+"/"+stream_base+"/"+m1.group(1)+".mpd.complete"
-                            print("Testing "+testfile, flush=True)
-                            if isfile(testfile): 
-                                return '/adinsert/'+stream
-                time.sleep(0.5)
-            return None
+            zk_path=zk_segment_prefix+"/"+stream_base+"/link"
+            print("get prefix from "+zk_path, flush=True)
+            prefix=self._zk.get(zk_path)
+            print(prefix, flush=True)
+            if not prefix:
+                zk_path1=zk_segment_prefix+"/"+stream_base+"/backoff"
+                prefix="/adstatic"
+                try:
+                    backoff=self._zk.get(zk_path1)
+                    if not backoff: backoff=ad_backoff
+                    if int(backoff)>0:
+                        self._zk.set(zk_path1,str(int(backoff)-1))
+                        return None
+                except:
+                    print(traceback.format_exc(), flush=True)
+            return prefix+"/"+segment
 
         # get zk data for additional scheduling instruction
-        seg_info=self._zk.get(zk_prefix+"/"+stream_base+"/"+user+"/"+stream.split("/")[-1])
+        seg_info=self._zk.get(zk_manifest_prefix+"/"+stream_base+"/"+user+"/"+segment)
         if seg_info: 
             # schedule ad
             if "transcode" in seg_info:
@@ -70,6 +71,7 @@ class SegmentHandler(web.RequestHandler):
             if "analytics" in seg_info or "transcode" in seg_info:
                 self._sch.flush()
 
+        # redirect to get the media stream
         return '/intercept/' + stream
 
     @gen.coroutine
@@ -80,12 +82,16 @@ class SegmentHandler(web.RequestHandler):
             self.set_status(400, "X-USER missing in headers")
             return
         algos = self.request.headers.get('X-ALGO')
+        print("ALGOS: "+algos, flush=True)
         if not algos: 
             self.set_status(400, "X-ALGO missing in headers")
 
         redirect=yield self._get_segment(stream, user, algos)
         if redirect is None:
+            print("Status: 404, AD not ready", flush=True)
             self.set_status(404, "AD not ready")
         else:
+            print("X-Accel-Redirect: "+redirect, flush=True)
+            if stream.find("/adstream/") != -1: self.add_header('Content-Cache','no-cache')
             self.add_header('X-Accel-Redirect',redirect)
             self.set_status(200,'OK')

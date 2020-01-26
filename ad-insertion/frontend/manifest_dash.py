@@ -79,7 +79,7 @@ def _period_index(ad_spec, s):
         s=s-interval
         i=i+1
 
-def parse_dash(stream_cp_url, mpd, ad_spec, ad_segment=5.0, ad_bench_mode=0):
+def parse_dash(stream_cp_url, mpd, ad_spec, ad_segment, ad_bench_mode=0):
     stream_cp_url="/".join(stream_cp_url.split("/")[:-1])
 
     root=ET.fromstring(mpd)

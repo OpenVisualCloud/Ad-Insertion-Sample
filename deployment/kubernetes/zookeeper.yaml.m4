@@ -33,26 +33,18 @@ spec:
       enableServiceLinks: false
       containers:
         - name: zookeeper
-          image: confluentinc/cp-zookeeper:5.3.1
+          image: zookeeper:3.5.6
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 2181
           env:
-            - name: "ZOOKEEPER_SERVER_ID"
-              value: "1"
-            - name: "ZOOKEEPER_CLIENT_PORT"
-              value: "2181"
-            - name: "ZOOKEEPER_TICK_TIME"
-              value: "2000"
-            - name: "ZOOKEEPER_HEAP_OPTS"
-              value: "-Xmx1024m -Xms1024m"
-            - name: "ZOOKEEPER_MAX_CLIENT_CNXNS"
+            - name: "ZOO_TICK_TIME"
+              value: "3600000"
+            - name: "ZOO_MAX_CLIENT_CNXNS"
               value: "20000"
-            - name: "ZOOKEEPER_LOG4J_LOGGERS"
-              value: "zookeepr=ERROR"
-            - name: "ZOOKEEPER_LOG4J_ROOT_LOGLEVEL"
+            - name: "ZOO_AUTOPURGE_PURGEINTERVAL"
+              value: "1"
+            - name: "ZOO_SESSION_TIMEOUT_MS"
+              value: "7200000"
+            - name: "ZOO_LOG4J_PROP"
               value: "ERROR"
-            - name: NO_PROXY
-              value: "*"
-            - name: no_proxy
-              value: "*"

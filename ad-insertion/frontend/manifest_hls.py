@@ -3,13 +3,15 @@
 import re
 import copy
 
-def _ad_template(ad_spec, name, seq, seg_duration):
-    return [
-        "#EXT-X-DISCONTINUITY",
-        "#EXTINF: " + str(seg_duration) + ",",
-        name.format(0),
-        "#EXT-X-DISCONTINUITY"
-    ]
+def _ad_template(ad_spec, name, seq, seg_segment):
+    lines=["#EXT-X-DISCONTINUITY"]
+    for i in range(int(ad_spec["duration"]/seg_segment)):
+        lines.extend([
+            "#EXTINF: " + str(seg_segment) + ",",
+            name.format(i),
+        ])
+    lines.append("#EXT-X-DISCONTINUITY")
+    return lines
 
 def _ad_time(ad_spec, seq):
     time=0
@@ -17,7 +19,7 @@ def _ad_time(ad_spec, seq):
         time=time+ad_spec["duration"]
     return time
 
-def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment=5.0, ad_bench_mode=0):
+def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment, ad_bench_mode=0):
     lines=m3u8.splitlines()
     if lines[0]!="#EXTM3U": return {}  # invalid m3u8
     if lines[1]!="#EXT-X-VERSION:3": return {}  # format not supported
