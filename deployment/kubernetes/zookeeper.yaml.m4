@@ -38,6 +38,8 @@ spec:
           ports:
             - containerPort: 2181
           env:
+            - name: "ZOO_TICK_TIME"
+              value: "10000"
             - name: "ZOO_MAX_CLIENT_CNXNS"
               value: "160000"
             - name: "ZOO_AUTOPURGE_PURGEINTERVAL"
