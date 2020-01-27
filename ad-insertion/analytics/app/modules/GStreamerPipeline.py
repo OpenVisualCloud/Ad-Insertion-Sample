@@ -330,6 +330,11 @@ class GStreamerPipeline(Pipeline):
                     if self.state == "QUEUED":
                         logger.debug("Setting Pipeline {id} State to RUNNING".format(id=self.id))
                         self.state = "RUNNING"
+        elif t == Gst.MessageType.HAVE_CONTEXT:
+            cont = message.parse_have_context()
+            context_struct = cont.get_structure()
+            if context_struct.has_field("gst.vaapi.Display"):
+                context_struct.get_value("gst.vaapi.Display")
         else:
             pass
         return True
