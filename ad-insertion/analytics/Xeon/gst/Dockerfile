@@ -1,6 +1,6 @@
 # ssai_analytics_gst_xeon
 
-FROM openvisualcloud/xeon-ubuntu1804-analytics-gst:20.1
+FROM xeon-ubuntu1804-analytics-gst
 
 # Fetch python3 and Install python3
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q python3-gst-1.0 python3-jsonschema python3-pip ca-certificates && rm -rf /var/lib/apt/lists/* && \
