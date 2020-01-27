@@ -2,7 +2,7 @@
     "name": "object_detection",
     "version": 1,
     "type": "GStreamer",
-    "template":"urisourcebin uri=\"{source[uri]}\" ! concat name=c ! decodebin ! video/x-raw,width=300,height=300 ! videoconvert name=\"videoconvert\" ! gvadetect model=\"{models[object_detection][1][network]}\" model-proc=\"{models[object_detection][1][proc]}\" name=\"detection\" ! gvametaconvert converter=json method=detection source=\"{source[uri]}\" name=\"metaconvert\" ! queue ! gvametapublish name=\"destination\" ! appsink name=appsink",
+    "template":"urisourcebin uri=\"{source[uri]}\" ! concat name=c ! decodebin ! vaapipostproc name=\"vaapipostproc\" ! video/x-raw,width=300,height=300 ! gvadetect model=\"{models[object_detection][1][network]}\" model-proc=\"{models[object_detection][1][proc]}\" name=\"detection\" ! gvametaconvert converter=json method=detection source=\"{source[uri]}\" name=\"metaconvert\" ! queue ! gvametapublish name=\"destination\" ! appsink name=appsink",
     "description": "Object Detection Pipeline",
     "parameters": {
 	"type" : "object",
@@ -16,10 +16,6 @@
 	    "cpu-streams": {
 		"element":"detection",
 		"type": "string"
-	    },
-	    "n-threads": {
-		"element":"videoconvert",
-		"type": "integer"
 	    },
 	    "nireq": {
 		"element":"detection",
