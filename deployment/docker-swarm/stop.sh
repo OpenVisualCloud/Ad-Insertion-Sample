@@ -26,7 +26,7 @@ docker_compose)
     esac
 
     docker stack services $name 
-    echo "Shuting down stack $name..."
+    echo "Shutting down stack $name..."
     while test -z "$(docker stack rm $name 2>&1 | grep 'Nothing found in stack')"; do
         sleep 2
     done
