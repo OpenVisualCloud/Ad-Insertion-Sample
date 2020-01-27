@@ -19,7 +19,7 @@ docker_compose)
     ;;
 *)
     docker stack services adi
-    echo "Shuting down stack adi..."
+    echo "Shutting down stack adi..."
     while test -z "$(docker stack rm adi 2>&1 | grep 'Nothing found in stack')"; do
         sleep 2
     done
