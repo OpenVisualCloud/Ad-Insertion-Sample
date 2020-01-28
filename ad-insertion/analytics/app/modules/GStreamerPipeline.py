@@ -30,7 +30,8 @@ class GStreamerPipeline(Pipeline):
                                    "GstGvaClassify",
                                    "GstGvaInference"]
 
-
+    _inference_element_cache = {}
+   
     def __init__(self, id, config, models, request):
         self.config = config
         self.id = id
@@ -112,7 +113,7 @@ class GStreamerPipeline(Pipeline):
 
     def get_avg_fps(self):
         return self.avg_fps
-    
+
     def _get_element_property(self,element,key):
         if isinstance(element,str):
             return (element,key,None)
@@ -143,7 +144,12 @@ class GStreamerPipeline(Pipeline):
                                 logger.debug("Parameter {} given for element {} but no property found".format(property,name))
                         else:
                             logger.debug("Parameter {} given for element {} but no element found".format(property,name))
-               
+    
+    def _cache_inference_elements(self):
+        gva_elements = [(e,e.__gtype__.name+'_'+e.get_property('inference-id')) for e in self.pipeline.iterate_elements() if (e.__gtype__.name in self.GVA_INFERENCE_ELEMENT_TYPES and e.get_property("inference-id"))]
+        for e, key in gva_elements:
+            if key not in GStreamerPipeline._inference_element_cache:
+                GStreamerPipeline._inference_element_cache[key] = e
     def _set_default_models(self):
         gva_elements = [e for e in self.pipeline.iterate_elements() if (e.__gtype__.name in self.GVA_INFERENCE_ELEMENT_TYPES and "VA_DEVICE_DEFAULT" in e.get_property("model"))]
         for e in gva_elements:
@@ -226,6 +232,7 @@ class GStreamerPipeline(Pipeline):
         self.pipeline = Gst.parse_launch(self._gst_launch_string)
         self._set_properties()
         self._set_default_models()
+        self._cache_inference_elements()
         sink = self.pipeline.get_by_name("appsink")
 
         if sink is not None:
@@ -248,6 +255,7 @@ class GStreamerPipeline(Pipeline):
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect("message", GStreamerPipeline.bus_call, self)
+        self.pipeline._bus_connection_id = bus.connect("message", GStreamerPipeline.bus_call, self)
         splitmuxsink = self.pipeline.get_by_name("splitmuxsink")
         self._real_base=None
 
@@ -317,6 +325,7 @@ class GStreamerPipeline(Pipeline):
         if t == Gst.MessageType.EOS:
             logger.info("Pipeline {id} Ended".format(id=self.id))
             bus.remove_signal_watch()
+            bus.disconnect(self.pipeline._bus_connection_id)
             self.shutdown_and_delete_pipeline("COMPLETED")
         elif t == Gst.MessageType.ERROR:
             err, debug = message.parse_error()
@@ -331,10 +340,7 @@ class GStreamerPipeline(Pipeline):
                         logger.debug("Setting Pipeline {id} State to RUNNING".format(id=self.id))
                         self.state = "RUNNING"
         elif t == Gst.MessageType.HAVE_CONTEXT:
-            cont = message.parse_have_context()
-            context_struct = cont.get_structure()
-            if context_struct.has_field("gst.vaapi.Display"):
-                context_struct.get_value("gst.vaapi.Display")
+            pass
         else:
             pass
         return True

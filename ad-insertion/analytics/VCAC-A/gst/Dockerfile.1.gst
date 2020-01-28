@@ -1,6 +1,6 @@
 # vcaca-ubuntu1804-analytics-gst
 
-FROM openvisualcloud/vcaca-ubuntu1804-dev:20.1
+FROM openvisualcloud/vcaca-ubuntu1804-dev:20.1 as build
 ENV InferenceEngine_DIR=/opt/intel/openvino/deployment_tools/inference_engine/share
 RUN apt-get update && apt-get install -y -q git cmake wget uuid-dev automake autotools-dev libtool-bin libssl-dev
 
@@ -28,3 +28,7 @@ RUN git clone ${VA_GSTREAMER_PLUGINS_REPO} && \
     make install
 
 RUN mkdir -p /usr/lib/x86_64-linux-gnu/gstreamer-1.0 && cp gst-video-analytics/build/intel64/Release/lib/* /usr/lib/x86_64-linux-gnu/gstreamer-1.0
+
+FROM openvisualcloud/vcaca-ubuntu1804-analytics-gst:20.1
+
+COPY --from=build /usr/lib/x86_64-linux-gnu/gstreamer-1.0 /usr/lib/x86_64-linux-gnu/gstreamer-1.0
