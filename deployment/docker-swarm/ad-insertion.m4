@@ -2,8 +2,7 @@
     ad-insertion-service:
         image: ssai_ad_insertion_frontend:latest
         volumes:
-            - ${AD_DASH_VOLUME}:/var/www/adinsert/dash:ro
-            - ${AD_HLS_VOLUME}:/var/www/adinsert/hls:ro
+            - ${AD_CACHE_VOLUME}:/var/www/adinsert:ro
             - ${AD_STATIC_VOLUME}:/var/www/adstatic:ro
         environment:
             AD_INTERVALS: 12

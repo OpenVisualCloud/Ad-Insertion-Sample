@@ -6,8 +6,7 @@
             no_proxy: "*"
         volumes:
             - ${VIDEO_ARCHIVE_VOLUME}:/var/www/archive:ro
-            - ${VIDEO_DASH_VOLUME}:/var/www/video/dash:rw
-            - ${VIDEO_HLS_VOLUME}:/var/www/video/hls:rw
+            - ${VIDEO_CACHE_VOLUME}:/var/www/video:rw
         networks:
             - appnet
         deploy:
