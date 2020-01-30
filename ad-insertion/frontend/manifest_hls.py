@@ -19,7 +19,7 @@ def _ad_time(ad_spec, seq):
         time=time+ad_spec["duration"]
     return time
 
-def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment, ad_bench_mode=0):
+def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment):
     lines=m3u8.splitlines()
     if lines[0]!="#EXTM3U": return {}  # invalid m3u8
     if lines[1]!="#EXT-X-VERSION:3": return {}  # format not supported
@@ -96,17 +96,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment, ad_bench_mo
                 "seg_time":timeline+_ad_time(ad_spec,ad_sequence)
             }
 
-            if ad_bench_mode:
-                line_range=(int)((len(lines)/2+ad_interval-1)/ad_interval)
-                if segsplayed == 0 and ad_sequence == 0:
-                    for _idy in range(line_range):
-                        for _idx in range(_idy*ad_interval+ahead_analytic,(_idy+1)*ad_interval):
-                            if i+2*_idx+1<len(lines):
-                                temp = analytic_info.copy()
-                                temp["stream"]=stream_cp_url+"/"+lines[i+2*_idx+1].replace(ori_analysis_res, dst_analysis_res)
-                                temp["seg_time"]=timeline+_ad_time(ad_spec,ad_sequence+_idy)+duration*_idx
-                                seg_info["analytics"] +=[temp]
-            elif segsplayed == 0 and ad_sequence == 0:
+            if segsplayed == 0 and ad_sequence == 0:
                 for _idx in range(ahead_analytic,ad_interval):
                     if i+2*_idx+1<len(lines):
                         temp = analytic_info.copy()
@@ -128,28 +118,11 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment, ad_bench_mo
                         seg_info["analytics"] +=[temp]
 
             # shedule transcoding every seg
-            if ad_bench_mode:
-                transcode_info={
-                    "stream":ad_spec["path"]+"/"+ad_name+".m3u8",
-                    "seg_time":timeline+_ad_time(ad_spec,ad_sequence)+duration*(ad_interval - segsplayed),
-                    "bench_mode":1,
-                }
-                line_range=(int)((len(lines)/2+ad_interval-1)/ad_interval)
-                if segsplayed == 0 and ad_sequence == 0:
-                    seg_info["transcode"]=[]
-                    for k in stream_info: seg_info[k]=stream_info[k]
-                    for _idy in range(line_range):
-                        _ad_name=ad_spec["prefix"]+"/"+str(_idy)+"/"+m1.group(1)
-                        temp = transcode_info.copy()
-                        temp["stream"]=ad_spec["path"]+"/"+_ad_name+".m3u8"
-                        temp["seg_time"]=timeline+_ad_time(ad_spec,ad_sequence+_idy)+duration*(ad_interval - segsplayed)
-                        seg_info["transcode"]+=[temp]
-            elif (ad_sequence == 0 and segsplayed == ad_interval - 4) or (ad_sequence != 0 and segsplayed == 1):
+            if (ad_sequence == 0 and segsplayed == ad_interval - 4) or (ad_sequence != 0 and segsplayed == 1):
                 for k in stream_info: seg_info[k]=stream_info[k]
                 transcode_info={
                     "stream":ad_spec["path"]+"/"+ad_name+".m3u8",
                     "seg_time":timeline+_ad_time(ad_spec,ad_sequence)+duration*(ad_interval - segsplayed),
-                    "bench_mode":0,
                 }
                 seg_info["transcode"]=[transcode_info]
 
