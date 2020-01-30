@@ -15,6 +15,7 @@ $(window).bind("load", function () {
     if (spec("videourl")=="off") $("#player [video-section] .input-group").hide();
     if (spec("seq")) settings.user("u"+spec("seq"));
     if (spec("benchmark")) settings.algorithms(spec("benchmark")+" ");
+    if (spec("window")) settings.analytics_window(spec("window"));
 
     $(".top-bar").trigger(":initpage");
     $("#player").trigger(":update");

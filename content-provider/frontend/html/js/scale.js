@@ -47,6 +47,7 @@ function mklayout() {
                 header: "off",
                 playlist: "off",
                 videourl: "off",
+                window: spec("window")?spec("window"):20,
             };
             var tmp=$('<div screen><iframe src="/?'+$.param(args)+'" scrolling="no" /><img src="image/screen.png"/></div>');
             var view_port_width=screen_width1-margin*2;
