@@ -52,6 +52,9 @@ def clip(adkeyword):
         if item != None:
             return item
 
+total_suggestion=0
+total_intelligent_suggestion=0
+
 class MetaDataHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
         super(MetaDataHandler, self).__init__(app, request, **kwargs)
@@ -79,11 +82,14 @@ class MetaDataHandler(web.RequestHandler):
                 max_matched_num = cur_max_matched_num
                 max_matched_idx = idx_clip
 
-        if max_matched_idx == -1:
-            max_matched_idx = random.randint(0,len(self.inventory)-1)
-            print("Random suggestion", flush=True)
+        global total_suggestion, total_intelligent_suggestion
+        total_suggestion=total_suggestion+1
+        if max_matched_idx>=0:
+            total_intelligent_suggestion=total_intelligent_suggestion+1
         else:
-            print("Intelligent suggestion", flush=True)
+            max_matched_idx = random.randint(0,len(self.inventory)-1)
+
+        print("Suggestion rate: "+str(total_intelligent_suggestion)+"/"+str(total_suggestion), flush=True)
         return self.inventory[max_matched_idx]["uri"]
 
     @gen.coroutine
