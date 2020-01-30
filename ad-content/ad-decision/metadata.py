@@ -5,6 +5,7 @@ import json
 import requests
 from adkeyword import GetAdKeywords, GetMaxKeyword, GetAttrKeyword
 import random
+import traceback
 
 ad_decision_post_reponse_template = {
     "source": {
@@ -51,13 +52,15 @@ def clip(adkeyword):
         if item != None:
             return item
 
+total_suggestion=0
+total_intelligent_suggestion=0
+
 class MetaDataHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
         super(MetaDataHandler, self).__init__(app, request, **kwargs)
         self.inventory = None
         self.keywords = []
         self.user_keywords = []
-        self.bench_mode = 0
         
     def check_origin(self, origin):
         return True
@@ -79,12 +82,14 @@ class MetaDataHandler(web.RequestHandler):
                 max_matched_num = cur_max_matched_num
                 max_matched_idx = idx_clip
 
-        if max_matched_idx == -1:
-            max_matched_idx = random.randint(0,len(self.inventory))
-            if self.bench_mode:
-                return self.inventory[max_matched_idx]["uri"]
-            return None
+        global total_suggestion, total_intelligent_suggestion
+        total_suggestion=total_suggestion+1
+        if max_matched_idx>=0:
+            total_intelligent_suggestion=total_intelligent_suggestion+1
+        else:
+            max_matched_idx = random.randint(0,len(self.inventory)-1)
 
+        print("Suggestion rate: "+str(total_intelligent_suggestion)+"/"+str(total_suggestion), flush=True)
         return self.inventory[max_matched_idx]["uri"]
 
     @gen.coroutine
@@ -107,11 +112,9 @@ class MetaDataHandler(web.RequestHandler):
 
         try:
             random.shuffle(self.inventory)
-            #print(self.request.body.decode('utf-8'))
             data = json.loads(self.request.body.decode('utf-8'))
             self.user_name = data["user"]["name"]
             self.user_keywords = data["user"]["keywords"]
-            self.bench_mode = data["bench_mode"]
             # parse the meta data and choose the keyword, the data is the list of meta data
             self.keywords = GetAdKeywords(data["metadata"])
             # select a ad clip according to the keyword
@@ -126,7 +129,7 @@ class MetaDataHandler(web.RequestHandler):
             #self.write(json.dumps(self.keywords))
             #self.write(json.dumps(data))
 
-        except Exception as e:
-            self.set_status(503, "exception when post")
-            print(str(e))
+        except:
+            print(traceback.format_exc(), flush=True)
+            self.set_status(503, "Exception when post")
 

@@ -25,7 +25,7 @@ class ManifestHandler(web.RequestHandler):
         return True
 
     @run_on_executor
-    def _get_manifest(self, stream, user, bench):
+    def _get_manifest(self, stream, user):
         # Retrive the manifest from upstream.
         try:
             r=requests.get(content_provider_url+"/"+stream)
@@ -55,7 +55,6 @@ class ManifestHandler(web.RequestHandler):
                 m3u8=manifest,
                 stream_info=zk.get(zk_path+"/"+stream.split("/")[-1]),
                 ad_spec=ad_spec,
-                ad_bench_mode=int(bench),
                 ad_segment=ad_segment
             )
         if stream.endswith(".mpd"):
@@ -63,7 +62,6 @@ class ManifestHandler(web.RequestHandler):
                 stream_cp_url=content_provider_url+"/"+stream,
                 mpd=manifest,
                 ad_spec=ad_spec,
-                ad_bench_mode=int(bench),
                 ad_segment=ad_segment
             )
 
@@ -86,12 +84,8 @@ class ManifestHandler(web.RequestHandler):
         if not user: 
             self.set_status(400, "X-USER missing in headers")
             return
-        bench = self.request.headers.get('X-BENCH')
-        if not bench: 
-            self.set_status(400, "X-BENCH missing in headers")
-            return
 
-        minfo=yield self._get_manifest(stream, user, bench)
+        minfo=yield self._get_manifest(stream, user)
         if isinstance(minfo, dict):
             self.write(minfo["manifest"])
             self.set_header('content-type',minfo["content-type"])

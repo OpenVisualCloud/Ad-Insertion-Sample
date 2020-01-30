@@ -55,12 +55,6 @@ $("#setting").find("form").submit(function() {
        settings.algorithms(settings.algorithms().replace("face ",""));
     }
 
-    if ($("#benchModeSwitch").is(":checked")) {
-       settings.benchmode(1);
-    } else {
-       settings.benchmode(0);
-    }
-
     $("#player").trigger(":update");
     return false;
 });
@@ -78,9 +72,5 @@ var settings={
     algorithms: function (value) {
         if (typeof value != "undefined") settings.localStorage.algorithms=value;
         return typeof settings.localStorage.algorithms!="undefined"?settings.localStorage.algorithms:"object face emotion ";
-    },
-    benchmode: function (enable) {
-        if (typeof enable != "undefined") settings.localStorage.benchmode=enable;
-        return typeof settings.localStorage.benchmode!="undefined"?parseInt(settings.localStorage.benchmode,10):0;
     },
 }
