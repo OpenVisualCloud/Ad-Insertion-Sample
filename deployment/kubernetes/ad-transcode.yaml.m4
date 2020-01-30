@@ -32,7 +32,13 @@ spec:
           volumeMounts:
             - mountPath: /var/www/adinsert
               name: ad-cache
+            - mountPath: /var/www/adsegment
+              name: ad-segment
+              readOnly: true
       volumes:
           - name: ad-cache
             persistentVolumeClaim:
                claimName: ad-cache
+          - name: ad-segment
+            persistentVolumeClaim:
+               claimName: ad-segment

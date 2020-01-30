@@ -15,8 +15,7 @@ import shutil
 import traceback
 
 adinsert_archive_root="/var/www/adinsert"
-segment_dash_root=adinsert_archive_root+"/segment/dash"
-segment_hls_root=adinsert_archive_root+"/segment/hls"
+adsegment_archive_root="/var/www/adsegment"
 dash_root=adinsert_archive_root+"/dash"
 hls_root=adinsert_archive_root+"/hls"
 zk_segment_prefix="/ad-insertion-segment"
@@ -57,50 +56,37 @@ request_template={
 
 def ADPrefetch(ad_uri):
     # retrive the ad from the ad content and save to local adinsert_archive_root firstly and return the local stream name
-    #ad_uri = ad_content_server+"/" +"GibfM0FYj_g.mp4"
     target=adinsert_archive_root+"/" + ad_uri.split("/")[-1]
-    #print(target)
     if ad_uri.find("http://") != -1:
         try:
+            print("Retrieve "+ad_uri, flush=True)
             r = requests.get(ad_uri,timeout=timeout)
             if r.status_code == 200:
                 with open(target, "wb") as f:
                     f.write(r.content)
                 return target 
-        except requests.exceptions.RequestException as e:  # This is the correct syntax
-            print("Error sending status request in ADPrefetch()" + str(e), flush=True)
-    elif not isfile(ad_uri):
-        print("The ad content uri %s is not a file!"+ad_uri)
-        return None 
+        except:
+            print(traceback.format_exc(), flush=True)
+    return None 
 
 def ADClipDecision(msg, db):
     duration = msg.time_range[1]-msg.time_range[0]
-    query_times = 10
-    for t in range(query_times):
-        print("query db with time range: "+str(msg.time_range[0])+"-"+str(msg.time_range[1]))
-        metaData = db.query(msg.content, msg.time_range, msg.time_field)
-        if metaData or msg.bench_mode:
-            try:
-                jdata = json.dumps({
-                    "metadata":metaData,
-                    "user":{
-                        "name":msg.user_name,
-                        "keywords":msg.user_keywords
-                    },
-                    "bench_mode":msg.bench_mode
-                })
-                r = requests.post(ad_decision_server, data=jdata, timeout=timeout)
-                if r.status_code == 200:
-                    ad_info = r.json()
-                    print(ad_info,flush=True)
-                    return ad_info[0]["source"]["uri"]
-            except requests.exceptions.RequestException as e:
-                print("Error in ADClipDecision() " + str(e), flush=True)
-            return None
-        time.sleep(1)
-        if t == query_times - 2:
-            msg.time_range[0]=msg.time_range[0]-duration/2
-    return None
+    print("query db with time range: "+str(msg.time_range[0])+"-"+str(msg.time_range[1]))
+    metaData = db.query(msg.content, msg.time_range, msg.time_field)
+    try:
+        r=requests.post(ad_decision_server, timeout=timeout, data=json.dumps({
+            "metadata":metaData,
+            "user":{
+                "name":msg.user_name,
+                "keywords":msg.user_keywords
+            },
+        }))
+        r.raise_for_status()
+        ad_info = r.json()
+        return ad_info[0]["source"]["uri"]
+    except:
+        print(traceback.format_exc(), flush=True)
+        return None
 
 class KafkaMsgParser(object):
     def __init__(self, kafkamsg):
@@ -121,10 +107,7 @@ class KafkaMsgParser(object):
         self.height = self.msg["ad_config"]["resolution"]["height"]
         self.width = self.msg["ad_config"]["resolution"]["width"]
         self.bitrate = self.msg["ad_config"]["bandwidth"]
-        self.bench_mode = self.msg["bench_mode"]
-        self.segment_path = segment_hls_root
-        if self.streaming_type=="dash":
-            self.segment_path = segment_dash_root
+        self.segment_path = adsegment_archive_root+"/"+self.streaming_type
 
     def GetRedition(self):
         redition = ([self.width, self.height, self.bitrate, 128000],)
@@ -164,12 +147,12 @@ def ADTranscode(kafkamsg, db):
         stream = ADClipDecision(msg,db)
         zkd_path="/".join(msg.target.replace(adinsert_archive_root+"/","").split("/")[:-1])
         if not stream:
-            print("Query AD clip failed and fall back to skipped ad clip!", flush=True)
             set_ad_path(zk_segment_prefix+"/"+zkd_path+"/link","/adstatic")
             zks.process_abort()
         else:
             try:
                 stream_folder = msg.segment_path + "/" + stream.split("/")[-1]
+                print("Checking pre-transcoded stream: "+stream_folder, flush=True)
                 if isdir(stream_folder): # pre-transcoded AD exists
                     print("Prefetch the AD segment {} \n".format(stream_folder),flush=True)
                     CopyADSegment(msg,stream)

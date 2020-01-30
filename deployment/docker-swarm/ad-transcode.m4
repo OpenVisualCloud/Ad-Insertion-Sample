@@ -5,10 +5,8 @@
             NO_PROXY: "*"
             no_proxy: "*"
         volumes:
-            - ${AD_DASH_VOLUME}:/var/www/adinsert/dash:rw
-            - ${AD_HLS_VOLUME}:/var/www/adinsert/hls:rw
-            - ${AD_SEGMENT_DASH_VOLUME}:/var/www/adinsert/segment/dash:ro
-            - ${AD_SEGMENT_HLS_VOLUME}:/var/www/adinsert/segment/hls:ro
+            - ${AD_CACHE_VOLUME}:/var/www/adinsert:rw
+            - ${AD_SEGMENT_VOLUME}:/var/www/adsegment:ro
         networks:
             - appnet
         deploy:

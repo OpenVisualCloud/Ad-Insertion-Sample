@@ -8,7 +8,6 @@ function hls_play(page, video, url) {
             xhrSetup: function(xhr, url) {
                 xhr.setRequestHeader("X-USER", settings.user());
                 xhr.setRequestHeader("X-ALGO", settings.algorithms());
-                xhr.setRequestHeader("X-BENCH", settings.benchmode());
             }
         };
         var player=new Hls(config);
@@ -57,7 +56,6 @@ function dash_play(page, video, url) {
             modifyRequestHeader: function (xhr) {
                 xhr.setRequestHeader("X-USER",settings.user());
                 xhr.setRequestHeader("X-ALGO", settings.algorithms());
-                xhr.setRequestHeader("X-BENCH", settings.benchmode());
                 return xhr;
             },
             modifyRequestURL: function (url) {
@@ -88,7 +86,6 @@ function shaka_play(page, video, url) {
     player.getNetworkingEngine().registerRequestFilter(function (type,request) {
         request.headers["X-USER"]=settings.user();
         request.headers["X-ALGO"]=settings.alogirthms();
-        request.headers["X-BENCH"]=settings.benchmode();
     });
 
     player.load(url).then(function () {
