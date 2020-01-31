@@ -5,6 +5,7 @@ function hls_play(page, video, url) {
             nudgeMaxRetry: 30,
             maxFragLookUpTolerance: 0.5,
             maxBufferHole: 1.5,
+            capLevelToPlayerSize: true,
             xhrSetup: function(xhr, url) {
                 xhr.setRequestHeader("X-USER", settings.user());
                 xhr.setRequestHeader("X-ALGO", settings.algorithms());
