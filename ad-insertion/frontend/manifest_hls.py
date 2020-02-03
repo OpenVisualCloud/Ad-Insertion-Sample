@@ -118,7 +118,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment):
                         seg_info["analytics"] +=[temp]
 
             # shedule transcoding every seg
-            if (ad_sequence == 0 and segsplayed == ad_interval - 4) or (ad_sequence != 0 and segsplayed == 1):
+            if segsplayed == ad_interval - 4:
                 for k in stream_info: seg_info[k]=stream_info[k]
                 transcode_info={
                     "stream":ad_spec["path"]+"/"+ad_name+".m3u8",
