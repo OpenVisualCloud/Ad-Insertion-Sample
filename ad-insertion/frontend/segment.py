@@ -95,10 +95,11 @@ class SegmentHandler(web.RequestHandler):
         zk.close()
 
         if redirect is None:
+            print("Timing {0} {1} {2} AD not ready".format(time.time(), user, stream), flush=True)
             print("Status: 404, AD not ready", flush=True)
             self.set_status(404, "AD not ready")
         else:
-            print("X-Accel-Redirect: "+redirect, flush=True)
+            print("Timing {0} {1} {2} X-Accel-Redirect: {3}".format(time.time(), user, stream, redirect), flush=True)
             if stream.find("/adstream/") != -1: self.add_header('Content-Cache','no-cache')
             self.add_header('X-Accel-Redirect',redirect)
             self.set_status(200,'OK')

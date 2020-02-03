@@ -7,6 +7,7 @@ from zkdata import ZKData
 from manifest_hls import parse_hls
 from manifest_dash import parse_dash
 import requests
+import time
 import os
 
 zk_manifest_prefix="/ad-insertion-manifest"
@@ -87,6 +88,7 @@ class ManifestHandler(web.RequestHandler):
 
         minfo=yield self._get_manifest(stream, user)
         if isinstance(minfo, dict):
+            print("Timing {0} {1} {2} manifest".format(time.time(),user,stream), flush=True)
             self.write(minfo["manifest"])
             self.set_header('content-type',minfo["content-type"])
             self.set_status(200, 'OK')
