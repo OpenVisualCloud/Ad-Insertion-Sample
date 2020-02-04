@@ -25,7 +25,6 @@ The sample is powered by the following Open Visual Cloud software stacks:
 
 - **Docker Engine**:        
   - Install [docker engine](https://docs.docker.com/install).     
-  - Install [docker compose](https://docs.docker.com/compose/install), if you plan to deploy through docker compose. Version 1.20+ is required.    
   - Setup [docker swarm](https://docs.docker.com/engine/swarm), if you plan to deploy through docker swarm. See [Docker Swarm Setup](deployment/docker-swarm/README.md) for additional setup details.  
   - Setup [Kubernetes](https://kubernetes.io/docs/setup), if you plan to deploy through Kubernetes. See [Kubernetes Setup](deployment/kubernetes/README.md) for additional setup details.     
   - Setup docker proxy as follows if you are behind a firewall:   
@@ -69,13 +68,6 @@ Use the following commands to start/stop services via docker swarm (see also [Do
 make update
 make start_docker_swarm      
 make stop_docker_swarm      
-```
-
-Use the following commands to start/stop services via docker-compose:        
-
-```bash
-make start_docker_compose      
-make stop_docker_compose      
 ```
 
 Use the following commands to start/stop services via Kubernetes (see also [Kubernetes Setup](deployment/kubernetes/README.md)):        
