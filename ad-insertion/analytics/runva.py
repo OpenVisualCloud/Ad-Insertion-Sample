@@ -32,6 +32,7 @@ class RunVA(object):
                 state = pinfo["state"]
                 if state == "COMPLETED":
                     fps=pinfo["avg_fps"]
+                    print("Status analysis: Timing {0} {1} {2} {3} {4}".format(reqs["start_time"], pinfo["start_time"], pinfo["elapsed_time"], reqs["user"], reqs["source"]["uri"]), flush=True)
                     break
                 if state == "ABORTED" or state == "ERROR": return -1
 
