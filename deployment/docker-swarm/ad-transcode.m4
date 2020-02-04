@@ -7,6 +7,7 @@
         volumes:
             - ${AD_CACHE_VOLUME}:/var/www/adinsert:rw
             - ${AD_SEGMENT_VOLUME}:/var/www/adsegment:ro
+            - /etc/localtime:/etc/localtime:ro
         networks:
             - appnet
         deploy:

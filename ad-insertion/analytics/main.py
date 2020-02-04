@@ -63,6 +63,8 @@ def process_stream(streamstring):
             },
             "tags": streamjson["tags"],
             "parameters": streamjson["parameters"],
+            "user": streamjson["user_info"]["name"],
+            "start_time": streamjson["start_time"],
         }, streamjson["pipeline"])
 
         if fps<0:

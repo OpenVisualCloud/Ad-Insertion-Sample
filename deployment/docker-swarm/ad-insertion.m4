@@ -4,6 +4,7 @@
         volumes:
             - ${AD_CACHE_VOLUME}:/var/www/adinsert:ro
             - ${AD_STATIC_VOLUME}:/var/www/adstatic:ro
+            - /etc/localtime:/etc/localtime:ro
         environment:
             AD_INTERVALS: 12
             AD_DURATION: 10

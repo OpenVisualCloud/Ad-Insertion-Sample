@@ -66,11 +66,11 @@ class SegmentHandler(web.RequestHandler):
             # schedule analytics
             if "analytics" in seg_info:
                 if algos.find("object")>=0:
-                    self._sch.analyze(seg_info, "object_detection")
+                    self._sch.analyze(user, seg_info, "object_detection")
                 if algos.find("emotion")>=0:
-                    self._sch.analyze(seg_info, "emotion_recognition")
+                    self._sch.analyze(user, seg_info, "emotion_recognition")
                 if algos.find("face")>=0:
-                    self._sch.analyze(seg_info, "face_recognition")
+                    self._sch.analyze(user, seg_info, "face_recognition")
 
             if "analytics" in seg_info or "transcode" in seg_info:
                 self._sch.flush()

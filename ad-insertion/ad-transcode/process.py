@@ -96,6 +96,7 @@ class KafkaMsgParser(object):
         self.target = self.msg["destination"]["adpath"]
         self.target_path = self.target[0:self.target.rfind("/")]
         self.target_name = self.target.split("/")[-1]
+        self.start_time = self.msg["start_time"]
 
         # use mp4 stream name as the index
         self.content = self.msg["meta-db"]["stream"]
@@ -133,6 +134,7 @@ def set_ad_path(path, value):
 def ADTranscode(kafkamsg, db):
     msg=KafkaMsgParser(kafkamsg)
     zks=ZKState(msg.target_path, msg.target_name)
+    start_time=time.time()
     if zks.processed():
         print("AD transcoding finish the clip :",msg.target, flush=True)
         zks.close()
@@ -168,6 +170,7 @@ def ADTranscode(kafkamsg, db):
                 # signal that we are ready
                 set_ad_path(zk_segment_prefix+"/"+zkd_path+"/link","/adinsert/"+zkd_path)
                 zks.process_end()
+                print("Status transcode: Timing {0} {1} {2} {3} {4}".format(msg.start_time, start_time, time.time()-start_time, msg.user_name, msg.target), flush=True)
             except Exception as e:
                 print(traceback.format_exc(), flush=True)
                 set_ad_path(zk_segment_prefix+"/"+zkd_path+"/link","/adstatic")

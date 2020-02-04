@@ -3,6 +3,7 @@
 from messaging import Producer
 import json
 import os
+import time
 
 analytics_topic = "seg_analytics_sched"
 transcode_topic = "ad_transcode_sched"
@@ -12,7 +13,7 @@ class Schedule(object):
         super(Schedule, self).__init__()
         self._producer=Producer()
 
-    def analyze(self, seg_info, pipeline):
+    def analyze(self, user, seg_info, pipeline):
         request={
             "source": {
                 "uri": ""
@@ -23,13 +24,20 @@ class Schedule(object):
             },
             "parameters": {
                 "every-nth-frame":int(os.environ.get("EVERY_NTH_FRAME"))
-            }
+            },
+            "user_info": {
+                "name": user,
+                "keywords": [] #"keywords": ["sports","animal"]
+            },
+            "start_time": 0.0
         }
         for item in seg_info["analytics"]:
             temp=request.copy()
             temp["source"]["uri"]=item["stream"]
             temp["tags"]["seg_time"]=item["seg_time"]
-            print("Schedule analysis: "+temp["source"]["uri"], flush=True)
+            temp["start_time"]=time.time()
+            #print("Schedule analysis: "+temp["source"]["uri"], flush=True)
+            print("Schedule analysis: Timing {0} {1} {2}".format(temp["start_time"], user, temp["source"]["uri"]), flush=True)
             if "initSeg" in seg_info:
                 temp["source"]["uri-init"]=seg_info["initSeg"]
             self._producer.send(analytics_topic, json.dumps(temp))
@@ -59,12 +67,15 @@ class Schedule(object):
                 "name": user,
                 "keywords": [] #"keywords": ["sports","animal"]
             },
+            "start_time": 0.0
         }
         for item in seg_info["transcode"]:
             temp=request.copy()
             temp["meta-db"]["time_range"]=[item["seg_time"]-search_interval,item["seg_time"]]
             temp["destination"]["adpath"]=item["stream"]
-            print("Schedule transcode: "+temp["destination"]["adpath"], flush=True)
+            temp["start_time"]=time.time()
+            #print("Schedule transcode: "+temp["destination"]["adpath"], flush=True)
+            print("Schedule transcode: Timing {0} {1} {2}".format(temp["start_time"], user, temp["destination"]["adpath"]), flush=True)
             self._producer.send(transcode_topic, json.dumps(temp))
 
     def flush(self):
