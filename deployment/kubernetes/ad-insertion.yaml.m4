@@ -1,3 +1,4 @@
+include(platform.m4)
 
 apiVersion: v1
 kind: Service
@@ -68,3 +69,4 @@ spec:
           - name: ad-static
             persistentVolumeClaim:
                claimName: ad-static
+PLATFORM_NODE_SELECTOR(`Xeon')dnl

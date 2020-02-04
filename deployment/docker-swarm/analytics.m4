@@ -11,6 +11,9 @@ ifelse(defn(`PLATFORM'),`Xeon',`dnl
             - appnet
         deploy:
             replicas: defn(`NANALYTICS')
+            placement:
+                constraints:
+                    - node.labels.vcac_zone!=yes
 ')dnl
 
 ifelse(defn(`PLATFORM'),`VCAC-A',`dnl

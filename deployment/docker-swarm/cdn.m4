@@ -13,6 +13,7 @@
             placement:
                 constraints:
                     - node.role==manager
+                    - node.labels.vcac_zone!=yes
         secrets:
             - source: self_crt
               target: /var/run/secrets/self.crt

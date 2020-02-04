@@ -1,3 +1,4 @@
+include(platform.m4)
 
 apiVersion: v1
 kind: Service
@@ -56,3 +57,4 @@ spec:
           - name: video-cache
             persistentVolumeClaim:
                claimName: video-cache
+PLATFORM_NODE_SELECTOR(`Xeon')dnl

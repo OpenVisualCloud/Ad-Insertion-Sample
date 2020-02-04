@@ -1,3 +1,4 @@
+include(platform.m4)
 
 apiVersion: apps/v1
 kind: Deployment
@@ -29,4 +30,4 @@ spec:
               value: "*"
             - name: no_proxy
               value: "*"
-
+PLATFORM_NODE_SELECTOR(`Xeon')dnl
