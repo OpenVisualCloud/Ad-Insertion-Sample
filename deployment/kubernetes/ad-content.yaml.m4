@@ -1,3 +1,4 @@
+include(platform.m4)
 
 apiVersion: v1
 kind: Service
@@ -50,3 +51,4 @@ spec:
           - name: ad-archive
             persistentVolumeClaim:
                claimName: ad-archive
+PLATFORM_NODE_SELECTOR(`Xeon')dnl
