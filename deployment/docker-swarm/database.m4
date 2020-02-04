@@ -16,5 +16,5 @@
             replicas: 1
             placement:
                 constraints:
-                    - node.role==manager
+                    - node.labels.vcac_zone!=yes
 
