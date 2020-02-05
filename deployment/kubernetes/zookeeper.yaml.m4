@@ -1,3 +1,4 @@
+include(platform.m4)
 
 apiVersion: v1
 kind: Service
@@ -46,3 +47,4 @@ spec:
               value: "1"
             - name: "ZOO_LOG4J_PROP"
               value: "ERROR"
+PLATFORM_NODE_SELECTOR(`Xeon')dnl

@@ -1,3 +1,4 @@
+include(platform.m4)
 
 apiVersion: v1
 kind: Service
@@ -64,4 +65,4 @@ spec:
               value: "-Xmx1024m -Xms1024m"
             - name: "KAFKA_LOG4J_ROOT_LOGLEVEL"
               value: "ERROR"
-
+PLATFORM_NODE_SELECTOR(`Xeon')dnl

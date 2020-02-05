@@ -1,3 +1,4 @@
+include(platform.m4)
 
 apiVersion: apps/v1
 kind: Deployment
@@ -42,3 +43,4 @@ spec:
           - name: video-archive
             persistentVolumeClaim:
                claimName: video-archive
+PLATFORM_NODE_SELECTOR(`Xeon')dnl
