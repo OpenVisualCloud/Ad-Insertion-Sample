@@ -130,7 +130,7 @@ $("#player").on(":initpage", function (e) {
                         'abort': playnext,
                         'error': playnext,
                     });
-                    var stream1=stream.replace(".mp4/","_seq"+sessionStorage.seq+".mp4/");
+                    var stream1=stream.replace(".mp4/","_seq"+sessionStorage.seq+settings.user()+".mp4/");
                     $("#player").trigger(":play",[stream1]);
                     sessionStorage.seq=parseInt(sessionStorage.seq,10)+1;
                 },100);

@@ -25,20 +25,20 @@ def process_stream(streamstring):
     user = streamjson["user_info"]["name"]
     elapsed_time = time.time()-streamjson["start_time"]
     print("VA feeder: stream: "+stream+" "+user+" elapsed-time on kafka queue:" + str(elapsed_time), flush=True)
-    init_stream = None
+
     zk_path = None
+    init_stream = None
     if 'uri-init' in streamjson['source']:
-        init_stream = streamjson['source']['uri-init']
-        print("VA feeder: init_stream: "+init_stream, flush=True)
-        zk_path = stream+"/"+pipeline1
+        init_stream = streamjson['source']['uri-init'] 
 
-    m1 = re.search("(.*)/.*_([0-9]+.ts)$", stream)
-    if m1:
-        segment = stream.split('/')[-1].split('_')[-1]
-        zk_path = m1.group(1)+"/"+segment+"/"+pipeline1
+    m1 = re.search(r'(dash/.*)/chunk-stream[0-9]*-([0-9]*.m4s)$', stream)
+    if m1: zk_path="/analytics/"+m1.group(1)+"/"+m1.group(2)+"/"+streamjson["pipeline"]
 
-    print("VA feeder: zk_path "+zk_path + " " + user, flush=True)
-    zk=ZKState(zk_path,user)
+    m1 = re.search("(hls/.*)/[0-9]*p_([0-9]*.ts)$", stream)
+    if m1: zk_path="/analytics/"+m1.group(1)+"/"+m1.group(2)+"/"+streamjson["pipeline"]
+    print("zk path: "+zk_path, flush=True)
+
+    zk=ZKState(zk_path)
     if zk.processed():
         print("VA feeder: " + user + " " + stream + " already complete", flush=True)
         zk.close()

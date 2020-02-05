@@ -133,7 +133,11 @@ def set_ad_path(path, value):
 
 def ADTranscode(kafkamsg, db):
     msg=KafkaMsgParser(kafkamsg)
-    zks=ZKState(msg.target_path, msg.target_name)
+    # path: /var/www/adinsert/hls/Content_seq7u10.mp4/adstream/u10/4, name: 360p.m3u8
+    zk_path="/ad-transcode/"+ ("/".join(msg.target_path.split("/")[-5:]))
+    print("zk_path: "+zk_path+"/"+msg.target_name, flush=True)
+
+    zks=ZKState(zk_path, msg.target_name)
     start_time=time.time()
     if zks.processed():
         print("AD transcoding finish the clip :",msg.target, flush=True)
