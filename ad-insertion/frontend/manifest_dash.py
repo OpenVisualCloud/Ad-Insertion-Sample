@@ -92,6 +92,8 @@ def parse_dash(stream_cp_url, mpd, ad_spec, ad_segment):
         "audio": list(Period.findall(_ns("AdaptationSet[@contentType='audio']")+"/"+_ns("Representation"))),
     }
 
+    analytic_ahead=ad_spec["analytic_ahead"]
+    transcode_ahead=ad_spec["transcode_ahead"]
     # scan all segs into structure
     periods=[]
     for AdaptationSet in Period.findall(_ns("AdaptationSet")):
@@ -128,7 +130,7 @@ def parse_dash(stream_cp_url, mpd, ad_spec, ad_segment):
             sidx=0
             duration=0
             ad_interval=ad_spec["interval"][i%len(ad_spec["interval"])]
-            ahead_analytic=ad_interval - 5
+            ahead_analytic=ad_interval - analytic_ahead
             if ahead_analytic<0: ahead_analytic=0
 
             for S in periods[i][AdaptationSet]:
@@ -185,7 +187,7 @@ def parse_dash(stream_cp_url, mpd, ad_spec, ad_segment):
                         temp["seg_time"]=S[0]/timescale+_ad_time(ad_spec,i+1)+(S[1]/timescale)*_idx
                         minfo["segs"][stream]["analytics"] +=[temp]
 
-                if (i==0 and sidx==ad_interval-4) or (i!=0 and sidx==1):
+                if sidx==ad_interval-transcode_ahead:
                     transcode_info={
                         "stream":ad_spec["path"]+"/"+ad_spec["prefix"]+"/"+str(i)+"/"+Representation1.attrib["height"]+"p.mpd",
                         "seg_time":S[0]/timescale+_ad_time(ad_spec,i) + (S[1]/timescale)*(ad_interval -sidx),

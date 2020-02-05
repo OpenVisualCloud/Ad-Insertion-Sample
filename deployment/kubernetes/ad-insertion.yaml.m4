@@ -51,6 +51,10 @@ spec:
               value: "0"
             - name: EVERY_NTH_FRAME 
               value: "3"
+            - name: AD_ANALYTIC_AHEAD
+              value: "3"
+            - name: AD_TRANSCODE_AHEAD
+              value: "2"
             - name: NO_PROXY
               value: "*"
             - name: no_proxy

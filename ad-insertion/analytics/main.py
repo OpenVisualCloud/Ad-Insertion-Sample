@@ -22,7 +22,9 @@ def process_stream(streamstring):
     streamjson = ast.literal_eval(streamstring)
     pipeline1 = streamjson["pipeline"]+"/1"
     stream = streamjson['source']['uri']
-    print("VA feeder: stream: "+stream, flush=True)
+    user = streamjson["user_info"]["name"]
+    elapsed_time = time.time()-streamjson["start_time"]
+    print("VA feeder: stream: "+stream+" "+user+" elapsed-time on kafka queue:" + str(elapsed_time), flush=True)
     init_stream = None
     zk_path = None
     if 'uri-init' in streamjson['source']:
@@ -35,10 +37,10 @@ def process_stream(streamstring):
         segment = stream.split('/')[-1].split('_')[-1]
         zk_path = m1.group(1)+"/"+segment+"/"+pipeline1
 
-    print("VA feeder: zk_path "+zk_path, flush=True)
-    zk=ZKState(zk_path)
+    print("VA feeder: zk_path "+zk_path + " " + user, flush=True)
+    zk=ZKState(zk_path,user)
     if zk.processed():
-        print("VA feeder: " + stream + " already complete", flush=True)
+        print("VA feeder: " + user + " " + stream + " already complete", flush=True)
         zk.close()
         return
 
@@ -63,7 +65,7 @@ def process_stream(streamstring):
             },
             "tags": streamjson["tags"],
             "parameters": streamjson["parameters"],
-            "user": streamjson["user_info"]["name"],
+            "user": user,
             "start_time": streamjson["start_time"],
         }, streamjson["pipeline"])
 

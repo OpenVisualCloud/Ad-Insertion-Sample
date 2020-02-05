@@ -15,6 +15,8 @@ ad_storage_root = "/var/www/adinsert"
 ad_interval=list(map(int,os.environ["AD_INTERVALS"].split(",")))
 ad_duration=int(os.environ.get("AD_DURATION"))
 ad_segment=int(os.environ.get("AD_SEGMENT"))
+ad_analytic_ahead=int(os.environ.get("AD_ANALYTIC_AHEAD"))
+ad_transcode_ahead=int(os.environ.get("AD_TRANSCODE_AHEAD"))
 
 class ManifestHandler(web.RequestHandler):
     def __init__(self, app, request, **kwargs):
@@ -46,6 +48,8 @@ class ManifestHandler(web.RequestHandler):
             "path": ad_storage_root+"/"+stream_base,
             "interval": ad_interval, # ad interval (#segments)
             "duration": ad_duration, # ad duration
+            "analytic_ahead":ad_analytic_ahead,
+            "transcode_ahead":ad_transcode_ahead,
         }
 
         zk=ZKData()
