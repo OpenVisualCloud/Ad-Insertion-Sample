@@ -11,7 +11,9 @@
             AD_SEGMENT: 10
             AD_BACKOFF: 3
             AD_BENCH_MODE: 0
-            EVERY_NTH_FRAME: 3
+            AD_ANALYTIC_AHEAD: 3
+            AD_TRANSCODE_AHEAD: 2
+            EVERY_NTH_FRAME: 6
             NO_PROXY: "*"
             no_proxy: "*"
         networks:
