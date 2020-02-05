@@ -30,6 +30,8 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment):
     target_duration=3.0
     media_sequence=0
     ad_sequence=0
+    analytic_ahead=ad_spec["analytic_ahead"]
+    transcode_ahead=ad_spec["transcode_ahead"]
     minfo={ "segs": {}, "streams": {}, "manifest": [] }
     for i in range(len(lines)):
         if lines[i].startswith("#EXT-X-TARGETDURATION:"):
@@ -52,7 +54,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment):
                 minfo["streams"][lines[i+1]]=stream_info
 
         ad_interval=ad_spec["interval"][ad_sequence%len(ad_spec["interval"])]
-        ahead_analytic = ad_interval - 5
+        ahead_analytic = ad_interval - analytic_ahead
         if ahead_analytic < 0: ahead_analytic=0
 
         if lines[i].startswith("#EXTINF:") and i+1<len(lines):
@@ -118,7 +120,7 @@ def parse_hls(stream_cp_url, m3u8, stream_info, ad_spec, ad_segment):
                         seg_info["analytics"] +=[temp]
 
             # shedule transcoding every seg
-            if segsplayed == ad_interval - 4:
+            if segsplayed == ad_interval - transcode_ahead:
                 for k in stream_info: seg_info[k]=stream_info[k]
                 transcode_info={
                     "stream":ad_spec["path"]+"/"+ad_name+".m3u8",
