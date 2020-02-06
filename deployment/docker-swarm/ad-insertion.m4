@@ -8,7 +8,7 @@
         environment:
             AD_INTERVALS: 12
             AD_DURATION: 10
-            AD_SEGMENT: 10
+            AD_SEGMENT: 5
             AD_BACKOFF: 3
             AD_BENCH_MODE: 0
             AD_ANALYTIC_AHEAD: 3
@@ -19,7 +19,7 @@
         networks:
             - appnet
         deploy:
-            replicas: ifelse(defn(`PLATFORM'),`Xeon',1,4)
+            replicas: ifelse(defn(`PLATFORM'),`Xeon',1,1)
             placement:
                 constraints:
                     - node.role==manager
