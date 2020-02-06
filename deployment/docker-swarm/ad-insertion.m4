@@ -6,13 +6,13 @@
             - ${AD_STATIC_VOLUME}:/var/www/adstatic:ro
             - /etc/localtime:/etc/localtime:ro
         environment:
-            AD_INTERVALS: 12
+            AD_INTERVALS: 6
             AD_DURATION: 10
             AD_SEGMENT: 10
             AD_BACKOFF: 3
             AD_BENCH_MODE: 0
-            AD_ANALYTIC_AHEAD: 3
-            AD_TRANSCODE_AHEAD: 2
+            AD_ANALYTIC_AHEAD: 1
+            AD_TRANSCODE_AHEAD: 1
             EVERY_NTH_FRAME: 6
             NO_PROXY: "*"
             no_proxy: "*"
