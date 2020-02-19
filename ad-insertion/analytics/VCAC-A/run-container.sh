@@ -1,7 +1,7 @@
 #!/bin/sh
 
 function gracefully_exit {
-    docker kill $(docker ps --format {{.ID}} --filter name=$HOSTNAME)
+    docker kill $(docker ps --format {{.ID}} --filter name=analytics_$HOSTNAME)
     exit 0
 }
 
@@ -14,6 +14,6 @@ NETWORKS="$(docker inspect $HOSTNAME --format {{.NetworkSettings.Networks}} | se
 BINDS="$(docker inspect $HOSTNAME --format {{.HostConfig.Mounts}} | sed -e 's/\[\(.*\)]/\1/' -e 's/{\([a-z]*\) \([^ ]*\) \([^ ]*\) \([a-z]*\)[^}]*}/-v \2:\3:\4/g' -e 's/:true/:ro/g' -e 's/:false/:rw/g')"
 
 # docker run
-/usr/local/bin/docker-entrypoint.sh docker run --rm --name $HOSTNAME --user root -v /var/tmp:/var/tmp --privileged $ENVS $NETWORKS $BINDS "$@" $VCAC_IMAGE &
+/usr/local/bin/docker-entrypoint.sh docker run --name analytics_$HOSTNAME --user root -v /var/tmp:/var/tmp --privileged $ENVS $NETWORKS $BINDS "$@" $VCAC_IMAGE &
 
 wait
