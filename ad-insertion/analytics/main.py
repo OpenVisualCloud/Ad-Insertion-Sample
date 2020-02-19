@@ -11,6 +11,9 @@ import socket
 import time
 import os
 import re
+import resource
+import gc
+import subprocess
 
 video_analytics_topic = "seg_analytics_sched"
 machine_prefix=os.environ.get("VA_PRE")
@@ -40,7 +43,7 @@ def process_stream(streamstring):
     if zk.processed():
         print("VA feeder: " + stream + " already complete", flush=True)
         zk.close()
-        return
+        return 0
 
     if zk.process_start():
         merged_segment = None
@@ -73,19 +76,49 @@ def process_stream(streamstring):
         if merged_segment:
             merge.delete_merged_segment(merged_segment)
     zk.close()
+    return 1
+
+def free_command():
+    free = subprocess.check_output(["free","-h","-w"]).decode().split('\n')
+    headers = free[0].split()
+    memory = free[1].split()
+    return dict(zip(headers,memory[1:]))
+
 
 if __name__ == "__main__":
     c = Consumer("analytics")
+    count = 0
+    mem = 0
+    start = time.time()
+    elapsed = 0
+    max_time = 60 * 60 * 2
+    max_mem = 800
     while True:
         try:
             print("VA feeder: listening to messages", flush=True)
             for msg in c.messages(video_analytics_topic):
                 print("VA feeder: recieved message: " + str(msg), flush=True)
                 try:
-                    process_stream(msg)
+                    count = count + process_stream(msg)
+                    mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024
+                    memory_usage = {'count':count,'memory_usage':mem}
+                    memory_usage.update(free_command())
+                    print(json.dumps(memory_usage))
+                    elapsed = time.time() - start
+                    if (elapsed>max_time) or (mem>=max_mem):
+                        break
                 except Exception as e:
                     print("VA feeder: "+str(e), flush=True)
+            if (elapsed>max_time) or (mem>=max_mem):
+                break
         except Exception as e:
             print("VA feeder: error in main" + str(e), flush=True)
             time.sleep(1)
-    c.close()
+    if (mem>=max_mem):
+        print("Reached Max Memory",flush=True)
+    elif (elapsed>max_time):
+        print("Reached Max Time",flush=True)
+    else:
+        print("Exited for unknown reason",flush=True)
+    
+    #c.close()

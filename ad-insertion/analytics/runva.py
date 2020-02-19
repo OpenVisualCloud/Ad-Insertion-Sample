@@ -24,16 +24,21 @@ class RunVA(object):
             print("Exception: "+str(msg), flush=True)
             return -1
         fps=0
+        state = None
         while True:
             self._maincontext.iteration()
             pinfo=PipelineManager.get_instance_status(pipeline,version,pid)
-            print(pinfo, flush=True)
+#            print(pinfo, flush=True)
             if pinfo is not None: 
-                state = pinfo["state"]
+                new_state = pinfo["state"]
+                if (new_state != state):
+                    print(pinfo)
+                state = new_state
                 if state == "COMPLETED":
                     fps=pinfo["avg_fps"]
                     break
                 if state == "ABORTED" or state == "ERROR": return -1
 
         PipelineManager.stop_instance(pipeline,version,pid)
+        del PipelineManager.pipeline_instances[pid]
         return fps

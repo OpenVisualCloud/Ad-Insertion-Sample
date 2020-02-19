@@ -32,3 +32,6 @@ RUN mkdir -p /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 && cp gst-video-analy
 FROM openvisualcloud/vcaca-ubuntu1804-analytics-gst:20.1
 
 COPY --from=build /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0 /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0
+
+RUN apt update && apt install -y libjemalloc-dev
+ENV LD_PRELOAD=libjemalloc.so
