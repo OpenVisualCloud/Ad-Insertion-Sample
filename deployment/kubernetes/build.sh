@@ -13,7 +13,7 @@ mkdir -p "$DIR/../../volume/ad/segment/dash" "$DIR/../../volume/ad/segment/hls"
 mkdir -p "$DIR/../../volume/video/cache/dash" "$DIR/../../volume/video/cache/hls"
 
 if [ -x /usr/bin/kubectl ] || [ -x /usr/local/bin/kubectl ]; then
-    HOSTIP=$(ping $(hostname -f) -c 1|awk '/icmp_seq/{print substr($5,2,length($5)-3)}')
+    HOSTIP=$(ip route get 8.8.8.8 | awk '/ src /{split(substr($0,index($0," src ")),f);print f[2];exit}')
     if [ -z "$HOSTIP" ]; then
         exit 0
     fi
