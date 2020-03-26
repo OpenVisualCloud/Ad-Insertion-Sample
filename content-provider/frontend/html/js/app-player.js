@@ -86,7 +86,7 @@ function shaka_play(page, video, url) {
 
     player.getNetworkingEngine().registerRequestFilter(function (type,request) {
         request.headers["X-USER"]=settings.user();
-        request.headers["X-ALGO"]=settings.alogirthms();
+        request.headers["X-ALGO"]=settings.algorithms();
     });
 
     player.load(url).then(function () {
