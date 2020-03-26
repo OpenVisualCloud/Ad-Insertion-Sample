@@ -18,6 +18,9 @@ if machine_prefix == None:
     machine_prefix="VA-"
 va=RunVA()
 
+global_total_fps = 0
+global_seg_count = 0
+
 def process_stream(streamstring):
     streamjson = ast.literal_eval(streamstring)
     pipeline1 = streamjson["pipeline"]+"/1"
@@ -73,6 +76,13 @@ def process_stream(streamstring):
             zk.process_abort()
         else:
             zk.process_end()
+
+        if fps > 0:
+            global global_total_fps, global_seg_count
+            global_total_fps = global_total_fps + fps
+            global_seg_count = global_seg_count + 1
+            avg_fps = global_total_fps/global_seg_count
+            print("VA statistics : "+ "avg_fps " + str(avg_fps) + " " + str(global_total_fps)+" " + str(global_seg_count),flush=True)
             
         if merged_segment:
             merge.delete_merged_segment(merged_segment)

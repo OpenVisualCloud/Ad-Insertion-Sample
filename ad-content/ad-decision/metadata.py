@@ -89,7 +89,7 @@ class MetaDataHandler(web.RequestHandler):
         else:
             max_matched_idx = random.randint(0,len(self.inventory)-1)
 
-        print("Suggestion rate: "+str(total_intelligent_suggestion)+"/"+str(total_suggestion), flush=True)
+        print("AD insert Suggestion rate: "+str(total_intelligent_suggestion)+"/"+str(total_suggestion)+ " "+ str(total_intelligent_suggestion*100.0/total_suggestion)+ "%", flush=True)
         return self.inventory[max_matched_idx]["uri"]
 
     @gen.coroutine
