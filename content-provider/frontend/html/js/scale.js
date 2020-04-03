@@ -19,6 +19,7 @@ function mklayout() {
 
     var ncolumns=spec("ncols")?Math.floor((parseInt(spec("ncols"),10)+1)/2)*2:2;
     var nrows=spec("nrows")?parseInt(spec("nrows"),10):3;
+    var userid=spec("userid")?parseInt(spec("userid"),10):100;
     $("#scale [info-block] [channel]").text(nrows*ncolumns);
 
     var header_height=144;
@@ -42,7 +43,7 @@ function mklayout() {
             var x=(screen_width+margin*2)*c;
             if (c>=ncolumns/2) x=x+divide_width;
             var args={ 
-                seq: r*ncolumns+c, 
+                seq: userid+r*ncolumns+c, 
                 benchmark: spec("benchmark")?spec("benchmark"):"object",
                 header: "off",
                 playlist: "off",
