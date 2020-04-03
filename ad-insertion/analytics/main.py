@@ -11,6 +11,10 @@ import socket
 import time
 import os
 import re
+from messaging import Producer
+import json
+
+workload_topic="workload_data"
 
 video_analytics_topic = "seg_analytics_sched"
 machine_prefix=os.environ.get("VA_PRE")
@@ -82,6 +86,10 @@ def process_stream(streamstring):
             global_total_fps = global_total_fps + fps
             global_seg_count = global_seg_count + 1
             avg_fps = global_total_fps/global_seg_count
+            workload_info = {"user":user, "type":"analytic","fps":fps, "fps_avg":avg_fps, "fps_tot":global_total_fps, "seg_num":global_seg_count}
+            producer=Producer()
+            producer.send(workload_topic,json.dumps(workload_info))
+            producer.close()
             print("VA statistics : "+ "avg_fps " + str(avg_fps) + " " + str(global_total_fps)+" " + str(global_seg_count),flush=True)
             
         if merged_segment:

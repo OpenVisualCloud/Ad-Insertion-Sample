@@ -6,6 +6,10 @@ import requests
 from adkeyword import GetAdKeywords, GetMaxKeyword, GetAttrKeyword
 import random
 import traceback
+from messaging import Producer
+import json
+
+workload_topic="workload_data"
 
 ad_decision_post_reponse_template = {
     "source": {
@@ -86,6 +90,10 @@ class MetaDataHandler(web.RequestHandler):
         total_suggestion=total_suggestion+1
         if max_matched_idx>=0:
             total_intelligent_suggestion=total_intelligent_suggestion+1
+            workload_info = {"user":self.user_name, "type":"adrate", "ad_request_tot":total_suggestion, "ad_request_suc":total_intelligent_suggestion}
+            producer=Producer()
+            producer.send(workload_topic,json.dumps(workload_info))
+            producer.close()
         else:
             max_matched_idx = random.randint(0,len(self.inventory)-1)
 
