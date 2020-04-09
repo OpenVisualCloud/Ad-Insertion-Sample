@@ -19,8 +19,11 @@ if [ -x /usr/bin/kubectl ] || [ -x /usr/local/bin/kubectl ]; then
     fi
 
     # list all workers
-    hosts=($(kubectl get nodes --selector='!node-role.kubernetes.io/master' --show-labels | grep -v 'vcac-zone=yes' | grep ' Ready ' | cut -f1 -d' '))
-    if test ${#hosts[@]} -lt 2; then
+    hosts=($(kubectl get node -l vcac-zone!=yes -o jsonpath='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}:{range @.spec.taints[*]}{@.key}={@.effect};{end}{end}' | grep Ready=True | grep -v NoSchedule | cut -f1 -d':'))
+    if test ${#hosts[@]} -eq 0; then
+        printf "\nFailed to locate worker node(s) for shared storage\n\n"
+        exit -1
+    elif test ${#hosts[@]} -lt 2; then
         hosts=(${hosts[0]} ${hosts[0]})
     fi
 
