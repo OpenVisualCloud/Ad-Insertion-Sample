@@ -22,10 +22,6 @@ spec:
           image: ssai_kafka2db:latest
           imagePullPolicy: IfNotPresent
           env:
-            - name: INGEST_DURATION
-              value: "0.1"
-            - name: INGEST_BATCH
-              value: "50"
             - name: NO_PROXY
               value: "*"
             - name: no_proxy
