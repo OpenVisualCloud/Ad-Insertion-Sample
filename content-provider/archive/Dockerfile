@@ -1,5 +1,5 @@
 
-FROM openvisualcloud/xeon-ubuntu1804-media-ffmpeg:20.1
+FROM openvisualcloud/xeon-ubuntu1804-media-ffmpeg:20.4
 RUN apt-get update && apt-get install -y -q youtube-dl bc wget && rm -rf /var/lib/apt/lists/*;
 
 ####
