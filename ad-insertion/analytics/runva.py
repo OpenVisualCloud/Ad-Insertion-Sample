@@ -1,40 +1,61 @@
 #!/usr/bin/python3
 
-from vaserving.pipeline_manager import PipelineManager
-from vaserving.model_manager import ModelManager
-from concurrent.futures import ThreadPoolExecutor
-from gi.repository import GLib
+from vaserving.vaserving import VAServing
+from vaserving.pipeline import Pipeline
 import time
+import os
+
+#network_preference = os.environ.get("NETWORK_PREFERENCE")
 
 class RunVA(object):
     def __init__(self):
         super(RunVA, self).__init__()
-        ModelManager.load_config("/home/models",{})
-        PipelineManager.load_config("/home/pipelines",1)
-        self._maincontext=GLib.MainLoop().get_context()
-        GLib.timeout_add(1000,self._noop)
+        vaserving_args = {'model_dir': '/home/models',
+                          'pipeline_dir': '/home/pipelines',
+                          'max_running_pipelines': 1,
+#                          'network_preference': network_preference,
+                          'log_level': "DEBUG"}
+        VAServing.start(vaserving_args)
 
     def _noop(self):
         return True
 
-    def loop(self, reqs, pipeline, version="1"):
+    def loop(self, reqs, _pipeline, _version="1"):
         print(reqs, flush=True)
-        pid,msg=PipelineManager.create_instance(pipeline,version,reqs)
-        if pid is None:
-            print("Exception: "+str(msg), flush=True)
+        source = reqs["source"]
+        destination = reqs["destination"]
+        tags = reqs["tags"]
+        parameters = reqs["parameters"]
+
+        pipeline = VAServing.pipeline(_pipeline, _version)
+        instance_id = pipeline.start(source=source,
+                             destination=destination,
+                             tags=tags,
+                             parameters=parameters)
+        if instance_id is None:
+            print("Pipeline {} version {} Failed to Start".format(
+               _pipeline, _version), flush=True)
             return -1
+
         fps=0
         while True:
-            self._maincontext.iteration()
-            pinfo=PipelineManager.get_instance_status(pipeline,version,pid)
-            print(pinfo, flush=True)
-            if pinfo is not None: 
-                state = pinfo["state"]
+            status = pipeline.status()
+            print(status, flush=True)
+
+            if (status.state.stopped()):
+                print("Pipeline {} Version {} Instance {} Ended with {}".format(
+                    _pipeline, _version, instance_id, status.state.name), flush=True)
+                break
+
+            if status is not None: 
+                state = status["state"]
                 if state == "COMPLETED":
-                    fps=pinfo["avg_fps"]
-                    print("Status analysis: Timing {0} {1} {2} {3} {4}".format(reqs["start_time"], pinfo["start_time"], pinfo["elapsed_time"], reqs["user"], reqs["source"]["uri"]), flush=True)
+                    fps=status["avg_fps"]
+                    print("Status analysis: Timing {0} {1} {2} {3} {4}".format(reqs["start_time"], status["start_time"], status["elapsed_time"], reqs["user"], reqs["source"]["uri"]), flush=True)
                     break
                 if state == "ABORTED" or state == "ERROR": return -1
 
-        PipelineManager.stop_instance(pipeline,version,pid)
+        print("exiting va pipeline", flush=True)
+        pipeline.stop()
+        VAServing.stop()
         return fps
