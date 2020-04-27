@@ -4,11 +4,14 @@ FROM openvisualcloud/vcaca-ubuntu1804-analytics-gst:20.4 as build
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update -qq && apt-get install -qq git ca-certificates python3 python3-pip && rm -rf /var/lib/apt/lists/*
 ARG VA_SERVING_REPO=https://gitlab.devtools.intel.com/video-analytics/video-analytics-serving.git
-ARG VA_SERVING_BRANCH="develop"
+ARG VA_SERVING_BRANCH="ovc_integration"
+ARG VA_SERVING_TAG="1340f1f88401ce557a6715270dd07be5303d4901"
 
 RUN  git clone ${VA_SERVING_REPO} -b ${VA_SERVING_BRANCH} --depth 1
-
+RUN  cd video-analytics-serving; git checkout ${VA_SERVING_TAG}
 RUN pip3 install --ignore-installed --target /home/build -r video-analytics-serving/requirements.txt
+RUN rm -rf /home/video-analytics-serving/vaserving/__main__.py
+RUN rm -rf /home/video-analytics-serving/vaserving/rest_api
 
 FROM openvisualcloud/vcaca-ubuntu1804-analytics-gst:20.4
 # Fetch python3 and Install python3
@@ -29,6 +32,7 @@ COPY gallery/ /home/gallery/
 COPY VCAC-A/gst/pipelines/ /home/pipelines/
 COPY *.py /home/
 COPY --from=ssai_common /home/*.py /home/
+ENV LOG_LEVEL "DEBUG"
 
 WORKDIR /home
 CMD ["/home/main.py"]
