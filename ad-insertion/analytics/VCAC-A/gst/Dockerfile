@@ -26,9 +26,13 @@ RUN mv /home/models/object_detection/1/mobilenet-ssd.json.gst /home/models/objec
     mv /home/models/emotion_recognition/1/emotions-recognition-retail-0003.json.gst /home/models/emotion_recognition/1/emotions-recognition-retail-0003.json && \
     mv /home/models/face_detection_adas/1/face-detection-adas-0001.json.gst /home/models/face_detection_adas/1/face-detection-adas-0001.json && \
     mv /home/models/face_detection_retail/1/face-detection-retail-0004.json.gst /home/models/face_detection_retail/1/face-detection-retail-0004.json && \
-    mv /home/models/landmarks_regression/1/landmarks-regression-retail-0009.json.gst /home/models/landmarks_regression/1/landmarks-regression-retail-0009.json
+    mv /home/models/landmarks_regression/1/landmarks-regression-retail-0009.json.gst /home/models/landmarks_regression/1/landmarks-regression-retail-0009.json && \
+    mv /home/models/face_reidentification/1/face-reidentification-retail-0095.json.gst /home/models/face_reidentification/1/face-reidentification-retail-0095.json
 
 COPY gallery/ /home/gallery/
+RUN mv /home/gallery/face_gallery_FP16/gallery.json.gst /home/gallery/face_gallery_FP16/gallery.json && \
+    mv /home/gallery/face_gallery_FP32/gallery.json.gst /home/gallery/face_gallery_FP32/gallery.json
+
 COPY VCAC-A/gst/pipelines/ /home/pipelines/
 COPY *.py /home/
 COPY --from=ssai_common /home/*.py /home/
