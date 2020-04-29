@@ -14,8 +14,7 @@ class RunVA(object):
         vaserving_args = {'model_dir': '/home/models',
                           'pipeline_dir': '/home/pipelines',
                           'max_running_pipelines': 1,
-                          'network_preference': network_preference,
-                          'log_level': "DEBUG"}
+                          'network_preference': network_preference}
         VAServing.start(vaserving_args)
         self._pause = 0.5
 
