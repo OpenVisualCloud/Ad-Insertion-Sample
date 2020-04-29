@@ -2,20 +2,26 @@
     "name": "object_detection",
     "version": 1,
     "type": "FFmpeg",
-    "template":"-flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_device /dev/dri/renderD128 -i \"{source[uri]}\" -vf \"detect=model={models[object_detection][1][network]}:device=HDDL:model_proc=\"{models[object_detection][1][proc]}\":interval={parameters[every-nth-frame]}:nireq={parameters[nireq]},metaconvert=converter=json:method=all:source=NULL:tags=NULL\"",
+    "template": [
+        "-flags unaligned -hwaccel vaapi -hwaccel_output_format vaapi -hwaccel_device /dev/dri/renderD128",
+        " -i \"{source[uri]}\" -vf \"detect=model={models[object_detection][1][network]}",
+        ":device=HDDL:model_proc=\"{models[object_detection][1][proc]}\":interval={parameters[inference-interval]}",
+        ":nireq={parameters[nireq]},metaconvert\"",
+        " -an -y -f metapublish"
+    ],
     "description": "Object Detection",
     "parameters": {
-        "type" : "object",
-        "properties" : {
+        "type": "object",
+        "properties": {
             "inference-interval": {
-                "element":"detection",
+                "element": "detection",
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 4294967295,
                 "default": 6
             },
             "nireq": {
-                "element":"detection",
+                "element": "detection",
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 64,
@@ -24,5 +30,3 @@
         }
     }
 }
-
-
