@@ -9,7 +9,7 @@
         ":model_proc=\"{models[face_detection_retail][1][proc]}\"",
         ":interval=\"{parameters[inference-interval]}\":device=HDDL:nireq=\"{parameters[nireq]}\",",
         "classify=model=\"{models[face_reidentification][1][network]}\":model_proc=\"{models[face_reidentification][1][proc]}\":device=HDDL\",",
-        "identify=gallery=\"/home/gallery/face_gallery_FP16/gallery.json,metaconvert=converter\"",
+        "identify=gallery=\"/home/gallery/face_gallery_FP16/gallery.json\",metaconvert\"",
         " -y -an -f metapublish"
     ],
     "description": "Face Recognition",
