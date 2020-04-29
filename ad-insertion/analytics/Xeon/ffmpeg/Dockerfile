@@ -5,7 +5,7 @@ From openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg:20.4 as build
 RUN DEBIAN_FRONTEND=noninteractive apt-get update -qq && apt-get install -qq git ca-certificates python3 python3-pip && rm -rf /var/lib/apt/lists/*
 ARG VA_SERVING_REPO=https://gitlab.devtools.intel.com/video-analytics/video-analytics-serving.git
 ARG VA_SERVING_BRANCH="ovc_integration"
-ARG VA_SERVING_TAG="a73d641de1f26c4c7b3f3fbcf805b2427347d994"
+ARG VA_SERVING_TAG="b1448c400f1c3b9beaa244c385ef74e3d545a63f"
 
 RUN  git clone ${VA_SERVING_REPO} -b ${VA_SERVING_BRANCH} --depth 1
 RUN  cd video-analytics-serving; git checkout ${VA_SERVING_TAG}
@@ -26,6 +26,7 @@ COPY ./gallery/ /home/gallery/
 COPY ./Xeon/ffmpeg/pipelines/ /home/pipelines
 COPY *.py /home/
 COPY --from=ssai_common /home/*.py /home/
+ENV LOG_LEVEL "DEBUG"
 ENV FRAMEWORK=ffmpeg
 WORKDIR /home
 CMD ["/home/main.py"]
