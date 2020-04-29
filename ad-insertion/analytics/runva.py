@@ -7,7 +7,6 @@ import os
 
 network_preference = os.environ.get("NETWORK_PREFERENCE")
 
-
 class RunVA(object):
     def __init__(self):
         super(RunVA, self).__init__()
@@ -15,6 +14,7 @@ class RunVA(object):
                           'pipeline_dir': '/home/pipelines',
                           'max_running_pipelines': 1,
                           'network_preference': network_preference}
+        print("vaserving args: {} ".format(vaserving_args),flush=True)
         VAServing.start(vaserving_args)
         self._pause = 0.5
 

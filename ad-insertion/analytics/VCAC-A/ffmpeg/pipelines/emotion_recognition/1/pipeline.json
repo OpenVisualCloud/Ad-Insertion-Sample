@@ -7,7 +7,7 @@
     "parameters": {
         "type" : "object",
         "properties" : {
-            "every-nth-frame": {
+            "inference-interval": {
                 "element":"detection",
                 "type": "integer",
                 "minimum": 0,
