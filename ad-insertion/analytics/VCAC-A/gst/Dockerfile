@@ -39,7 +39,7 @@ COPY --from=ssai_common /home/*.py /home/
 ENV LOG_LEVEL "DEBUG"
 ENV FRAMEWORK gstreamer
 WORKDIR /home
-CMD ["/home/main.py"]
+CMD ["/home/analyze.py"]
 
 ###
 ARG  USER
