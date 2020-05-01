@@ -23,7 +23,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: NETWORK_PREFERENCE
-              value: ifelse(defn(`PLATFORM'),`VCAC-A',`"{\"HDDL\":\"FP16\"}',`"{\"CPU\":\"INT32,FP32\"}"')
+              value: "{\"defn(`PLATFORM_DEVICE')\":\"defn(`NETWORK_PREFERENCE')\"}"
             - name: VA_PRE
               value: "defn(`PLATFORM')-"
             - name: NO_PROXY
