@@ -21,6 +21,7 @@ ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
         image: vcac-container-launcher:latest
         environment:
             VCAC_IMAGE: `ssai_analytics_'defn(`FRAMEWORK')_vcac-a:latest
+            VCAC_NETWORK_PREFERENCE: "{\"HDDL\":\"FP16\"}"
             VCAC_VA_PRE: "VCAC-A-"
             VCAC_NO_PROXY: "*"
             VCAC_no_proxy: "*"

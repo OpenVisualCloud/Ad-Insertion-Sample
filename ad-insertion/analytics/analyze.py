@@ -98,7 +98,6 @@ def process_stream(streamstring):
             merge.delete_merged_segment(merged_segment)
     zk.close()
 
-
 if __name__ == "__main__":
     c = Consumer("analytics")
     while True:

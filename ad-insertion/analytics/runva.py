@@ -16,20 +16,14 @@ class RunVA(object):
                           'network_preference': network_preference}
         print("vaserving args: {} ".format(vaserving_args),flush=True)
         VAServing.start(vaserving_args)
-        self._pause = 0.5
+        self._pause = 0.05
 
     def loop(self, reqs, _pipeline, _version="1"):
-        print(reqs, flush=True)
-        source = reqs["source"]
-        destination = reqs["destination"]
-        tags = reqs["tags"]
-        parameters = reqs["parameters"]
-
         pipeline = VAServing.pipeline(_pipeline, _version)
-        instance_id = pipeline.start(source=source,
-                                     destination=destination,
-                                     tags=tags,
-                                     parameters=parameters)
+        instance_id = pipeline.start(source=reqs["source"],
+                                     destination=reqs["destination"],
+                                     tags=reqs["tags"],
+                                     parameters=reqs["parameters"])
         if instance_id is None:
             print("Pipeline {} version {} Failed to Start".format(
                 _pipeline, _version), flush=True)
@@ -56,6 +50,8 @@ class RunVA(object):
             time.sleep(self._pause)
 
         pipeline.stop()
-      #  VAServing.stop()
         print("exiting va pipeline", flush=True)
         return fps
+
+    def close(self):
+        VAServing.stop()
