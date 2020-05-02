@@ -3,17 +3,15 @@
 from vaserving.vaserving import VAServing
 from vaserving.pipeline import Pipeline
 import time
-import os
-
-network_preference = os.environ.get("NETWORK_PREFERENCE")
 
 class RunVA(object):
     def __init__(self):
         super(RunVA, self).__init__()
-        vaserving_args = {'model_dir': '/home/models',
-                          'pipeline_dir': '/home/pipelines',
-                          'max_running_pipelines': 1,
-                          'network_preference': network_preference}
+        vaserving_args = {
+            'model_dir': '/home/models',
+            'pipeline_dir': '/home/pipelines',
+            'max_running_pipelines': 1,
+        }
         print("vaserving args: {} ".format(vaserving_args),flush=True)
         VAServing.start(vaserving_args)
         self._pause = 0.05
