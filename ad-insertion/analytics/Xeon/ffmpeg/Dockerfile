@@ -29,7 +29,7 @@ COPY --from=ssai_common /home/*.py /home/
 ENV LOG_LEVEL "DEBUG"
 ENV FRAMEWORK=ffmpeg
 WORKDIR /home
-CMD ["/home/main.py"]
+CMD ["/home/analyze.py"]
 
 ####
 ARG  USER
