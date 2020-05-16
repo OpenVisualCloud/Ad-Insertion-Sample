@@ -20,7 +20,7 @@ if [ -x /usr/bin/kubectl ] || [ -x /usr/local/bin/kubectl ]; then
     fi
 
     # list all workers
-    hosts=($(kubectl get node -l vcac-zone!=yes -o jsonpath='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}:{range @.spec.taints[*]}{@.key}={@.effect};{end}{end}' | grep Ready=True | grep -v NoSchedule | cut -f1 -d':'))
+    hosts=($(kubectl get node -l vcac-zone!=yes -o custom-columns=NAME:metadata.name,STATUS:status.conditions[-1].type,TAINT:spec.taints | grep " Ready " | grep -v "NoSchedule" | cut -f1 -d' '))
     if test ${#hosts[@]} -eq 0; then
         printf "\nFailed to locate worker node(s) for shared storage\n\n"
         exit -1
