@@ -1,0 +1,13 @@
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ad-cache
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ad-cache
+  resources:
+    requests:
+      storage: {{ .Values.pvc.ad.cache }}
+

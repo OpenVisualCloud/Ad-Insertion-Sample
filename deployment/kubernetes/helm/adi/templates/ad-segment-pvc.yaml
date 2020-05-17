@@ -1,0 +1,12 @@
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ad-segment
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ad-segment
+  resources:
+    requests:
+      storage: {{ .Values.pvc.ad.segment }}

@@ -1,0 +1,12 @@
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ad-static
+spec:
+  accessModes:
+    - ReadOnlyMany
+  storageClassName: ad-static
+  resources:
+    requests:
+      storage: {{ .Values.pvc.ad.static }}
