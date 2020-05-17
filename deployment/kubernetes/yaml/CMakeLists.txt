@@ -9,5 +9,5 @@ foreach(m4file ${m4files})
     set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${yamlfile}")
 endforeach(m4file)
 
-add_dependencies(start_${service} create_pv)
+add_dependencies(start_${service} create_pv sign_certificate)
 add_dependencies(stop_${service} delete_pv)
