@@ -22,8 +22,8 @@ spec:
           image: `ssai_analytics_'defn(`FRAMEWORK')`_'defn(`PLATFORM_SUFFIX'):latest
           imagePullPolicy: IfNotPresent
           env:
-            - name: NETWORK_PREFERENCE
-              value: "{\"CPU\":\"INT8,FP32\"}"
+            - name: `NETWORK_PREFERENCE'
+              value: "{\"defn(`PLATFORM_DEVICE')\":\"defn(`NETWORK_PREFERENCE')\"}"
             - name: VA_PRE
               value: "defn(`PLATFORM')-"
             - name: NO_PROXY
