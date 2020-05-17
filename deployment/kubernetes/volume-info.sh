@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+export AD_ARCHIVE_VOLUME_PATH=/tmp/archive/ad
+export AD_ARCHIVE_VOLUME_SIZE=1
+export AD_ARCHIVE_VOLUME_HOST=$1
+
+export AD_CACHE_VOLUME_PATH=/tmp/cache/ad
+export AD_CACHE_VOLUME_SIZE=1
+export AD_CACHE_VOLUME_HOST=$1
+
+export AD_SEGMENT_VOLUME_PATH=/tmp/segment/ad
+export AD_SEGMENT_VOLUME_SIZE=1
+export AD_SEGMENT_VOLUME_HOST=$1
+
+export AD_STATIC_VOLUME_PATH=/tmp/static/ad
+export AD_STATIC_VOLUME_SIZE=1
+export AD_STATIC_VOLUME_HOST=$1
+
+export VIDEO_ARCHIVE_VOLUME_PATH=/tmp/archive/video
+export VIDEO_ARCHIVE_VOLUME_SIZE=2
+export VIDEO_ARCHIVE_VOLUME_HOST=$2
+
+export VIDEO_CACHE_VOLUME_PATH=/tmp/cache/video
+export VIDEO_CACHE_VOLUME_SIZE=2
+export VIDEO_CACHE_VOLUME_HOST=$2
