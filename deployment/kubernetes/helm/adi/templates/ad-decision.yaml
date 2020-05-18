@@ -33,7 +33,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: ad-decision
-          image: ssai_ad_decision_frontend:latest
+          image: {{ $.Values.registryPrefix }}ssai_ad_decision_frontend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

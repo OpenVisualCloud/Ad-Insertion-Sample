@@ -1,7 +1,7 @@
 include(platform.m4)
 
     analytics:
-        image: PLATFORM_IMAGE(`ssai_analytics_'defn(`FRAMEWORK')`_'defn(`PLATFORM_SUFFIX'):latest)
+        image: PLATFORM_IMAGE(defn(`REGISTRY_PREFIX')`ssai_analytics_'defn(`FRAMEWORK')`_'defn(`PLATFORM_SUFFIX'):latest)
         environment:
             PLATFORM_ENV(``NETWORK_PREFERENCE''): "{\"defn(`PLATFORM_DEVICE')\":\"defn(`NETWORK_PREFERENCE')\"}"
             PLATFORM_ENV(VA_PRE): "defn(`PLATFORM')-"

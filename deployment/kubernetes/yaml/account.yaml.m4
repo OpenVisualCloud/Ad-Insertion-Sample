@@ -34,7 +34,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: account
-          image: ssai_account_service:latest
+          image: defn(`REGISTRY_PREFIX')ssai_account_service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

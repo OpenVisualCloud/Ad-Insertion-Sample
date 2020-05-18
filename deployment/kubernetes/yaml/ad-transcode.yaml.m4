@@ -23,7 +23,7 @@ spec:
         fsGroup: defn(`GROUPID')
       containers:
         - name: ad-transcode
-          image: ssai_ad_transcode:latest
+          image: defn(`REGISTRY_PREFIX')ssai_ad_transcode:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: NO_PROXY

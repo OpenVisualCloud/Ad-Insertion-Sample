@@ -65,7 +65,7 @@ make adhls
 Use the following commands to start/stop services via docker swarm (see also [Docker Swarm Setup](deployment/docker-swarm/README.md)).    
 
 ```bash
-make update
+make update # optional for private registry
 make start_docker_swarm      
 make stop_docker_swarm      
 ```
@@ -73,7 +73,7 @@ make stop_docker_swarm
 Use the following commands to start/stop services via Kubernetes (see also [Kubernetes Setup](deployment/kubernetes/README.md)):        
 
 ```bash
-make update
+make update # optional for private registry
 make volume
 make start_kubernetes      
 make stop_kubernetes      

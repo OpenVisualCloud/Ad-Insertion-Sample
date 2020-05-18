@@ -72,8 +72,8 @@ Expand the platform device name.
 */}}
 {{- define "adi.platform.device" }}
 {{- if eq "vcac-a" ( include "adi.platform.suffix" . ) }}
-{{- "hddl" }}
+{{- "HDDL" }}
 {{- else }}
-{{- "cpu" }}
+{{- "CPU" }}
 {{- end }}
 {{- end }}

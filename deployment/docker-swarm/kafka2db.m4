@@ -1,6 +1,6 @@
 
     kafka2db:
-        image: ssai_kafka2db:latest
+        image: defn(`REGISTRY_PREFIX')ssai_kafka2db:latest
         environment:
             NO_PROXY: "*"
             no_proxy: "*"

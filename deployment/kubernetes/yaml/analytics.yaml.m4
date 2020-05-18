@@ -19,7 +19,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: analytics
-          image: `ssai_analytics_'defn(`FRAMEWORK')`_'defn(`PLATFORM_SUFFIX'):latest
+          image: defn(`REGISTRY_PREFIX')`ssai_analytics_'defn(`FRAMEWORK')`_'defn(`PLATFORM_SUFFIX'):latest
           imagePullPolicy: IfNotPresent
           env:
             - name: `NETWORK_PREFERENCE'

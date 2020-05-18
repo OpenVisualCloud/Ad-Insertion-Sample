@@ -20,14 +20,14 @@ Follow the [instructions](https://docs.docker.com/engine/swarm/swarm-tutorial/cr
 
 Finally, start/stop services as follows:
 ```
-make update
+make update # optional for private registry
 make start_docker_swarm
 make stop_docker_swarm
 ```
 
 ---
 
-The `make update` command uploads the sample images to each worker node. If you prefer to use a private docker registry, replace with your instructions to upload the images to your docker registry.   
+The `make update` command uploads the sample images to each worker node. If you prefer to use a private docker registry, configure the sample, `cmake -DREGISTRY=<registry-url> ..`, to push the sample images to the private docker registry after each build.  
 
 ---
 
@@ -41,7 +41,7 @@ script/setup-vcac-a.sh
 
 Then start/stop services as follows:
 ```
-make update
+make update # optional for private registry
 make start_docker_swarm
 make stop_docker_swarm
 ```

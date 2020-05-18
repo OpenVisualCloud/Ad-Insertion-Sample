@@ -1,6 +1,6 @@
 
     ad-transcode:
-        image: ssai_ad_transcode:latest
+        image: defn(`REGISTRY_PREFIX')ssai_ad_transcode:latest
         environment:
             NO_PROXY: "*"
             no_proxy: "*"

@@ -37,7 +37,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: cdn
-          image: ssai_cdn_service:latest
+          image: defn(`REGISTRY_PREFIX')ssai_cdn_service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8443
