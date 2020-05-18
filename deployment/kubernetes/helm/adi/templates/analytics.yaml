@@ -1,4 +1,3 @@
-include(platform.m4)
 
 apiVersion: apps/v1
 kind: Deployment
@@ -7,7 +6,7 @@ metadata:
   labels:
      app: analytics
 spec:
-  replicas: defn(`NANALYTICS')
+  replicas: {{ .Values.nanalytics }}
   selector:
     matchLabels:
       app: analytics
@@ -19,17 +18,19 @@ spec:
       enableServiceLinks: false
       containers:
         - name: analytics
-          image: `ssai_analytics_'defn(`FRAMEWORK')`_'defn(`PLATFORM_SUFFIX'):latest
+          image: ssai_analytics_{{ .Values.framework }}_{{ include "adi.platform.suffix" $ }}:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: NETWORK_PREFERENCE
-              value: "{\"CPU\":\"INT8,FP32\"}"
+              value: "{\"{{ include "adi.platform.device" $ }}\":\"{{ .Values.networkPreference }}\"}"
             - name: VA_PRE
-              value: "defn(`PLATFORM')-"
+              value: "{{ include "adi.platform.suffix" $ }}-"
             - name: NO_PROXY
               value: "*"
             - name: no_proxy
               value: "*"
-defn(`PLATFORM_VOLUME_MOUNTS')dnl
-defn(`PLATFORM_VOLUMES')dnl
-PLATFORM_NODE_SELECTOR(`VCAC-A')dnl
+          volumeMounts:
+            {{- include "adi.platform.mounts" $ }}
+      volumes:
+          {{- include "adi.platform.volumes" $ }}
+      {{ include "adi.platform.accel-selector" $ }}

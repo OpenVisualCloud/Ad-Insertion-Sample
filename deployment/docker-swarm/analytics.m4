@@ -1,38 +1,21 @@
+include(platform.m4)
 
-ifelse(defn(`PLATFORM'),`Xeon',`dnl
     analytics:
-        image: `ssai_analytics_'defn(`FRAMEWORK')_xeon:latest
+        image: PLATFORM_IMAGE(`ssai_analytics_'defn(`FRAMEWORK')`_'defn(`PLATFORM_SUFFIX'):latest)
         environment:
-            NETWORK_PREFERENCE: "{\"CPU\":\"INT8,FP32\"}"
-            VA_PRE: "defn(`PLATFORM')-"
-            NO_PROXY: "*"
-            no_proxy: "*"
-        networks:
-            - appnet
-        deploy:
-            replicas: defn(`NANALYTICS')
-            placement:
-                constraints:
-                    - node.labels.vcac_zone!=yes
-')dnl
-
-ifelse(defn(`PLATFORM'),`VCAC-A',`dnl
-    analytics:
-        image: vcac-container-launcher:latest
-        environment:
-            VCAC_IMAGE: `ssai_analytics_'defn(`FRAMEWORK')_vcac-a:latest
-            VCAC_VA_PRE: "VCAC-A-"
-            VCAC_NO_PROXY: "*"
-            VCAC_no_proxy: "*"
+            PLATFORM_ENV(``NETWORK_PREFERENCE''): "{\"defn(`PLATFORM_DEVICE')\":\"defn(`NETWORK_PREFERENCE')\"}"
+            PLATFORM_ENV(VA_PRE): "defn(`PLATFORM')-"
+            PLATFORM_ENV(NO_PROXY): "*"
+            PLATFORM_ENV(no_proxy): "*"
+PLATFORM_ENV_EXTRA()dnl
         volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
             - /etc/localtime:/etc/localtime:ro
+PLATFORM_VOLUME_EXTRA()dnl
         networks:
             - appnet 
         deploy:
             replicas: defn(`NANALYTICS')
             placement:
                 constraints:
-                    - node.labels.vcac_zone==yes
-')dnl
+                    - PLATFORM_ZONE()
 
