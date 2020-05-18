@@ -34,7 +34,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: ad-content
-          image: ssai_ad_content_frontend:latest
+          image: defn(`REGISTRY_PREFIX')ssai_ad_content_frontend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

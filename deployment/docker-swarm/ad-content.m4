@@ -1,6 +1,6 @@
 
     ad-content-service:
-        image: ssai_ad_content_frontend:latest
+        image: defn(`REGISTRY_PREFIX')ssai_ad_content_frontend:latest
         environment:
             NO_PROXY: "*"
             no_proxy: "*"

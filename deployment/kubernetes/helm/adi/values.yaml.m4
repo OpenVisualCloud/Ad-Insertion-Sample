@@ -1,4 +1,7 @@
 
+# private registry URL
+registryPrefix: ""
+
 # platform specifies the target platform: Xeon or VCAC-A.
 platform: "defn(`PLATFORM')"
 

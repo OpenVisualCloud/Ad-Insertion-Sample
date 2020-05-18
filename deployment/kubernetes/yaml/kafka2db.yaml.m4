@@ -19,7 +19,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: kafka2db
-          image: ssai_kafka2db:latest
+          image: defn(`REGISTRY_PREFIX')ssai_kafka2db:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: NO_PROXY

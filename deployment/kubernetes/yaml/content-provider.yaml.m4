@@ -34,7 +34,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: content-provider
-          image: ssai_content_provider_frontend:latest
+          image: defn(`REGISTRY_PREFIX')ssai_content_provider_frontend:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: NO_PROXY

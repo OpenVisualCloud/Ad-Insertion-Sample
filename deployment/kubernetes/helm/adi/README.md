@@ -55,11 +55,18 @@ make adhls
 Use the following commands to start/stop services via Kubernetes:
 
 ```bash
-make update
+make update # optional for private registry
 make volume
 make start_helm     
 make stop_helm
 ```
+
+---
+
+- The `make update` command uploads the sample images to each worker node. If you prefer to use a private docker registry, configure the sample, `cmake -DREGISTRY=<registry-url> ..`, to push the sample images to the private registry after each build.
+- The `make volume` command creates local persistent volumes under the `/tmp` directory of the first two Kubernetes workers. This is a temporary solution for quick sample deployment. For scalability beyond a two-node cluster, consider rewriting the persistent volume scripts.
+
+---
 
 ### Launch browser:
 

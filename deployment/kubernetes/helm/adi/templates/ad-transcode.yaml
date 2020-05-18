@@ -22,7 +22,7 @@ spec:
         fsGroup: {{ .Values.groupId }}
       containers:
         - name: ad-transcode
-          image: ssai_ad_transcode:latest
+          image: {{ $.Values.registryPrefix }}ssai_ad_transcode:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: NO_PROXY
