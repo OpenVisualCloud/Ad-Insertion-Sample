@@ -1,17 +1,21 @@
 # ssai_analytics_ffmpeg_xeon
 
-From openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg:20.4 as build
+FROM centos:7.6.1810 as build
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update -qq && apt-get install -qq git ca-certificates python3 python3-pip && rm -rf /var/lib/apt/lists/*
-ARG VA_SERVING_REPO=https://github.com/intel/video-analytics-serving.git
-ARG VA_SERVING_BRANCH="v0.3_preview"
-ARG VA_SERVING_TAG="1b342051b85682beadb1ec173f848697fa2f02b2"
+ARG VA_SERVING_REPO=https://github.com/intel/video-analytics-serving
+ARG VA_SERVING_TAG="v0.3.0-alpha"
 
-RUN  git clone ${VA_SERVING_REPO} -b ${VA_SERVING_BRANCH} --depth 1
-RUN  cd video-analytics-serving; git checkout ${VA_SERVING_TAG}
-#RUN pip3 install --ignore-installed --target /home/build -r video-analytics-serving/requirements.txt
-RUN rm -rf /home/video-analytics-serving/vaserving/__main__.py
-RUN rm -rf /home/video-analytics-serving/vaserving/rest_api
+RUN curl -L ${VA_SERVING_REPO}/archive/${VA_SERVING_TAG}.tar.gz | tar -xz && \
+    mv video-analytics-serving* video-analytics-serving && \
+    rm -rf video-analytics-serving/vaserving/__main__.py && \
+    rm -rf video-analytics-serving/vaserving/rest_api && \
+    mv video-analytics-serving/vaserving /home
+
+COPY ./models/ /home/models/
+COPY ./gallery/ /home/gallery/
+COPY ./Xeon/ffmpeg/pipelines/ /home/pipelines
+COPY *.py /home/
+COPY --from=ssai_common /home/*.py /home/
 
 From openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg:20.4
 
@@ -19,14 +23,7 @@ From openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg:20.4
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends python3-gst-1.0 python3-jsonschema python3-pip && rm -rf /var/lib/apt/lists/* && \
     pip3 install 'kafka-python>=1.4.7' 'kazoo>=2.6.1'
 
-#COPY --from=build /home/build/ /usr/lib/python3/dist-packages
-COPY --from=build /home/video-analytics-serving/vaserving /home/vaserving
-COPY ./models/ /home/models/
-COPY ./gallery/ /home/gallery/
-COPY ./Xeon/ffmpeg/pipelines/ /home/pipelines
-COPY *.py /home/
-COPY --from=ssai_common /home/*.py /home/
-ENV LOG_LEVEL "DEBUG"
+COPY --from=build /home/ /home/
 ENV FRAMEWORK=ffmpeg
 WORKDIR /home
 CMD ["/home/analyze.py"]
