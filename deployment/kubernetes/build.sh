@@ -6,6 +6,7 @@ FRAMEWORK="${2:-gst}"
 NANALYTICS="${3:-1}"
 NTRANSCODES="${4:-1}"
 MINRESOLUTION="${5:-360p}"
+NETWORK="${6:-FP32}"
 
 rm -rf "$DIR/../../volume/ad/cache"
 mkdir -p "$DIR/../../volume/ad/cache/dash" "$DIR/../../volume/ad/cache/hls"
@@ -48,10 +49,10 @@ if [ -x /usr/bin/kubectl ] || [ -x /usr/local/bin/kubectl ]; then
     export VIDEO_CACHE_VOLUME_SIZE=2
     export VIDEO_CACHE_VOLUME_HOST=${hosts[1]}
 
-    echo "Generating templates with PLATFORM=${PLATFORM},FRAMEWORK=${FRAMEWORK},NANALYTICS=${NANALYTICS},NTRANSCODES=${NTRANSCODES},MINRESOLUTION=${MINRESOLUTION}"
+    echo "Generating templates with PLATFORM=${PLATFORM},FRAMEWORK=${FRAMEWORK},NANALYTICS=${NANALYTICS},NTRANSCODES=${NTRANSCODES},MINRESOLUTION=${MINRESOLUTION},NETWORK=${NETWORK}"
     find "${DIR}" -maxdepth 1 -name "*.yaml" -exec rm -rf "{}" \;
     for template in $(find "${DIR}" -maxdepth 1 -name "*.yaml.m4" -print); do
         yaml=${template/.m4/}
-        m4 -DPLATFORM=${PLATFORM} -DFRAMEWORK=${FRAMEWORK} -DNANALYTICS=${NANALYTICS} -DNTRANSCODES=${NTRANSCODES} -DMINRESOLUTION=${MINRESOLUTION} $(env | grep _VOLUME_ | sed 's/^/-D/') -DUSERID=$(id -u) -DGROUPID=$(id -g) -DHOSTIP=${HOSTIP} -I "${DIR}" "${template}" > "${yaml}"
+        m4 -DPLATFORM=${PLATFORM} -DFRAMEWORK=${FRAMEWORK} -DNANALYTICS=${NANALYTICS} -DNTRANSCODES=${NTRANSCODES} -DMINRESOLUTION=${MINRESOLUTION} -DNETWORK_PREFERENCE=${NETWORK} $(env | grep _VOLUME_ | sed 's/^/-D/') -DUSERID=$(id -u) -DGROUPID=$(id -g) -DHOSTIP=${HOSTIP} -I "${DIR}" "${template}" > "${yaml}"
     done
 fi
