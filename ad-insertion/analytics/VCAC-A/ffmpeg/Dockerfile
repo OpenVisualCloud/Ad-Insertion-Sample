@@ -2,14 +2,10 @@
 
 FROM centos:7.6.1810 as build
 
-ARG VA_SERVING_REPO=https://github.com/intel/video-analytics-serving
-ARG VA_SERVING_TAG="v0.3.0-alpha"
+ARG  VA_SERVING_REPO=https://raw.githubusercontent.com/intel/video-analytics-serving
+ARG  VA_SERVING_TAG="v0.3.0-alpha"
 
-RUN curl -L ${VA_SERVING_REPO}/archive/${VA_SERVING_TAG}.tar.gz | tar -xz && \
-    mv video-analytics-serving* video-analytics-serving && \
-    rm -rf video-analytics-serving/vaserving/__main__.py && \
-    rm -rf video-analytics-serving/vaserving/rest_api && \
-    mv video-analytics-serving/vaserving /home
+RUN  mkdir -p /home/vaserving/common/utils && touch /home/vaserving/__init__.py /home/vaserving/common/__init__.py /home/vaserving/common/utils/__init__.py && for x in common/utils/logging.py common/settings.py arguments.py ffmpeg_pipeline.py gstreamer_pipeline.py model_manager.py pipeline.py pipeline_manager.py schema.py vaserving.py; do curl -o /home/vaserving/$x -L ${VA_SERVING_REPO}/${VA_SERVING_TAG}/vaserving/$x; done
 
 COPY models/ /home/models/
 COPY gallery/ /home/gallery/
