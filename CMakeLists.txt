@@ -1,9 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 
 Project(ssai NONE)
-add_custom_target(dist  ${CMAKE_HOME_DIRECTORY}/script/mk-dist.sh)
 set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_HOME_DIRECTORY}/dist")
-add_custom_target(update  ${CMAKE_HOME_DIRECTORY}/script/update-image.sh)
 
 if (NOT DEFINED REGISTRY)
     set(REGISTRY "")
@@ -64,6 +62,11 @@ if(PLATFORM STREQUAL "VCAC-A")
     endif()
 endif()
 string(REGEX REPLACE ",$" "" NETWORK ${NETWORK})
+
+add_custom_target(dist  ${CMAKE_HOME_DIRECTORY}/script/mk-dist.sh)
+if(NOT REGISTRY)
+    add_custom_target(update  ${CMAKE_HOME_DIRECTORY}/script/update-image.sh)
+endif()
 
 file(GLOB dirs "deployment" "*")
 list(REMOVE_DUPLICATES dirs)
