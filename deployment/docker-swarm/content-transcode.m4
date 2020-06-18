@@ -1,6 +1,6 @@
 
     content-transcode:
-        image: ssai_content_transcode:latest
+        image: defn(`REGISTRY_PREFIX')ssai_content_transcode:latest
         environment:
             NO_PROXY: "*"
             no_proxy: "*"

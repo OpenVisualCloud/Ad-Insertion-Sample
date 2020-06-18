@@ -1,0 +1,36 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics
+  labels:
+     app: analytics
+spec:
+  replicas: {{ .Values.nanalytics }}
+  selector:
+    matchLabels:
+      app: analytics
+  template:
+    metadata:
+      labels:
+        app: analytics
+    spec:
+      enableServiceLinks: false
+      containers:
+        - name: analytics
+          image: {{ $.Values.registryPrefix }}ssai_analytics_{{ .Values.framework }}_{{ include "adi.platform.suffix" $ }}:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: NETWORK_PREFERENCE
+              value: "{\"{{ include "adi.platform.device" $ }}\":\"{{ .Values.networkPreference }}\"}"
+            - name: VA_PRE
+              value: "{{ include "adi.platform.suffix" $ }}-"
+            - name: NO_PROXY
+              value: "*"
+            - name: no_proxy
+              value: "*"
+          volumeMounts:
+            {{- include "adi.platform.mounts" $ }}
+      volumes:
+          {{- include "adi.platform.volumes" $ }}
+      {{ include "adi.platform.accel-selector" $ }}

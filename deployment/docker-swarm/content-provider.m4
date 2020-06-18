@@ -1,6 +1,6 @@
 
     content-provider-service:
-        image: ssai_content_provider_frontend:latest
+        image: defn(`REGISTRY_PREFIX')ssai_content_provider_frontend:latest
         environment:
             NO_PROXY: "*"
             no_proxy: "*"

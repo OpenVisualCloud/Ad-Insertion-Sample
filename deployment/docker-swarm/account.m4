@@ -1,6 +1,6 @@
 
     account-service:
-        image: ssai_account_service:latest
+        image: defn(`REGISTRY_PREFIX')ssai_account_service:latest
         environment:
             NO_PROXY: "*"
             no_proxy: "*"

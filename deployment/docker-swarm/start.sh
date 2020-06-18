@@ -24,7 +24,6 @@ test -f "$yml" || yml="$DIR/docker-compose.yml"
 
 export USER_ID=$(id -u)
 export GROUP_ID=$(id -g)
-"$DIR/../certificate/self-sign.sh"
 shift
 . "$DIR/build.sh"
 case "$1" in

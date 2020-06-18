@@ -1,0 +1,45 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: content-transcode
+  labels:
+     app: content-transcode
+spec:
+  replicas: {{ .Values.ntranscodes }}
+  selector:
+    matchLabels:
+      app: content-transcode
+  template:
+    metadata:
+      labels:
+        app: content-transcode
+    spec:
+      enableServiceLinks: false
+      securityContext:
+        runAsUser: {{ .Values.userId }}
+        runAsGroup: {{ .Values.groupId }}
+        fsGroup: {{ .Values.groupId }}
+      containers:
+        - name: content-transcode
+          image: {{ $.Values.registryPrefix }}ssai_content_transcode:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: NO_PROXY
+              value: "*"
+            - name: no_proxy
+              value: "*"
+          volumeMounts:
+            - mountPath: /var/www/video
+              name: video-cache
+            - mountPath: /var/www/archive
+              name: video-archive
+              readOnly: true
+      volumes:
+          - name: video-cache
+            persistentVolumeClaim:
+               claimName: video-cache
+          - name: video-archive
+            persistentVolumeClaim:
+               claimName: video-archive
+      {{ include "adi.platform.node-selector" $ }}

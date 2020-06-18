@@ -1,6 +1,6 @@
 
     ad-insertion-service:
-        image: ssai_ad_insertion_frontend:latest
+        image: defn(`REGISTRY_PREFIX')ssai_ad_insertion_frontend:latest
         volumes:
             - ${AD_CACHE_VOLUME}:/var/www/adinsert:ro
             - ${AD_STATIC_VOLUME}:/var/www/adstatic:ro
