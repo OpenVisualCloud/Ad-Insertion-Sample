@@ -1,6 +1,6 @@
 
     ad-decision-service:
-        image: ssai_ad_decision_frontend:latest
+        image: defn(`REGISTRY_PREFIX')ssai_ad_decision_frontend:latest
         environment:
             NO_PROXY: "*"
             no_proxy: "*"

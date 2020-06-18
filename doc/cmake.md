@@ -2,6 +2,7 @@
 ### CMake Options:
 
 Use the following definitions to customize the building process:   
+- **REGISTRY**: Specify the URL of the private docker registry. 
 - **PLATFORM**: Specify the target platform: `Xeon` or [`VCAC-A`](vcac-a.md).   
 - **FRAMEWORK**: Specify the target framework: `gst` or `ffmpeg`.   
 - **NANALYTICS**: Specify the number of analytics instances enabled for content analysis.  

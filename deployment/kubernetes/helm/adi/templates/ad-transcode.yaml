@@ -1,0 +1,45 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ad-transcode
+  labels:
+     app: ad-transcode
+spec:
+  replicas: {{ .Values.ntranscodes }}
+  selector:
+    matchLabels:
+      app: ad-transcode
+  template:
+    metadata:
+      labels:
+        app: ad-transcode
+    spec:
+      enableServiceLinks: false
+      securityContext:
+        runAsUser: {{ .Values.userId }}
+        runAsGroup: {{ .Values.groupId }}
+        fsGroup: {{ .Values.groupId }}
+      containers:
+        - name: ad-transcode
+          image: {{ $.Values.registryPrefix }}ssai_ad_transcode:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: NO_PROXY
+              value: "*"
+            - name: no_proxy
+              value: "*"
+          volumeMounts:
+            - mountPath: /var/www/adinsert
+              name: ad-cache
+            - mountPath: /var/www/adsegment
+              name: ad-segment
+              readOnly: true
+      volumes:
+          - name: ad-cache
+            persistentVolumeClaim:
+               claimName: ad-cache
+          - name: ad-segment
+            persistentVolumeClaim:
+               claimName: ad-segment
+      {{ include "adi.platform.node-selector" $ }}

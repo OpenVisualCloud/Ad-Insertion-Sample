@@ -1,43 +1,26 @@
 include(platform.m4)
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: ad-decision-service
-  labels:
-    app: ad-decision
-spec:
-  ports:
-  - port: 8080
-    protocol: TCP
-  selector:
-    app: ad-decision
-
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ad-decision
+  name: kafka2db
   labels:
-     app: ad-decision
+     app: kafka2db
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ad-decision
+      app: kafka2db
   template:
     metadata:
       labels:
-        app: ad-decision
+        app: kafka2db
     spec:
       enableServiceLinks: false
       containers:
-        - name: ad-decision
-          image: ssai_ad_decision_frontend:latest
+        - name: kafka2db
+          image: defn(`REGISTRY_PREFIX')ssai_kafka2db:latest
           imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8080
           env:
             - name: NO_PROXY
               value: "*"

@@ -7,8 +7,7 @@ fi
 
 PLATFORM="${1:-Xeon}"
 FRAMEWORK="${2:-gst}"
-USER="docker"
-GROUP="docker"
+REGISTRY="$7"
 
 build_docker() {
     docker_file="$1"
@@ -18,7 +17,13 @@ build_docker() {
     if test -f "$docker_file.m4"; then
         m4 -I "$(dirname $docker_file)" "$docker_file.m4" > "$docker_file"
     fi
-    (cd "$DIR"; docker build --network host --file="$docker_file" "$@" -t "$image_name" "$DIR" $(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/--build-arg /') --build-arg USER=${USER} --build-arg GROUP=${GROUP} --build-arg UID=$(id -u) --build-arg GID=$(id -g))
+    (cd "$DIR"; docker build --network host --file="$docker_file" "$@" -t "$image_name" "$DIR" $(env | cut -f1 -d= | grep -E '_(proxy|REPO|VER)$' | sed 's/^/--build-arg /') --build-arg UID=$(id -u) --build-arg GID=$(id -g))
+
+    # if REGISTRY is specified, push image to the private registry
+    if [ -n "$REGISTRY" ]; then
+        docker tag "$image_name" "$REGISTRY$image_name"
+        docker push "$REGISTRY$image_name"
+    fi
 }
 
 # build image(s) in order (to satisfy dependencies)

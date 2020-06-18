@@ -3,38 +3,38 @@ include(platform.m4)
 apiVersion: v1
 kind: Service
 metadata:
-  name: ad-content-service
+  name: account-service
   labels:
-    app: ad-content
+    app: account
 spec:
   ports:
   - port: 8080
     protocol: TCP
   selector:
-    app: ad-content
+    app: account
 
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ad-content
+  name: account
   labels:
-     app: ad-content
+     app: account
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ad-content
+      app: account
   template:
     metadata:
       labels:
-        app: ad-content
+        app: account
     spec:
       enableServiceLinks: false
       containers:
-        - name: ad-content
-          image: ssai_ad_content_frontend:latest
+        - name: account
+          image: defn(`REGISTRY_PREFIX')ssai_account_service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -43,12 +43,4 @@ spec:
               value: "*"
             - name: no_proxy
               value: "*"
-          volumeMounts:
-            - mountPath: /var/www/archive
-              name: ad-archive
-              readOnly: true
-      volumes:
-          - name: ad-archive
-            persistentVolumeClaim:
-               claimName: ad-archive
 PLATFORM_NODE_SELECTOR(`Xeon')dnl

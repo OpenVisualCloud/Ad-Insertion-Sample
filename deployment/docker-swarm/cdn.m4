@@ -1,6 +1,6 @@
 
     cdn-service:
-        image: ssai_cdn_service:latest
+        image: defn(`REGISTRY_PREFIX')ssai_cdn_service:latest
         ports:
             - "ifelse(defn(`PLATFORM'),`Xeon',8443,443):8443"
             - "ifelse(defn(`PLATFORM'),`Xeon',8080,80):8080"
