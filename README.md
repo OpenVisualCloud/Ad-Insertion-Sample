@@ -81,7 +81,7 @@ make stop_kubernetes
 
 ### Launch browser:
 
-Launch your browser and point to `https://<hostname>` to play the streams and see ADs got inserted during playback. 
+Launch your browser and point to `https://<hostname>` to see the sample UI. Double click on any video clip to play the stream and see ADs got inserted during playback. 
 
 <IMG src="doc/adi-ui.gif" height="270px"></IMG>
 
