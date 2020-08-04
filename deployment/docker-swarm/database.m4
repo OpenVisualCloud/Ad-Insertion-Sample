@@ -7,6 +7,7 @@
             - 'no_proxy=*'
         networks:
             - appnet
+        user: elasticsearch
         deploy:
             replicas: 1
             placement:

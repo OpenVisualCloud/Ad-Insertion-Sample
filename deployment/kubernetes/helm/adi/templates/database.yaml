@@ -44,4 +44,6 @@ spec:
               value: "*"
             - name: no_proxy
               value: "*"
+          securityContext:
+            runAsUser: 1000
       {{ include "adi.platform.node-selector" $ }}

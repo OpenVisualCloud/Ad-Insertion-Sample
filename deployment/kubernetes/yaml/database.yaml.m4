@@ -45,4 +45,6 @@ spec:
               value: "*"
             - name: no_proxy
               value: "*"
+          securityContext:
+            runAsUser: 1000
 PLATFORM_NODE_SELECTOR(`Xeon')dnl
