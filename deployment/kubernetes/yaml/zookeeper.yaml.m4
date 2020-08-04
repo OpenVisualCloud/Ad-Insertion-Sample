@@ -47,4 +47,6 @@ spec:
               value: "1"
             - name: "ZOO_LOG4J_PROP"
               value: "ERROR"
+          securityContext:
+            runAsUser: 1000
 PLATFORM_NODE_SELECTOR(`Xeon')dnl

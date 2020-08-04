@@ -1,5 +1,5 @@
     kafka-service:
-        image: wurstmeister/kafka:2.12-2.4.0
+        image: defn(`REGISTRY_PREFIX')ssai_kafka:latest
         environment:
             KAFKA_BROKER_ID: 1
             KAFKA_ZOOKEEPER_CONNECT: zookeeper-service:2181

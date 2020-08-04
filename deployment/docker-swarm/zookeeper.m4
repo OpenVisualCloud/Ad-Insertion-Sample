@@ -8,6 +8,7 @@
             ZOO_LOG4J_PROP: 'ERROR'
         networks:
             - appnet
+        user: zookeeper
         deploy:
             replicas: 1
             placement:
