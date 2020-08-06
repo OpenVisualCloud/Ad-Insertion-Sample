@@ -16,6 +16,7 @@
             KAFKA_LOG4J_ROOT_LOGLEVEL: 'ERROR'
         networks:
             - appnet
+        user: kafka
         deploy:
             replicas: 1
             placement:
