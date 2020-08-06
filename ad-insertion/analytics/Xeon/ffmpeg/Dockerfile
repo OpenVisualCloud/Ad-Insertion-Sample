@@ -13,7 +13,7 @@ COPY ./Xeon/ffmpeg/pipelines/ /home/pipelines
 COPY *.py /home/
 COPY --from=ssai_common /home/*.py /home/
 
-From openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg:20.4
+From openvisualcloud/xeon-ubuntu1804-analytics-ffmpeg:20.7
 
 # Fetch python3 and Install python3
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends python3-gst-1.0 python3-jsonschema python3-pip && rm -rf /var/lib/apt/lists/* && \
