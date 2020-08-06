@@ -13,7 +13,7 @@ COPY VCAC-A/ffmpeg/pipelines/ /home/pipelines/
 COPY *.py /home/
 COPY --from=ssai_common /home/*.py /home/
 
-FROM openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg:20.4
+FROM openvisualcloud/vcaca-ubuntu1804-analytics-ffmpeg:20.7
 
 # Fetch python3 and Install python3
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libgirepository-1.0-1 libsoup2.4.1 libjson-c3 python3-jsonschema python3-gi python3-requests python3-tornado python3-pip python3-setuptools python3-wheel && rm -rf /var/lib/apt/lists/* && \

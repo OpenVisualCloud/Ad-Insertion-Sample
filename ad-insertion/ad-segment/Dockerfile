@@ -1,5 +1,5 @@
 
-FROM openvisualcloud/xeon-ubuntu1804-media-ffmpeg:20.4
+FROM openvisualcloud/xeon-ubuntu1804-media-ffmpeg:20.7
 RUN apt-get update && apt-get install -y -q bc && rm -rf /var/lib/apt/lists/*;
 
 ####
