@@ -65,4 +65,6 @@ spec:
               value: "-Xmx1024m -Xms1024m"
             - name: "KAFKA_LOG4J_ROOT_LOGLEVEL"
               value: "ERROR"
+          securityContext:
+            runAsUser: 1000
 PLATFORM_NODE_SELECTOR(`Xeon')dnl
