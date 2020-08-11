@@ -25,10 +25,12 @@ COPY --from=ssai_common /home/*.py /home/
 
 FROM openvisualcloud/vcaca-ubuntu1804-analytics-gst:20.7
 # Fetch python3 and Install python3
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libjson-c3 python3-gst-1.0 python3-jsonschema python3-gi python3-requests python3-tornado python3-pip python3-setuptools python3-wheel &&  rm -rf /var/lib/apt/lists/* && \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q --no-install-recommends libjson-c3 python3-gst-1.0 python3-jsonschema python3-gi python3-requests python3-tornado python3-pip python3-setuptools python3-wheel libjemalloc-dev &&  rm -rf /var/lib/apt/lists/* && \
     pip3 install 'kafka-python>=1.4.7' 'kazoo>=2.6.1'
 
 COPY --from=build /home/ /home/
+# libjemalloc used by va-serving to avoid memory growth
+ENV LD_PRELOAD=libjemalloc.so
 ENV FRAMEWORK gstreamer
 WORKDIR /home
 CMD ["/home/analyze.py"]
