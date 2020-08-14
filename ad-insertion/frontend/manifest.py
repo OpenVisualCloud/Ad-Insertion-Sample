@@ -35,7 +35,7 @@ class ManifestHandler(web.RequestHandler):
             manifest=r.text
         except Exception as e:
             print("Exception: "+str(e), flush=True)
-            return str(e)
+            return str("Client Error!")
 
         # launch zk
         stream_base = "/".join(stream.split("/")[:-1])
