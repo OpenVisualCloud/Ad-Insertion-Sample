@@ -9,6 +9,8 @@ The E2E sample implements a server-side AD insertion system, which features on-d
 
 The [Content Provider](content-provider/README.md) service serves original content, with on-demand transcoding, through the DASH or HLS streaming protocol. The [AD Insertion](ad-insertion/README.md) service analyzes video content on the fly and inserts AD, with transcoding if needed, into the video stream at each AD break slot.   
 
+See Also: [Demo Video](https://www.youtube.com/watch?v=aNeFV6cC_wE)   
+
 ### Software Stack: 
 
 The sample is powered by the following Open Visual Cloud software stacks:  
@@ -101,3 +103,5 @@ Launch your browser and point to `https://<hostname>` to see the sample UI. Doub
 - [Customize Videos](doc/customize.md)   
 - [Sample Distribution](doc/dist.md)  
 - [Utility Script](doc/script.md)  
+- [Demo Video](https://www.youtube.com/watch?v=aNeFV6cC_wE)  
+
