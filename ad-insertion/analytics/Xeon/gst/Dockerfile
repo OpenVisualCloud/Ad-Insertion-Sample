@@ -23,7 +23,7 @@ COPY Xeon/gst/pipelines/ /home/pipelines/
 COPY *.py /home/
 COPY --from=ssai_common /home/*.py /home/
 
-FROM openvisualcloud/xeon-ubuntu1804-analytics-gst:20.4
+FROM openvisualcloud/xeon-ubuntu1804-analytics-gst:20.7
 
 # Fetch python3 and Install python3
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -q python3-gst-1.0 python3-jsonschema python3-pip ca-certificates libjemalloc-dev && rm -rf /var/lib/apt/lists/* && \

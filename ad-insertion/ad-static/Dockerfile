@@ -1,5 +1,5 @@
 
-FROM openvisualcloud/xeon-ubuntu1804-media-ffmpeg:20.4
+FROM openvisualcloud/xeon-ubuntu1804-media-ffmpeg:20.7
 
 ####
 ARG  USER=docker
