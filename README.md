@@ -105,4 +105,3 @@ Launch your browser and point to `https://<hostname>` to see the sample UI. Doub
 - [Sample Distribution](doc/dist.md)  
 - [Utility Script](doc/script.md)  
 - [Demo Video](https://www.youtube.com/watch?v=aNeFV6cC_wE)  
-
